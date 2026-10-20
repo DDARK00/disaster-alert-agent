@@ -243,7 +243,22 @@ def build_graph(deps: Deps):
                   "note": j["note"], "gaps": j["gaps"],
                   "evidence": [{k: e[k] for k in ("id", "kind", "text") if k in e} for e in j["evidence"]]} for j in js]
         user = "근거 데이터(JSON):\n" + json.dumps(facts, ensure_ascii=False)
-        user += "\n\n출력 형식: 지역마다 '### 지역명' 제목, 항목은 '- ' 로 시작하고 끝에 근거 ID를 [E1] 처럼 붙인다."
+        # 작은 모델이 형식 예시의 ID를 그대로 베끼거나 gap 문구를 빠뜨리지 않도록 데이터에서 지시를 만든다 (T-021)
+        ids = [e["id"] for j in js for e in j["evidence"]]
+        user += ("\n\n출력 형식: 지역마다 '### 지역명' 제목, 항목은 '- ' 로 시작하고 끝에 대괄호로 근거 ID를 붙인다."
+                 f"\n인용 가능한 근거 ID: {', '.join(f'[{i}]' for i in ids) if ids else '없음 — 어떤 [ID]도 쓰지 않는다'}."
+                 " 이 목록에 없는 ID는 절대 쓰지 않는다.")
+        must = []
+        for j in js:
+            if j["level"] == "none":
+                must.append(f"### {j['region']} 아래에 '확인된 위험 정보 없음 (기준 {j['as_of']})' 문장")
+            if j["level"] == "unknown":
+                must.append(f"### {j['region']} 아래에 '정보 없음 — 안전하다는 뜻이 아닙니다.' 문장")
+            for g in j["gaps"]:
+                if g["status"] in ("failed", "no_coverage"):
+                    must.append(f"### {j['region']} 아래에 '- 정보 없음: {g['source']} ({g['status']}) — 안전하다는 뜻이 아닙니다.'")
+        if must:
+            user += "\n반드시 그대로 포함할 문장:\n" + "\n".join(f"* {m}" for m in must)
         if state.get("feedback"):
             user += "\n\n이전 답변이 다음 이유로 반려되었습니다. 고쳐서 다시 작성하세요:\n- " + "\n- ".join(state["feedback"])
         try:
