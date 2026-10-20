@@ -25,7 +25,20 @@
 `route → parse_intent → gate → plan → research → judge → write → validate → finalize` (+ fixed_response, ask_region, fallback). 설명은 `agent/graph.py` 상단 주석.
 
 ## 환경변수
-`MCP_URL`(없으면 stdio 서브프로세스), `DATA_MODE`, `LLM_BACKEND`(fake|openai_compat), `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`, `LLM_NO_THINK`, `MAX_REWRITES`, `CORS_ORIGINS`, `LANGSMITH_*`.
+`config/settings.py`의 `Settings.from_env()` 한 곳에서 읽는다: `MCP_URL`(없으면 stdio 서브프로세스), `DATA_MODE`, `LLM_BACKEND`(fake|openai_compat), `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`, `LLM_TIMEOUT`, `LLM_NO_THINK`(1이면 `/no_think` + `reasoning_effort=none`, T-020), `MAX_REWRITES`, `CORS_ORIGINS`. `LANGSMITH_*`는 langsmith가 직접 읽는다.
+
+## 규칙·문구·프롬프트 (ADR-012)
+| 파일 | 내용 | 쓰는 곳 |
+|---|---|---|
+| `config/rules.yaml` | 위급·의도 단어(공백=`\s*`로 컴파일), 재난 동의어, 범위 단어, 금지 표현, 레벨 라벨·순위, 근거 상한 | `rules`, `judge`, `validator` |
+| `prompts/messages.yaml` | 면책, 119/112·범위 밖·되묻기 고정 응답, 템플릿 문구, 검증 기준 조각(`markers`), MCP statement | `compose`, `validator`, `graph`, MCP |
+| `prompts/{intent,plan,write,rewrite}.md` | LLM 지시문 (`=== 구역 ===`, 자리표시자 `$name`) | `graph` |
+| `prompts/briefing.md` | MCP Prompt `disaster_briefing_prompt` 원문 (write 의 system) | MCP |
+
+- 판정·라우팅·검증 로직은 코드에 있다. 파일에는 데이터만.
+- 기동 시 검사(`config/catalog.py`): 파일·키·구역 누락, 표준 문구가 검증 기준 조각(`markers`)을 포함하는지, 문구에 금지 표현이 없는지. 어기면 시작하지 않는다.
+- 검증 기준 조각·금지 표현은 테스트(`Catalog`)로 고정 — 파일 수정으로 검증이 느슨해지면 테스트가 실패한다.
+- LangSmith 루트 트레이스(`disaster_chat`)에 `prompts@<hash>` 태그와 파일별 해시 메타데이터.
 
 ## 테스트
-`sh/test.sh` — MCP 31건 + 백엔드 48건. 외부 API·LLM 없이 fixture, 프로세스 내 MCP, FakeLLM, 가짜 OpenAI 호환 HTTP 서버로 돈다.
+`sh/test.sh` — MCP 32건 + 백엔드 52건. 외부 API·LLM 없이 fixture, 프로세스 내 MCP, FakeLLM, 가짜 OpenAI 호환 HTTP 서버로 돈다.

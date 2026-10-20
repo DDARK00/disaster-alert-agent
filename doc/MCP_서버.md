@@ -19,10 +19,16 @@
 - 행동요령이 없는 유형(건조·열대야)은 다른 재난으로 대체하지 않는다.
 - 모든 특보 응답에 `disclaimer`(공식 경보 아님) 포함.
 
+## 문구·설정의 위치 (ADR-012)
+- `statement` 문구와 면책은 `prompts/messages.yaml`(`mcp.*`, `disclaimer`), 브리핑 프롬프트 원문은 `prompts/briefing.md`.
+- 환경변수는 `config/settings.py`(`DATA_MODE`, `MCP_TRANSPORT/HOST/PORT/PATH`). 서비스 키는 Settings 밖 — `capture.py`만 읽는다.
+- 컨테이너는 `config/`, `prompts/`를 함께 복사한다.
+
 ## replay 범위 (2026-10-20 수집분)
 - 기상특보: 2026-08-21 00:00 ~ 2026-10-20 10:18 (구역별, 이어 붙인 fixture 기준). 이보다 과거는 API 제약(60일)으로 재수집 불가.
 - 재난문자: 2026-10-01 ~ 2026-10-20 10:18.
 - replay에서 `as_of`를 생략하면 2026-10-19 23:59.
+- replay는 커밋된 fixture만 읽는다. live 캡처(`*_live__*`, gitignore)는 섞지 않는다(T-023).
 
 ## 테스트
-`sh/test.sh` (MCP 31건: 상태 접기 11, 지역 7, 서버 통합 9, capture 4). 컨테이너 실행은 `MCP_TRANSPORT=http` (`doc/도커.md`).
+`sh/test.sh` (MCP 32건: 상태 접기 11, 지역 7, 서버 통합 10, capture 4). 컨테이너 실행은 `MCP_TRANSPORT=http` (`doc/도커.md`).
