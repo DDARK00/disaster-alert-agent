@@ -98,7 +98,7 @@ sh/setup_venv.sh && sh/test.sh        # 단위 테스트
 | `DSSP_SHELTER_SERVICE_KEY` | 재난안전데이터공유플랫폼 | 통합대피소 |
 | `KAKAO_REST_API_KEY` | 카카오 디벨로퍼스 | 장소 검색 |
 
-같은 값이 여러 API에 통하면 같은 키를 여러 줄에 넣어도 됩니다. 선택 항목: `LANGSMITH_*`(관측성), `LLM_*`(모델).
+8개 모두 서로 다른 키입니다. 선택 항목: `LANGSMITH_*`(관측성), `LLM_*`(모델).
 
 ### 2. Docker로 실행
 ```bash
