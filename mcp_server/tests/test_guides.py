@@ -148,6 +148,11 @@ class Normalize(unittest.TestCase):
         self.assertGreaterEqual(g["excluded"], 19 + 12 + 9 - 3)  # 구조대원용 단계 3개 (내용 없는 행 제외)
         self.assertIn("교통사고 예방은", sections)
 
+    def test_admin_basis_rows_excluded(self):  # "※관련근거 : 대기환경 보전법 시행규칙…" (행정 근거, 시민 행동 아님)
+        g = guides.load("미세먼지", HM["미세먼지"], "replay")
+        self.assertGreaterEqual(g["excluded"], 1)
+        self.assertFalse(any("관련근거" in r["text"] for r in g["rows"]))
+
     def test_all_linked_hazards_have_rows_and_known_phases(self):
         for hz, hm in HM.items():
             if not hm["action_cate2"]:
