@@ -1,0 +1,186 @@
+{
+  "meta": {
+    "source": "weather",
+    "operation": "getPwnCd",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:21:47+00:00",
+    "http_status": 200,
+    "elapsed_ms": 69,
+    "call_no_today": 8,
+    "url": "http://apis.data.go.kr/1360000/WthrWrnInfoService/getPwnCd?serviceKey=***&numOfRows=200&pageNo=1&dataType=JSON&fromTmFc=20260821&toTmFc=20261019&areaCode=L1130110",
+    "error": null
+  },
+  "json": {
+    "response": {
+      "header": {
+        "resultCode": "00",
+        "resultMsg": "NORMAL_SERVICE"
+      },
+      "body": {
+        "dataType": "JSON",
+        "items": {
+          "item": [
+            {
+              "allEndTime": 202609031600,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202609031600,
+              "stnId": "108",
+              "tmFc": 202609031600,
+              "tmSeq": 18,
+              "warnVar": 12,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 202609021600,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202609021600,
+              "stnId": "108",
+              "tmFc": 202609021600,
+              "tmSeq": 16,
+              "warnVar": 13,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202608301910,
+              "stnId": "108",
+              "tmFc": 202608301910,
+              "tmSeq": 416,
+              "warnVar": 2,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "1",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608301510,
+              "tmSeq": 396,
+              "warnVar": 2,
+              "warnStress": 0,
+              "startTime": 202608301510
+            },
+            {
+              "allEndTime": 202608281730,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202608281730,
+              "stnId": "108",
+              "tmFc": 202608281730,
+              "tmSeq": 349,
+              "warnVar": 2,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "1",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608281510,
+              "tmSeq": 341,
+              "warnVar": 2,
+              "warnStress": 0,
+              "startTime": 202608281510
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "7",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608281000,
+              "tmSeq": 331,
+              "warnVar": 12,
+              "warnStress": 0,
+              "startTime": 202608281000
+            },
+            {
+              "allEndTime": 202608271800,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202608271800,
+              "stnId": "108",
+              "tmFc": 202608271800,
+              "tmSeq": 314,
+              "warnVar": 2,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "1",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608271605,
+              "tmSeq": 308,
+              "warnVar": 2,
+              "warnStress": 0,
+              "startTime": 202608271605
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "1",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608261600,
+              "tmSeq": 298,
+              "warnVar": 13,
+              "warnStress": 0,
+              "startTime": 202608261800
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1130110",
+              "areaName": "광주서부",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202608231600,
+              "stnId": "108",
+              "tmFc": 202608231600,
+              "tmSeq": 287,
+              "warnVar": 13,
+              "warnStress": 0,
+              "startTime": 0
+            }
+          ]
+        },
+        "pageNo": 1,
+        "numOfRows": 200,
+        "totalCount": 0
+      }
+    }
+  },
+  "text": null
+}

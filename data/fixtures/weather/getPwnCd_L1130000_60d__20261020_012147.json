@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "source": "weather",
+    "operation": "getPwnCd",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:21:47+00:00",
+    "http_status": 200,
+    "elapsed_ms": 81,
+    "call_no_today": 6,
+    "url": "http://apis.data.go.kr/1360000/WthrWrnInfoService/getPwnCd?serviceKey=***&numOfRows=200&pageNo=1&dataType=JSON&fromTmFc=20260821&toTmFc=20261019&areaCode=L1130000",
+    "error": null
+  },
+  "json": {
+    "response": {
+      "header": {
+        "resultCode": "03",
+        "resultMsg": "NO_DATA"
+      }
+    }
+  },
+  "text": null
+}

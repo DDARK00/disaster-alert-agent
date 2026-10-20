@@ -101,8 +101,18 @@ def call(source: str, operation: str, params: dict, tag: str, key_param: str = "
     except ValueError:
         body = None
 
+    # HTTP 200 이어도 API 레벨 오류(resultCode != 00/0)가 올 수 있다 (예: 조회기간 초과 = 99).
+    hdr = {}
+    if isinstance(body, dict):
+        hdr = (body.get("response") or body).get("header") or {}
+    api_code = str(hdr.get("resultCode")) if hdr else None
+    api_ok = api_code in ("0", "00")
+
     record = {
         "meta": {
+            "api_result_code": api_code,
+            "api_result_msg": hdr.get("resultMsg") if hdr else None,
+            "api_ok": api_ok,
             "source": source,
             "operation": operation,
             "mode": "live",
@@ -130,6 +140,8 @@ def summarize(rec: dict, max_chars: int = 1800) -> str:
     head = f"[{m['source']}/{m['operation'] or '-'}] http={m['http_status']} {m['elapsed_ms']}ms call#{m['call_no_today']} -> {m['saved_to']}"
     if m["error"]:
         return head + f"\n  error: {m['error']}"
+    if m.get("api_ok") is False:
+        head += f"\n  !! API 오류 resultCode={m['api_result_code']} {m['api_result_msg']}"
     body = rec["json"] if rec["json"] is not None else rec["text"]
     s = json.dumps(body, ensure_ascii=False)[:max_chars] if rec["json"] is not None else (body or "")[:max_chars]
     return head + "\n  " + s

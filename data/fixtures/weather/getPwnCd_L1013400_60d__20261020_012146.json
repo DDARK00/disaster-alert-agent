@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "source": "weather",
+    "operation": "getPwnCd",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:21:46+00:00",
+    "http_status": 200,
+    "elapsed_ms": 93,
+    "call_no_today": 5,
+    "url": "http://apis.data.go.kr/1360000/WthrWrnInfoService/getPwnCd?serviceKey=***&numOfRows=200&pageNo=1&dataType=JSON&fromTmFc=20260821&toTmFc=20261019&areaCode=L1013400",
+    "error": null
+  },
+  "json": {
+    "response": {
+      "header": {
+        "resultCode": "00",
+        "resultMsg": "NORMAL_SERVICE"
+      },
+      "body": {
+        "dataType": "JSON",
+        "items": {
+          "item": [
+            {
+              "allEndTime": 202608281600,
+              "areaCode": "L1013400",
+              "areaName": "광주시",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202608281600,
+              "stnId": "108",
+              "tmFc": 202608281600,
+              "tmSeq": 344,
+              "warnVar": 12,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1013400",
+              "areaName": "광주시",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202608271600,
+              "stnId": "108",
+              "tmFc": 202608271600,
+              "tmSeq": 307,
+              "warnVar": 13,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1013400",
+              "areaName": "광주시",
+              "cancel": "0",
+              "command": "7",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608251600,
+              "tmSeq": 295,
+              "warnVar": 12,
+              "warnStress": 0,
+              "startTime": 202608251600
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1013400",
+              "areaName": "광주시",
+              "cancel": "0",
+              "command": "1",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608241600,
+              "tmSeq": 291,
+              "warnVar": 13,
+              "warnStress": 0,
+              "startTime": 202608241800
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1013400",
+              "areaName": "광주시",
+              "cancel": "0",
+              "command": "7",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608241000,
+              "tmSeq": 290,
+              "warnVar": 12,
+              "warnStress": 1,
+              "startTime": 202608241100
+            },
+            {
+              "allEndTime": 0,
+              "areaCode": "L1013400",
+              "areaName": "광주시",
+              "cancel": "0",
+              "command": "1",
+              "endTime": 0,
+              "stnId": "108",
+              "tmFc": 202608231000,
+              "tmSeq": 286,
+              "warnVar": 12,
+              "warnStress": 0,
+              "startTime": 202608231100
+            }
+          ]
+        },
+        "pageNo": 1,
+        "numOfRows": 200,
+        "totalCount": 0
+      }
+    }
+  },
+  "text": null
+}
