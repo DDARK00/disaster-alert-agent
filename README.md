@@ -12,13 +12,36 @@
 
 
 ## 구조
+```mermaid
+flowchart LR
+    U[브라우저] -->|"/api/ (SSE)"| F[frontend<br/>nginx]
+    F --> B[backend<br/>FastAPI + LangGraph]
+    B -->|MCP| M[mcp 서버]
+    M --> A[(공공 API<br/>특보·재난문자·행동요령)]
+    M --> K[(카카오 로컬<br/>장소 검색)]
+    B -.-> L[LLM<br/>Ollama / OpenAI 호환]
 ```
-frontend (nginx, :8080) ──/api/ SSE──▶ backend (FastAPI + LangGraph, :8100) ──MCP──▶ mcp (:8200) ──▶ 공공 API
+
+**판정·라우팅·검증은 코드가, LLM은 의도 파악·계획·답변 작성만** 맡습니다. API 키는 `mcp` 컨테이너에만 전달되고 서버는 상태를 저장하지 않습니다.
+
+### 응답 순서
+```mermaid
+flowchart TD
+    Q[질문] --> I[의도 해석]
+    I --> R[지역 확정]
+    R --> P[조회 계획]
+    P --> E[근거 조회<br/>특보·문자·행동요령 병렬]
+    E --> J[위험 수준 판정]
+    J --> W[답변 작성]
+    W --> V{근거 검증}
+    V -->|통과| O[최종 답변]
+    V -->|실패| W2[1회 재작성] --> V2{재검증}
+    V2 -->|통과| O
+    V2 -->|실패| T[고정 템플릿]
 ```
-- **판정·라우팅·검증은 코드**, LLM은 의도 파악·계획·답변 작성만 맡습니다.
-- 그래프: 의도 해석 → 지역 확정 → 계획 → 근거 조회(병렬) → 판정 → 작성 → 검증(실패 시 1회 재작성, 이후 고정 템플릿).
-- 서버는 상태를 저장하지 않습니다. API 키는 `mcp` 컨테이너에만 전달됩니다.
-- 설계 배경: [`doc/기획서.md`](doc/기획서.md), 결정 기록: [`doc/ADR.md`](doc/ADR.md), 문제 해결 기록: [`doc/트러블슈팅.md`](doc/트러블슈팅.md).
+- 판정 결과(`judgement`)가 먼저 스트리밍되고, 검증을 통과한 최종 답변(`final`)이 이어서 도착합니다.
+- 응급 상황과 범위 밖 질문은 고정 응답, 지역이 모호하면 되묻기로 분기합니다.
+- 설계 배경과 결정 기록은 [`doc/기획서.md`](doc/기획서.md), [`doc/ADR.md`](doc/ADR.md), 문제 해결 기록은 [`doc/트러블슈팅.md`](doc/트러블슈팅.md)에 있습니다.
 
 ## 실행
 준비물: Docker, (선택) 로컬 LLM용 Ollama.
@@ -31,7 +54,7 @@ docker compose up --build   # http://localhost:8080
 - 키가 없어도 저장된 fixture로 재현(replay)할 수 있습니다. LLM 설정은 `.env`의 `LLM_*`입니다(`doc/도커.md`).
 - 필요한 키와 이름 규칙은 [`doc/환경변수.md`](doc/환경변수.md)를 보세요.
 
-로컬 테스트와 평가:
+단위 테스트와 평가 세트가 있습니다.
 ```bash
 sh/setup_venv.sh && sh/test.sh        # 단위 테스트
 .venv/bin/python eval/run_eval.py     # 평가 세트
