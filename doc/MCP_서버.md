@@ -9,7 +9,7 @@
 | `resolve_place` | Tool | `query` | Kakao Local 라이브 조회(저장 없음, ADR-011). status ok/not_found/failed/unavailable, 지원 지역이면 `region_id`, 법정동 코드, 장소 ID, 링크(`/link/map/{id}`, `/link/to/{id}`), 고정 안내 문구. 장소명·좌표는 반환하지 않음 |
 | `get_alert_status` | Tool | `region_id`, `as_of?`, `mode?` | 발효(alerts)·예고(pending)·최근 해제. 소스 상태와 문구 포함 |
 | `get_disaster_messages` | Tool | `region_id`, `as_of?`, `lookback_hours`, `hazards?` | 지역 적용 문자. scope direct/sido_wide |
-| `search_action_guide` | Tool | `hazard`, `phase?` | 행동요령 행(ID 포함). 없는 유형은 available=False |
+| `search_action_guide` | Tool | `hazard`, `phase?`, `mode?` | 행동요령 행(ID 포함). 소스는 hazard_map `source`로 코드가 정함(자연·사회·생활안전·민방위). `source`·`source_label`·`origin`(fixture/live/live_cache/fixture_fallback)·`excluded_non_citizen`. 없는 유형은 available=False |
 | `list_hazards` | Tool | – | 유형과 행동요령 유무 |
 | `source_health` | Tool | – | 소스별 최근 live 호출 성공·실패 시각, 원인 코드, 실패 횟수 (키·URL 없음, 프로세스 메모리) |
 | `guide://action/{hazard}` | Resource | – | 행동요령 전문 + 출처 |
@@ -21,6 +21,12 @@
 - 위험이 없을 때 문구는 "확인된 위험 정보 없음 (기준 시각, 조회 구역) … 안전을 보장하지 않습니다". "안전합니다"는 쓰지 않는다.
 - 행동요령이 없는 유형(건조·열대야)은 다른 재난으로 대체하지 않는다.
 - 모든 특보 응답에 `disclaimer`(공식 경보 아님) 포함.
+
+## 데이터 소스 (ADR-013, ADR-015)
+- `data/sources.yaml`: 소스별 엔드포인트·키 이름(새/옛)·이용조건·출처·일일 한도·유형 코드·캐시·상태. `registry.py`가 기동 시 pydantic으로 검사(상태 값, `*_SERVICE_KEY` 이름 규칙, guide 소스의 쪽 크기·5자리 유형 코드, hazard_map `source`·`action_cate2`와의 일치). 어기면 서버가 시작하지 않는다.
+- `guides.py`: 행동요령 4종 공통 어댑터. 쪽 넘기기(totalCount + 꽉 찬 쪽이면 한 쪽 더), live 일 1회 캐시·fixture 폴백, 정규화(제목·빈 행 제외, 앞 기호 제거, `Q : … A : …` → 한 줄), 대상 필터(rules.yaml `guide_audience`). fixture 갱신: `.venv/bin/python mcp_server/guides.py capture [소스]` (실제 호출 ~20건).
+- `schemas.py`: 외부 응답 pydantic 모델(봉투·행동요령·대피소·재난문자·기상특보). live 응답 검증 실패 → `response_invalid`.
+- fixture: `data/fixtures/{doing,guide_social,guide_life,guide_civil_defense}/cate_<코드>_p<n>__<시각>.json` (2026-10-20 수집, 커밋). 예전 단일 파일(`doing/cate_<코드>__…`)은 지우지 않았고 쪽 단위 파일이 있으면 그것을 쓴다(T-031).
 
 ## 문구·설정의 위치 (ADR-012)
 - `statement` 문구와 면책은 `prompts/messages.yaml`(`mcp.*`, `disclaimer`), 브리핑 프롬프트 원문은 `prompts/briefing.md`.

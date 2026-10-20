@@ -1,6 +1,6 @@
 """LangGraph 그래프 — 실습(all_total)의 노드 흐름에 재난 도메인 노드를 더한 구조.
 
-route ─┬─ emergency / out_of_scope ──────────────→ fixed_response ─→ END   (LLM 미사용)
+route ─┬─ emergency / not_in_data / out_of_scope ─→ fixed_response ─→ END   (LLM 미사용)
        └─ disaster → parse_intent(LLM+규칙) → gate(코드) ─┬─ ask_region ─→ END
                                                           ├─ unavailable (MCP 불가, 원인 문구) ─→ END
                                                           └─ plan(LLM+제약) → research(병렬+재시도)
@@ -136,7 +136,10 @@ def build_graph(deps: Deps):
         return {"route": r}
 
     async def fixed_response(state: State, writer):
-        text = rules.EMERGENCY_TEXT if state["route"] == "emergency" else rules.OUT_OF_SCOPE_TEXT
+        if state["route"] == "not_in_data":
+            text = msg("fixed.not_in_data", topic=rules.not_in_data_topic(state["query"]))
+        else:
+            text = rules.EMERGENCY_TEXT if state["route"] == "emergency" else rules.OUT_OF_SCOPE_TEXT
         return {"answer": text, "answer_source": "fixed", "judgements": []}
 
     # ── parse_intent (LLM + 규칙) ──
@@ -292,7 +295,7 @@ def build_graph(deps: Deps):
 
             async def guide(hz: str, ph: str):
                 try:
-                    r = await with_retry(lambda: deps.mcp.tool("search_action_guide", {"hazard": hz, "phase": ph}))
+                    r = await with_retry(lambda: deps.mcp.tool("search_action_guide", {"hazard": hz, "phase": ph, "mode": mode}))
                 except Exception as e:  # noqa: BLE001 — '없음'(unavailable)이 아니라 '조회 실패'(failed)로 둔다
                     r = {"hazard": hz, "available": False, "cause": mcp_cause(e),
                          "reason": f"조회 실패: {type(e).__name__}", "rows": []}
@@ -330,7 +333,7 @@ def build_graph(deps: Deps):
             "question": state["query"]})
         facts = [{"region": j["region"], "level": j["level_label"], "as_of": j["as_of"], "zones": j["zones"],
                   "note": j["note"], "gaps": j["gaps"],
-                  "evidence": [{k: e[k] for k in ("id", "kind", "text") if k in e} for e in j["evidence"]]} for j in js]
+                  "evidence": [{k: e[k] for k in ("id", "kind", "text", "source") if k in e} for e in j["evidence"]]} for j in js]
         # 작은 모델이 형식 예시의 ID를 그대로 베끼거나 gap 문구를 빠뜨리지 않도록 데이터에서 지시를 만든다 (T-021)
         # 근거 ID 는 지역마다 E1부터 — 지역별로 인용 가능 ID 와 반드시 인용할 특보 ID 를 준다 (validator 지역별 대조)
         region_ids = []
@@ -351,7 +354,7 @@ def build_graph(deps: Deps):
                 sentences.append(msg("answer.none", as_of=j["as_of"], zones=", ".join(j["zones"])))
             if j["level"] == "unknown":
                 sentences.append(msg("answer.unknown"))
-            sentences += [compose.gap_line(g) for g in j["gaps"] if g["status"] in ("failed", "no_coverage")]
+            sentences += [compose.gap_line(g) for g in j["gaps"] if g["status"] in ("failed", "no_coverage", "unavailable")]
             must += [prompt("write", "must", region=j["region"], sentence=s) for s in sentences]
         if must:
             user += "\n" + prompt("write", "must_header") + "\n" + "\n".join(f"* {m}" for m in must)

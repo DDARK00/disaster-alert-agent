@@ -11,7 +11,9 @@ def _cite(e: dict) -> str:
 
 
 def gap_line(g: dict) -> str:
-    """조회 실패·범위 밖 표준 문구 — 원인별 사유를 붙인다 (ADR-014). 템플릿과 write 지시문이 같은 문구를 쓴다."""
+    """조회 실패·범위 밖·데이터에 없음 표준 문구 — 원인별 사유를 붙인다 (ADR-014). 템플릿과 write 지시문이 같은 문구를 쓴다."""
+    if g["status"] == "unavailable":
+        return msg("answer.gap_unavailable", source=g["source"], reason=msg("causes.not_in_data"))
     return msg("answer.gap", source=g["source"], reason=reason(g["status"], g.get("cause")))
 
 
@@ -40,11 +42,12 @@ def render_answer(judgements: list[dict], intent: str = "status") -> str:
         if guides:
             out.append(msg("answer.guide_header"))
             for e in guides:
-                out.append(f"- [{e['hazard']}] {e['text']} {_cite(e)}")
+                src = f" · {e['source']}" if e.get("source") else ""
+                out.append(f"- [{e['hazard']}{src}] {e['text']} {_cite(e)}")
         for g in j["gaps"]:
             if g["status"] == "not_queried":
                 continue
-            out.append(gap_line(g) if g["status"] != "unavailable" else msg("answer.gap_unavailable", source=g["source"], reason=msg("causes.not_in_data")))
+            out.append(gap_line(g))
         if intent == "go_out":
             out.append(msg("answer.go_out"))
         out.append("")

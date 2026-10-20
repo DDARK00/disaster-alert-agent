@@ -6,6 +6,7 @@ LANGSMITH_* 는 langsmith 라이브러리가 직접 읽는다.
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -54,6 +55,6 @@ def load_dotenv_file(path: Path) -> None:
         line = line.strip()
         if line and not line.startswith("#") and "=" in line:
             k, v = line.split("=", 1)
-            v = v.split("  #")[0].strip().strip("\"'")
+            v = re.split(r"\s+#", v, maxsplit=1)[0].strip().strip("\"'")  # 인라인 주석: 공백 1칸 이상 + '#' (T-029)
             if v:
                 os.environ.setdefault(k.strip(), v)

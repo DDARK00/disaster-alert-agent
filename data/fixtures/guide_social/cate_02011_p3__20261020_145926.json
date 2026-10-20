@@ -1,0 +1,184 @@
+{
+  "meta": {
+    "api_result_code": "00",
+    "api_result_msg": "NORMAL SERVICE",
+    "api_ok": true,
+    "source": "guide_social",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T05:59:26+00:00",
+    "http_status": 200,
+    "elapsed_ms": 124,
+    "call_no_today": 3,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20589?serviceKey=***&numOfRows=100&pageNo=3&returnType=json&safety_cate=02011",
+    "error": null,
+    "error_kind": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 100,
+    "pageNo": 3,
+    "totalCount": 214,
+    "body": [
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화재발생시를 대비하여 평상시 피난방법, 피난로 등을 숙지하여야 합니다.",
+        "safety_cate_nm3": "아파트에 화재대비! 이것만은 꼭 실천합시다",
+        "safety_cate4": null,
+        "safety_cate3": "02011010",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화재보험에 가입한 경우 가입하고 있는 손해보험회사에 통보하여 보험금을 지급 받으시기 바랍니다.",
+        "safety_cate_nm3": "화재시 피해복구요령",
+        "safety_cate4": null,
+        "safety_cate3": "02011006",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화재시 가스와 연기에 의한 질식사 60% 이상 차지, 산소결핍 및 유독가스의 혼합 및 상승작용으로 강한 독성 발생",
+        "safety_cate_nm3": "연기를 알면 가족의 안전을 지킬수 있다",
+        "safety_cate4": "02011008001",
+        "safety_cate3": "02011008",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화재와 동시에 대부분의 전원이 차단되어 엘리베이터가 멈추고 실내가 유독가스로 가득차기 때문에 매우 위험합니다. 복도와 계단을 이용하여 옥외의 안전한 곳으로 대피하여야 합니다",
+        "safety_cate_nm3": "아파트에 화재가 발생하면 이렇게 해야 합니다",
+        "safety_cate4": "02011009004",
+        "safety_cate3": "02011009",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화재의 내용을 간단·명료하게 설명합니다.(우리 다중이용업소 주방에 불이 났어요. 2층이예요)",
+        "safety_cate_nm3": "대형화재",
+        "safety_cate4": "02011012003",
+        "safety_cate3": "02011012",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화재의 내용을 침착하게 화재발생장소, 주요건축물, 화재의 종류 등을 상세하게 설명합니다.(우리 집 주방에 불이 났어요. 2층 집이에요).",
+        "safety_cate_nm3": "화재발생 후에는",
+        "safety_cate4": "02011003002",
+        "safety_cate3": "02011003",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화재의 발견이 늦었거나 초기 소화작업이 곤란할 정도로 불이 번진 경우 젖은 수건 등으로 코와 입을 막은 후 낮은 자세로 대피하여야 합니다.",
+        "safety_cate_nm3": "아파트에 화재가 발생하면 이렇게 해야 합니다",
+        "safety_cate4": "02011009002",
+        "safety_cate3": "02011009",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "화폐교환은 완전히 탄 경우, 일부가 탄 경우 등 교환기준이 있습니다. 불에 탄 돈의 재를 원형대로 보존하여 한국은행에 가져가야 액면금액에 가깝게 교환 받을 수 있습니다.",
+        "safety_cate_nm3": "화재시 피해복구요령",
+        "safety_cate4": null,
+        "safety_cate3": "02011006",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "휴대전화는 사용 제한된 전화나 개통이 안 된 전화도 긴급신고가 가능합니다.",
+        "safety_cate_nm3": "화재발생 후에는",
+        "safety_cate4": "02011003002",
+        "safety_cate3": "02011003",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "휴대전화의 경우, 사용 제한된 전화나 개통이 않된 전화도 긴급신고가 가능합니다.",
+        "safety_cate_nm3": "화재시 행동요령",
+        "safety_cate4": "02011004006",
+        "safety_cate3": "02011004",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "휴대전화의 경우, 사용 제한된 전화나 개통이 않된 전화도 긴급신고가 가능합니다.※ 119는 화재신고는 물론 인명구조, 응급환자이송 등을 요청하는 번호입니다.",
+        "safety_cate_nm3": "화재발생시 국민행동요령",
+        "safety_cate4": "02011001003",
+        "safety_cate3": "02011001",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": "휴대전화의 경우, 사용제한된 전화나 개통이 않된 전화도 긴급신고가 가능합니다.",
+        "safety_cate_nm3": "대형화재",
+        "safety_cate4": "02011012003",
+        "safety_cate3": "02011012",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": null,
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": null,
+        "safety_cate_nm3": "화재발생 후에는",
+        "safety_cate4": "02011003004",
+        "safety_cate3": "02011003",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/hApartmentFire/hApartmentFire_icon_08.png",
+        "safety_cate_nm1": "사회재난"
+      },
+      {
+        "safety_cate_nm2": "화재",
+        "actRmks": null,
+        "safety_cate_nm3": "화재발생시 국민행동요령",
+        "safety_cate4": "02011001001",
+        "safety_cate3": "02011001",
+        "safety_cate2": "02011",
+        "safety_cate1": "02",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/hApartmentFire/hApartmentFire_icon_10.png",
+        "safety_cate_nm1": "사회재난"
+      }
+    ]
+  },
+  "text": null
+}

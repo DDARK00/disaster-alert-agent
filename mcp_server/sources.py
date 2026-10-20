@@ -9,7 +9,6 @@
 from __future__ import annotations
 
 import glob
-import hashlib
 import json
 import sys
 import urllib.parse
@@ -17,8 +16,11 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import failures
+import guides
 from alert_state import normalize_items
+from pydantic import ValidationError
 from regions import load_regions, message_applies
+from schemas import Envelope, MessageRow, WeatherEnvelope
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:  # config/ (Settings)
@@ -171,14 +173,13 @@ def get_weather_events(zones: list[str], as_of: datetime, mode: str) -> dict:
                             ok_codes=("0", "00", "03"))  # 03 NO_DATA = 이벤트 없음 (정상)
         if cause:
             return _failed(cause, f"{z}: {failures.detail(rec, cause)}", events=[], window=None)
-        resp = rec["json"].get("response") or rec["json"]
-        if str(resp["header"]["resultCode"]) == "03":
-            continue
-        try:
-            items = ((resp.get("body") or {}).get("items") or {}).get("item") or []
-            items = [items] if isinstance(items, dict) else items
-            normalize_items(items)  # 형식 검사 (필드 누락·타입 오류 → response_invalid)
-        except (AttributeError, KeyError, TypeError, ValueError) as e:
+        try:  # 경계 검증 (pydantic): 필드 누락·타입 오류 → response_invalid
+            env = WeatherEnvelope.model_validate(rec["json"])
+            if env.response.header.resultCode == "03":
+                continue
+            items = env.items()
+            normalize_items(items)
+        except (ValidationError, KeyError, TypeError, ValueError) as e:
             failures.note("weather", "response_invalid", f"{z}: {type(e).__name__}")
             return _failed("response_invalid", f"{z}: response_invalid {type(e).__name__}", events=[], window=None)
         events.extend(items)
@@ -227,9 +228,13 @@ def get_messages(region_id: str, as_of: datetime, lookback_hours: int, mode: str
                                              "crtDt": since.strftime("%Y%m%d")}, "msgs_live")
             if cause:
                 return _failed(cause, failures.detail(rec, cause), messages=[])
-            j = rec["json"]
-            allm.extend(j.get("body") or [])
-            if len(allm) >= int(j.get("totalCount") or 0):
+            try:  # 경계 검증 (pydantic)
+                env = Envelope[MessageRow].model_validate(rec["json"])
+            except ValidationError as e:
+                failures.note("dssp", "response_invalid", f"{e.error_count()} errors")
+                return _failed("response_invalid", f"response_invalid {e.error_count()} errors", messages=[])
+            allm.extend(m.model_dump() for m in env.body or [])
+            if len(allm) >= env.totalCount:
                 break
     out = []
     try:
@@ -255,28 +260,14 @@ def _hazard_map() -> dict:
     return json.loads((ROOT / "data" / "hazard_map.json").read_text(encoding="utf-8"))["hazards"]
 
 
-def load_guide(hazard: str) -> dict:
+def load_guide(hazard: str, mode: str = "replay") -> dict:
+    """재난 유형 → 행동요령. 소스는 hazard_map 의 source 로 코드가 정한다 (guides.py, ADR-013)."""
     hm = _hazard_map().get(hazard)
     if hm is None:
         return {"available": False, "reason": f"알 수 없는 재난 유형: {hazard}", "rows": []}
-    cate = hm["action_cate2"]
-    if not cate:
-        return {"available": False, "reason": f"'{hazard}'는 행동요령 API에 해당 항목이 없음", "rows": []}
-    files = sorted(glob.glob(str(FIX / "doing" / f"cate_{cate}__*.json"))) or \
-        (sorted(glob.glob(str(FIX / "doing" / "all__*.json"))) if cate == "01001" else [])
-    if not files:
-        return {"available": False, "reason": f"fixture 없음: {cate}", "rows": []}
-    d = _load(files[-1])
-    rows = []
-    for r in d["json"]["body"]:
-        if not r.get("safety_cate3") or not r.get("actRmks"):
-            continue  # 제목 행(분류 없음) 제외 (T-012)
-        text = r["actRmks"].strip().lstrip("-").strip()
-        rid = r["safety_cate3"] + "-" + hashlib.sha1(text.encode()).hexdigest()[:6]
-        rows.append({"id": rid, "text": text, "section": r["safety_cate_nm3"],
-                     "phase": hm["phases"].get(r["safety_cate3"], "info"), "hazard": hazard})
-    return {"available": True, "rows": rows, "snapshot_at": d["meta"]["fetched_at"],
-            "source": "행정안전부 자연재난국민행동요령 (DSSP-IF-20588)"}
+    if not hm["action_cate2"]:
+        return {"available": False, "reason": f"'{hazard}'는 공식 행동요령 데이터에 해당 항목이 없음", "rows": []}
+    return guides.load(hazard, hm, mode)
 
 
 def region_zones(region_id: str) -> list[str]:

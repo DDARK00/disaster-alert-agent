@@ -1,0 +1,151 @@
+{
+  "meta": {
+    "api_result_code": "00",
+    "api_result_msg": "NORMAL SERVICE",
+    "api_ok": true,
+    "source": "doing",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T05:59:24+00:00",
+    "http_status": 200,
+    "elapsed_ms": 125,
+    "call_no_today": 40,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588?serviceKey=***&numOfRows=100&pageNo=1&returnType=json&safety_cate=01007",
+    "error": null,
+    "error_kind": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 100,
+    "pageNo": 1,
+    "totalCount": 11,
+    "body": [
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "TV, 라디오 등을 통해 풍랑정보를 수시로 확인하고 관공서의 재난 예·경보를 청취합시다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "높은 파도가 발생할 위험이 있는 방파제, 방조제 등에 가지 맙시다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "수산 증·양식시설을 고정하고 지지대로 보강하여 높은 파도와 강풍에 유실되지 않도록 사전 조치합시다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "양식자재·해상작업대 등은 안전한 장소로 미리 이동 조치합시다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "지붕 위나 바깥에서의 작업은 위험하니 피해야 합니다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "집 안팎의 전기수리는 하지 맙시다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "파도에 휩쓸릴 위험이 있으니 바닷가로 나가지 않도록 주의합니다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "풍량 경보 : 경보 : 해상풍속 21m/s 이상(3시간 이상 지속), 유의 파고 5m 초과",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "풍량 주의보 :  해상풍속 14m/s 이상(3시간 이상 지속), 유의 파고 3m 초과",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "항해 중 또는 조업 어선은 인근 선박이나 관계기관(어업무선국 등)에 연락하고 대피합시다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "풍랑",
+        "actRmks": "해안가의 낚시꾼, 야영객, 행락객 등은 인근의 안전한 곳으로 대피합시다.",
+        "safety_cate_nm3": "풍랑특보 시 국민행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01007001",
+        "safety_cate2": "01007",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      }
+    ]
+  },
+  "text": null
+}

@@ -25,7 +25,7 @@
 
 `final.meta.failures`: `[{stage: source|mcp|llm, source?, region_id?, cause, status}]` — 이번 요청에서 난 실패 전부(LLM 실패 `llm_unavailable` 포함).
 
-`route`: `disaster` / `emergency` / `out_of_scope` / `ask_region` / `unavailable`(MCP에 연결하지 못함 — 고정 "정보 없음" 응답에 원인 문구).
+`route`: `disaster` / `emergency` / `not_in_data`(공식 데이터에 없는 행동요령 질문 — 고정 "해당 항목이 없습니다", rules.yaml `not_in_official_data`) / `out_of_scope` / `ask_region` / `unavailable`(MCP에 연결하지 못함 — 고정 "정보 없음" 응답에 원인 문구).
 
 조회 실패 원인 코드: `api_auth_error` `rate_limited` `api_http_error` `api_result_error` `api_timeout` `network_error` `response_invalid` `mcp_unreachable` `mcp_tool_error` (+ meta 전용 `llm_unavailable`). 문구는 `prompts/messages.yaml` `causes.*`.
 
@@ -46,7 +46,8 @@
 | `prompts/briefing.md` | MCP Prompt `disaster_briefing_prompt` 원문 (write 의 system) | MCP |
 
 - 판정·라우팅·검증 로직은 코드에 있다. 파일에는 데이터만.
-- 검증기 규칙(`agent/validator.py`): 금지 표현 · 면책/119 · 본문 URL 금지 · 모든 '- ' 항목 인용(정보 없음 줄 제외) · 인용 id 실재 · 지역명 · unknown→'정보 없음' · none→'확인된 위험 정보 없음' · 조회 실패 표기 · **지역 섹션별 인용 대조와 발효 중·예고 특보 전부 인용**(T-027).
+- 검증기 규칙(`agent/validator.py`): 금지 표현 · 면책/119 · 본문 URL 금지 · 모든 '- ' 항목 인용(정보 없음 줄 제외) · 인용 id 실재 · 지역명 · unknown→'정보 없음' · none→'확인된 위험 정보 없음' · 조회 실패 표기 · **지역 섹션별 인용 대조와 발효 중·예고 특보 전부 인용**(T-027) · 행동요령이 없는 유형은 "해당 항목이 없습니다" 표기(ADR-015).
+- 근거 선택(`agent/judge.py`): 금지 표현(T-024)·URL(T-030)이 든 공식 원문 행은 근거에서 뺀다(고쳐 쓰지 않음). 행동요령 근거에는 소스 표시 이름(`source`)이 붙는다.
 - 기동 시 검사(`config/catalog.py`): 파일·키·구역 누락, 표준 문구가 검증 기준 조각(`markers`)을 포함하는지, 문구에 금지 표현이 없는지. 어기면 시작하지 않는다.
 - 검증 기준 조각·금지 표현은 테스트(`Catalog`)로 고정 — 파일 수정으로 검증이 느슨해지면 테스트가 실패한다.
 - LangSmith 루트 트레이스(`disaster_chat`)에 `prompts@<hash>` 태그와 파일별 해시 메타데이터.
@@ -56,7 +57,7 @@
 
 ## 평가 (`eval/`)
 - `eval/dataset.jsonl` 27건: 경기 광주 9 · 광주광역시 8 · 모호 '광주' 3 · 이력 1 · 행동요령 1 · 위급 3 · 되묻기 1 · 범위 밖 1. 기대값은 커밋된 fixture의 **원본 특보 이벤트**를 사람이 읽고 정했다(`basis`). 시스템 판정 코드로 만들지 않는다.
-- 지표: `route` `regions` `level` `no_missed_risk`(특보가 있는데 none/unknown) `no_forbidden` `grounded`(백엔드 검증기 그대로) `emergency_fixed` `cause`(장애 주입 항목의 원인 코드·문구).
+- 지표: `route` `regions` `level`(행동요령 항목은 근거 존재·기대 소스 포함) `no_missed_risk`(특보가 있는데 none/unknown) `no_forbidden` `grounded`(백엔드 검증기 그대로) `emergency_fixed` `cause`(장애 주입 항목의 원인 코드·문구) `not_in_data`(공식 데이터에 없는 행동요령을 밝혔는가).
 - 장애 주입 항목(`fault` 필드, `eval/faults.py`)은 HTTP가 아니라 프로세스 내 같은 그래프·MCP로 돈다(네트워크 경계만 가짜). LLM은 환경변수로 만든다 — qwen 평가는 `LLM_BACKEND=openai_compat LLM_NO_THINK=1`을 함께 준다.
 - 실행: `.venv/bin/python eval/run_eval.py` (로컬 채점) / `--langsmith --prefix <이름>` (데이터셋 `disaster-advisor-eval-<sha8>`, 내용이 바뀌면 새 데이터셋).
 - 결과(2026-10-20): fake 27/27, qwen3:8b 27/27 (실험 `qwen3-8b-d5faa9d6`, llm 21·fixed 5·fallback 1). 첫 실행에서 위험 놓침 1건을 찾아 고침(T-026).

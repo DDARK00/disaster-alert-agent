@@ -1,0 +1,140 @@
+{
+  "meta": {
+    "api_result_code": "00",
+    "api_result_msg": "NORMAL SERVICE",
+    "api_ok": true,
+    "source": "doing",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T05:59:25+00:00",
+    "http_status": 200,
+    "elapsed_ms": 154,
+    "call_no_today": 44,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588?serviceKey=***&numOfRows=100&pageNo=2&returnType=json&safety_cate=01011",
+    "error": null,
+    "error_kind": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 100,
+    "pageNo": 2,
+    "totalCount": 110,
+    "body": [
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "지진을 이렇게 대비합니다",
+        "safety_cate4": "01011009004",
+        "safety_cate3": "01011009",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P5-1.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "지진이 발생하면 이렇게 행동합니다",
+        "safety_cate4": "01011010001",
+        "safety_cate3": "01011010",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P6-1.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "지진이 발생하면 이렇게 행동합니다",
+        "safety_cate4": "01011010002",
+        "safety_cate3": "01011010",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P6-2.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "지진이 발생하면 이렇게 행동합니다",
+        "safety_cate4": "01011010004",
+        "safety_cate3": "01011010",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P7-1.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "지진이 발생하면 이렇게 행동합니다",
+        "safety_cate4": "01011010005",
+        "safety_cate3": "01011010",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P7-2.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "지진이 발생하면 이렇게 행동합니다",
+        "safety_cate4": "01011010006",
+        "safety_cate3": "01011010",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P8-1.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "지진이 발생하면 이렇게 행동합니다",
+        "safety_cate4": "01011010007",
+        "safety_cate3": "01011010",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P8-2.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "장소에 따라 이렇게 행동합니다",
+        "safety_cate4": "01011011001",
+        "safety_cate3": "01011011",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P9-1.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "장소에 따라 이렇게 행동합니다",
+        "safety_cate4": "01011011002",
+        "safety_cate3": "01011011",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P9-2.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진",
+        "actRmks": null,
+        "safety_cate_nm3": "장소에 따라 이렇게 행동합니다",
+        "safety_cate4": "01011011003",
+        "safety_cate3": "01011011",
+        "safety_cate2": "01011",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P9-3.jpg",
+        "safety_cate_nm1": "자연재난"
+      }
+    ]
+  },
+  "text": null
+}

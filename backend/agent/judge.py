@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from config.catalog import RULES, msg, reason
 
+from .validator import URL  # 본문 링크 금지와 같은 기준
+
 LEVEL_LABEL: dict[str, str] = RULES["levels"]["labels"]
 STRESS_TO_LEVEL: dict[str, str] = RULES["levels"]["stress_to_level"]
 RANK: dict[str, int] = RULES["levels"]["rank"]
@@ -87,10 +89,12 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
                          "detail": g.get("reason", "행동요령 없음")})
             continue
         # 공식 원문이라도 금지 표현("…지붕이 안전하니…")이 든 행은 근거로 쓰지 않는다 — 고쳐 쓰지 않고 뺀다 (T-024)
-        rows = [r for r in g["rows"] if not any(w in r["text"] for w in FORBIDDEN)]
+        # 본문 링크는 검증기가 막으므로(링크는 칩으로만) URL 이 든 원문 행도 근거에서 뺀다 (T-030)
+        rows = [r for r in g["rows"] if not any(w in r["text"] for w in FORBIDDEN) and not URL.search(r["text"])]
         for r in rows[:MAX_GUIDE_PER_HAZARD]:
+            # [G#] 인용에 소스(기관·API 이름)를 함께 싣는다 (ADR-013)
             guide_rows.append({"id": f"G{len(guide_rows) + 1}", "kind": "guide", "hazard": hz, "phase": r["phase"],
-                               "text": r["text"], "ref": r["id"]})
+                               "text": r["text"], "ref": r["id"], "source": g.get("source_label") or g.get("source")})
     ev.extend(guide_rows)
 
     note = None

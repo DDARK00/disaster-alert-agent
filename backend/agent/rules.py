@@ -71,11 +71,24 @@ def is_out_of_scope(text: str) -> bool:
     return True
 
 
+NOT_IN_DATA = RULES["not_in_official_data"]
+
+
+def not_in_data_topic(text: str) -> str | None:
+    """공식 데이터에 없는 행동요령 질문이면 그 주제 (모든 단어 묶음에서 하나 이상 포함)."""
+    for t in NOT_IN_DATA:
+        if all(any(w in text for w in group) for group in t["all_of"]):
+            return t["topic"]
+    return None
+
+
 def route(text: str) -> str:
-    """emergency | out_of_scope | disaster  (위급 판정이 항상 우선)."""
+    """emergency | not_in_data | out_of_scope | disaster  (위급 판정이 항상 우선)."""
     text = text.strip()
     if is_emergency(text):
         return "emergency"
+    if not_in_data_topic(text):
+        return "not_in_data"
     if not text or is_out_of_scope(text):
         return "out_of_scope"
     return "disaster"

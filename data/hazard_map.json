@@ -1,8 +1,9 @@
 {
-  "_note": "기상특보 warnVar ↔ 재난문자 DST_SE_NM ↔ 행동요령 safety_cate2. 2026-10-20 호출로 확인. null=해당 항목 없음(폴백 금지, 답변에 '행동요령 없음' 명시)",
+  "_note": "기상특보 warnVar ↔ 재난문자 DST_SE_NM ↔ 행동요령 safety_cate2. 2026-10-20 호출로 확인. null=해당 항목 없음(폴백 금지, 답변에 '행동요령 없음' 명시) source=data/sources.yaml 의 guide 소스 이름(코드가 소스를 정한다, ADR-013). warnVar=null 은 기상특보가 없는 유형(행동요령만).",
   "hazards": {
     "강풍": {
       "warnVar": 1,
+      "source": "doing",
       "dst_se_nm": [
         "강풍"
       ],
@@ -16,6 +17,7 @@
     },
     "호우": {
       "warnVar": 2,
+      "source": "doing",
       "dst_se_nm": [
         "호우"
       ],
@@ -23,11 +25,14 @@
       "action_name": "호우",
       "phases": {
         "01003002": "prepare",
-        "01003003": "during"
+        "01003003": "during",
+        "01003001": "prepare",
+        "01003004": "after"
       }
     },
     "한파": {
       "warnVar": 3,
+      "source": "doing",
       "dst_se_nm": [
         "한파"
       ],
@@ -40,6 +45,7 @@
     },
     "건조": {
       "warnVar": 4,
+      "source": null,
       "dst_se_nm": [
         "건조"
       ],
@@ -49,6 +55,7 @@
     },
     "폭풍해일": {
       "warnVar": 5,
+      "source": "doing",
       "dst_se_nm": [],
       "action_cate2": "01013",
       "action_name": "해일",
@@ -62,6 +69,7 @@
     },
     "풍랑": {
       "warnVar": 6,
+      "source": "doing",
       "dst_se_nm": [
         "풍랑"
       ],
@@ -73,6 +81,7 @@
     },
     "태풍": {
       "warnVar": 7,
+      "source": "doing",
       "dst_se_nm": [
         "태풍"
       ],
@@ -92,6 +101,7 @@
     },
     "대설": {
       "warnVar": 8,
+      "source": "doing",
       "dst_se_nm": [
         "대설"
       ],
@@ -106,15 +116,22 @@
     },
     "황사": {
       "warnVar": 9,
+      "source": "doing",
       "dst_se_nm": [
         "황사"
       ],
       "action_cate2": "01008",
       "action_name": "황사",
-      "phases": {}
+      "phases": {
+        "01008001": "prepare",
+        "01008002": "during",
+        "01008003": "after",
+        "01008004": "info"
+      }
     },
     "폭염": {
       "warnVar": 12,
+      "source": "doing",
       "dst_se_nm": [
         "폭염"
       ],
@@ -128,10 +145,118 @@
     },
     "열대야": {
       "warnVar": 13,
+      "source": null,
       "dst_se_nm": [],
       "action_cate2": null,
       "action_name": null,
       "phases": {}
+    },
+    "지진": {
+      "warnVar": null,
+      "source": "doing",
+      "dst_se_nm": [],
+      "action_cate2": "01011",
+      "action_name": "지진",
+      "phases": {
+        "01011009": "prepare",
+        "01011010": "during",
+        "01011011": "during",
+        "01011012": "after",
+        "01011007": "info",
+        "01011008": "info"
+      }
+    },
+    "화재": {
+      "warnVar": null,
+      "source": "guide_social",
+      "dst_se_nm": [],
+      "action_cate2": "02011",
+      "action_name": "화재",
+      "phases": {
+        "02011002": "prepare",
+        "02011007": "prepare",
+        "02011010": "prepare",
+        "02011014": "prepare",
+        "02011001": "during",
+        "02011003": "during",
+        "02011004": "during",
+        "02011005": "during",
+        "02011009": "during",
+        "02011011": "during",
+        "02011012": "during",
+        "02011013": "during",
+        "02011015": "during",
+        "02011008": "info",
+        "02011006": "after"
+      }
+    },
+    "산불": {
+      "warnVar": null,
+      "source": "guide_social",
+      "dst_se_nm": [],
+      "action_cate2": "02012",
+      "action_name": "산불",
+      "phases": {
+        "02012003": "prepare",
+        "02012004": "prepare",
+        "02012001": "during",
+        "02012002": "during",
+        "02012006": "during",
+        "02012005": "after",
+        "02012007": "after"
+      }
+    },
+    "정전": {
+      "warnVar": null,
+      "source": "guide_social",
+      "dst_se_nm": [],
+      "action_cate2": "02018",
+      "action_name": "정전 및 전력부족",
+      "phases": {
+        "02018001": "during",
+        "02018002": "during",
+        "02018003": "during"
+      }
+    },
+    "교통사고": {
+      "warnVar": null,
+      "source": "guide_life",
+      "dst_se_nm": [],
+      "action_cate2": "03013",
+      "action_name": "교통사고",
+      "phases": {
+        "03013001": "prepare",
+        "03013002": "during"
+      }
+    },
+    "미세먼지": {
+      "warnVar": null,
+      "source": "guide_life",
+      "dst_se_nm": [],
+      "action_cate2": "03015",
+      "action_name": "미세먼지",
+      "phases": {
+        "03015005": "prepare",
+        "03015002": "during",
+        "03015003": "during",
+        "03015006": "during",
+        "03015007": "during",
+        "03015001": "info",
+        "03015004": "info"
+      }
+    },
+    "민방공": {
+      "warnVar": null,
+      "source": "guide_civil_defense",
+      "dst_se_nm": [],
+      "action_cate2": "04002",
+      "action_name": "민방공",
+      "phases": {
+        "04002001": "info",
+        "04002002": "during",
+        "04002003": "during",
+        "04002004": "during"
+      }
     }
   },
   "warn_stress": {

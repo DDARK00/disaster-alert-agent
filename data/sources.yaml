@@ -1,0 +1,144 @@
+# 데이터 소스 레지스트리 (ADR-013). 소스 출처·이용조건·키 이름의 단일 기준.
+# 로더: mcp_server/registry.py — 기동 시 형식 검사(필수 필드·상태 값·환경변수 이름 규칙). 어기면 MCP 서버가 시작하지 않는다.
+#
+# 필드
+#   title        표시 이름 (출처 표기·[G#] 인용에 쓴다)
+#   provider     제공기관
+#   portal_id    공공데이터포털 번호 (모르면 null — 확인 필요)
+#   api_id       API 식별자 (safetydata DSSP-IF-…, 기상청 서비스명)
+#   base         엔드포인트 (키 제외)
+#   env          서비스키 환경변수 이름 (값은 .env 에만, mcp 컨테이너에만 주입)
+#   env_legacy   옛 이름 (전환 기간 폴백 — 읽으면 경고 1회, 전환이 끝나면 삭제)
+#   license      이용조건과 확인 날짜
+#   attribution  출처 표기 문구
+#   daily_limit  일일 호출 한도 (null = 별도 한도 없음/미확인). 자체 카운터가 넘으면 호출하지 않고 rate_limited
+#   kind         alerts | messages | guide | shelter
+#   page_size    한 쪽 행 수 (guide·shelter)
+#   categories   유형 코드 → 이름 (guide). safety_cate 에 넣는 5자리 코드. hazard_map 에 연결한 유형만 둔다
+#                (전체 유형 목록은 doc/API_응답_스키마.md §3 — 범위는 작게 시작, 늘릴 때 대상 필터 규칙도 함께 검토)
+#   cache        호출 전략: request(요청마다) | daily(일 1회, 디스크 fixture 폴백) | region_hours(지역 단위 수 시간)
+#   fixture_dir  data/fixtures/ 아래 폴더 (replay 원본, 커밋됨)
+#   status       active(서비스 응답에 사용) | evaluating(사용 안 함) | blocked
+
+sources:
+  weather:
+    title: 기상청 기상특보 조회서비스
+    provider: 기상청
+    portal_id: "15000415"
+    api_id: WthrWrnInfoService
+    base: http://apis.data.go.kr/1360000/WthrWrnInfoService
+    env: WEATHER_ALERTS_SERVICE_KEY
+    env_legacy: null
+    license: 출처표시 (공공데이터포털, 확인 2026-10-17)
+    attribution: 기상청 기상특보 조회서비스 (WthrWrnInfoService)
+    daily_limit: null
+    kind: alerts
+    cache: request
+    fixture_dir: weather
+    status: active
+
+  dssp:
+    title: 행정안전부 긴급재난문자
+    provider: 행정안전부
+    portal_id: "15134001"
+    api_id: DSSP-IF-00247
+    base: https://www.safetydata.go.kr/V2/api/DSSP-IF-00247
+    env: DSSP_MESSAGE_SERVICE_KEY
+    env_legacy: DSSP_SERVICE_KEY
+    license: 출처표시·상업이용금지·변경금지 (확인 2026-10-17)
+    attribution: 행정안전부 긴급재난문자 (DSSP-IF-00247)
+    daily_limit: 1000
+    kind: messages
+    cache: request
+    fixture_dir: dssp
+    status: active
+
+  doing:
+    title: 행정안전부 자연재난 국민행동요령
+    provider: 행정안전부
+    portal_id: "15139401"
+    api_id: DSSP-IF-20588
+    base: https://www.safetydata.go.kr/V2/api/DSSP-IF-20588
+    env: DSSP_GUIDE_NATURAL_SERVICE_KEY
+    env_legacy: DSSP_DOING_SERVICE_KEY
+    license: 이용 제한 없음 (확인 2026-10-17)
+    attribution: 행정안전부 자연재난국민행동요령 (DSSP-IF-20588)
+    daily_limit: 1000
+    kind: guide
+    page_size: 100
+    cache: daily
+    fixture_dir: doing
+    status: active
+    categories: {"01001": 태풍, "01003": 호우, "01004": 강풍, "01005": 대설, "01006": 한파, "01007": 풍랑,
+                 "01008": 황사, "01009": 폭염, "01011": 지진, "01013": 해일}
+
+  guide_social:
+    title: 행정안전부 사회재난 국민행동요령
+    provider: 행정안전부
+    portal_id: null   # 확인 필요
+    api_id: DSSP-IF-20589
+    base: https://www.safetydata.go.kr/V2/api/DSSP-IF-20589
+    env: DSSP_GUIDE_SOCIAL_SERVICE_KEY
+    env_legacy: null
+    license: 이용 제한 없음, 자유 사용 (사용자 확인 2026-10-20)
+    attribution: 행정안전부 사회재난국민행동요령 (DSSP-IF-20589)
+    daily_limit: 1000
+    kind: guide
+    page_size: 100
+    cache: daily
+    fixture_dir: guide_social
+    status: active
+    categories: {"02011": 화재, "02012": 산불, "02018": 정전 및 전력부족}
+
+  guide_life:
+    title: 행정안전부 생활안전 국민행동요령
+    provider: 행정안전부
+    portal_id: null   # 확인 필요
+    api_id: DSSP-IF-20590
+    base: https://www.safetydata.go.kr/V2/api/DSSP-IF-20590
+    env: DSSP_GUIDE_LIFE_SERVICE_KEY
+    env_legacy: null
+    license: 이용 제한 없음, 자유 사용 (사용자 확인 2026-10-20)
+    attribution: 행정안전부 생활안전국민행동요령 (DSSP-IF-20590)
+    daily_limit: 1000
+    kind: guide
+    page_size: 100
+    cache: daily
+    fixture_dir: guide_life
+    status: active
+    categories: {"03013": 교통사고, "03015": 미세먼지}
+
+  guide_civil_defense:
+    title: 행정안전부 민방위 국민행동요령
+    provider: 행정안전부
+    portal_id: null   # 확인 필요
+    api_id: DSSP-IF-20591
+    base: https://www.safetydata.go.kr/V2/api/DSSP-IF-20591
+    env: DSSP_GUIDE_CIVIL_DEFENSE_SERVICE_KEY
+    env_legacy: null
+    license: 이용 제한 없음, 자유 사용 (사용자 확인 2026-10-20)
+    attribution: 행정안전부 민방위국민행동요령 (DSSP-IF-20591)
+    daily_limit: 1000
+    kind: guide
+    page_size: 100
+    cache: daily
+    fixture_dir: guide_civil_defense
+    status: active
+    categories: {"04002": 민방공}
+
+  shelter:
+    title: 행정안전부 통합대피소
+    provider: 행정안전부
+    portal_id: null   # 확인 필요
+    api_id: DSSP-IF-10941
+    base: https://www.safetydata.go.kr/V2/api/DSSP-IF-10941
+    env: DSSP_SHELTER_SERVICE_KEY
+    env_legacy: null
+    license: 이용 제한 없음, 자유 사용 (사용자 확인 2026-10-20)
+    attribution: 행정안전부 통합대피소 (DSSP-IF-10941)
+    daily_limit: 1000
+    kind: shelter
+    page_size: 100
+    cache: region_hours
+    fixture_dir: shelter
+    status: evaluating   # 작업 D(쉼터 연결)에서 검증 후 active

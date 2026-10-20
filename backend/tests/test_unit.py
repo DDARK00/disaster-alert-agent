@@ -159,7 +159,8 @@ class Catalog(unittest.TestCase):
     def test_validator_markers_and_forbidden_are_not_weakened(self):
         from agent import validator
         self.assertEqual(validator.MK, {"no_info": "정보 없음", "no_risk": "확인된 위험 정보 없음", "no_guarantee": "안전을 보장",
-                                        "official": "공식 경보", "emergency_call": "119"})
+                                        "official": "공식 경보", "emergency_call": "119",
+                                        "not_in_data": "해당 항목이 없습니다"})
         for w in ["안전합니다", "안전해요", "걱정하지 마", "문제없", "괜찮습니다", "위험 없", "안심하"]:
             self.assertIn(w, validator.FORBIDDEN)
 
@@ -170,6 +171,27 @@ class Catalog(unittest.TestCase):
         js = [judge.judge_region(alert_resp(alerts=[("폭풍해일", "경보")]), None, {"폭풍해일": {"available": True, "rows": rows}})]
         self.assertEqual([e["ref"] for e in js[0]["evidence"] if e["kind"] == "guide"], ["g-2"])
         self.assertTrue(validate(compose.render_answer(js), js)["ok"])
+
+    def test_guide_rows_with_urls_are_excluded(self):
+        # 실제 미세먼지 행동요령 "에어코리아(…, www.airkorea.or.kr)" → 본문 링크 금지라 근거에서 뺀다 (T-030)
+        rows = [{"phase": "prepare", "text": "에어코리아(www.airkorea.or.kr)", "id": "g-1"},
+                {"phase": "prepare", "text": "기상청, 지자체 홈페이지 등", "id": "g-2"}]
+        js = [judge.judge_region(alert_resp(), None, {"미세먼지": {"available": True, "rows": rows}})]
+        self.assertEqual([e["ref"] for e in js[0]["evidence"] if e["kind"] == "guide"], ["g-2"])
+        self.assertTrue(validate(compose.render_answer(js), js)["ok"])
+
+    def test_not_in_official_data_route(self):
+        for q in ["차가 물에 잠기면 어떻게 탈출해?", "지하차도 차량 침수 시 탈출 방법 알려줘"]:
+            self.assertEqual(rules.route(q), "not_in_data", q)
+        self.assertEqual(rules.route("지하차도에 물이 차오르고 있어"), "emergency")  # 위급이 먼저
+        self.assertEqual(rules.route("경기도 광주 지하차도 침수 위험 있어?"), "disaster")  # 탈출 요령 질문이 아님
+
+    def test_unavailable_guide_must_be_stated(self):
+        js = [judge.judge_region(alert_resp(), None, {"열대야": {"available": False, "reason": "없음", "rows": []}})]
+        text = compose.render_answer(js)
+        self.assertIn("해당 항목이 없습니다", text)
+        self.assertTrue(validate(text, js)["ok"])
+        self.assertFalse(validate(text.replace("해당 항목이 없습니다", ""), js)["ok"])
 
     def test_emergency_words_compile_with_flexible_spaces(self):
         for t in ["물이차오르고", "물  차올라", "불이 났어요", "의식이없어요", "대피하고  있어요", "지금당장"]:

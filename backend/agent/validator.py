@@ -78,6 +78,8 @@ def validate(answer: str, judgements: list[dict]) -> dict:
         for g in j["gaps"]:
             if g["status"] in ("failed", "no_coverage") and MK["no_info"] not in answer:
                 v.append(f"{g['source']} 조회 실패 미표기")
+            if g["status"] == "unavailable" and MK["not_in_data"] not in answer:  # 없는 행동요령을 지어내지 않았다는 표기
+                v.append(f"{g['source']} 공식 데이터에 없음 미표기")
 
     # 지역별 대조: 근거 ID 는 지역마다 E1 부터 다시 시작하므로 전체 합집합이 아니라 그 지역 섹션 안에서 검사한다
     sections, outside = _sections(answer, judgements)

@@ -11,6 +11,7 @@
   grounded                       : 백엔드 검증기 기준 통과 (모든 항목 인용, 인용 id 실재, 정보 없음·면책 문구)
   emergency_fixed                : 위급 표현은 LLM 없이 고정 119/112 응답
   cause                          : 장애 주입 항목(fault)에서 기대한 원인 코드가 meta.failures 에 있고 원인별 문구가 답변에 있는가
+  not_in_data                    : 공식 데이터에 없는 행동요령을 "해당 항목이 없습니다"로 밝혔는가 (지어내지 않음)
 검증기·판정 코드는 백엔드 것을 그대로 쓴다 — 평가용으로 느슨한 기준을 따로 만들지 않는다.
 
 장애 주입 항목(`fault` 필드)은 HTTP 가 아니라 프로세스 내에서 같은 그래프·MCP 서버로 돈다 (eval/faults.py, 네트워크 경계만 바꿈).
@@ -35,7 +36,8 @@ from config.catalog import msg  # noqa: E402
 
 DATASET = HERE / "dataset.jsonl"
 RISKY = {"upcoming", "advisory", "warning", "severe"}
-METRICS = ["route", "regions", "level", "no_missed_risk", "no_forbidden", "grounded", "emergency_fixed", "cause"]
+METRICS = ["route", "regions", "level", "no_missed_risk", "no_forbidden", "grounded", "emergency_fixed", "cause",
+           "not_in_data"]
 
 
 def load() -> list[dict]:
@@ -103,8 +105,12 @@ def score(out: dict, expect: dict) -> dict[str, int]:
          if expect["route"] == "emergency" else 1,
          "cause": int(expect["cause"] in {x.get("cause") for x in out.get("failures", [])}
                       and msg(f"causes.{expect['cause']}") in out["answer"]) if expect.get("cause") else 1}
+    s["not_in_data"] = int(msg("markers.not_in_data") in out["answer"]) if expect.get("not_in_data") else 1
     if expect.get("guide"):
-        s["level"] &= int(any(e["kind"] == "guide" for j in out["judgements"] for e in j["evidence"]))
+        guide_ev = [e for j in out["judgements"] for e in j["evidence"] if e["kind"] == "guide"]
+        s["level"] &= int(bool(guide_ev))
+        for src in expect.get("guide_sources", []):  # 소스는 코드가 hazard_map 으로 정한다 — 기대한 소스의 행인가
+            s["level"] &= int(any(src in (e.get("source") or "") for e in guide_ev))
     return s
 
 

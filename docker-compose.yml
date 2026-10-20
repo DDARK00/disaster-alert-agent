@@ -7,9 +7,17 @@ services:
       dockerfile: mcp_server/Dockerfile
     environment:
       DATA_MODE: ${DATA_MODE:-replay}
+      # 키 이름은 data/sources.yaml 의 env (doc/환경변수.md). 값은 .env 에만.
+      DSSP_MESSAGE_SERVICE_KEY: ${DSSP_MESSAGE_SERVICE_KEY:-}
+      DSSP_GUIDE_NATURAL_SERVICE_KEY: ${DSSP_GUIDE_NATURAL_SERVICE_KEY:-}
+      DSSP_GUIDE_SOCIAL_SERVICE_KEY: ${DSSP_GUIDE_SOCIAL_SERVICE_KEY:-}
+      DSSP_GUIDE_LIFE_SERVICE_KEY: ${DSSP_GUIDE_LIFE_SERVICE_KEY:-}
+      DSSP_GUIDE_CIVIL_DEFENSE_SERVICE_KEY: ${DSSP_GUIDE_CIVIL_DEFENSE_SERVICE_KEY:-}
+      DSSP_SHELTER_SERVICE_KEY: ${DSSP_SHELTER_SERVICE_KEY:-}
+      WEATHER_ALERTS_SERVICE_KEY: ${WEATHER_ALERTS_SERVICE_KEY:-}
+      # [전환 기간] 옛 이름 — 새 이름이 비어 있을 때만 쓰이고 경고 1회 (capture.service_key). 전환 후 삭제
       DSSP_SERVICE_KEY: ${DSSP_SERVICE_KEY:-}
       DSSP_DOING_SERVICE_KEY: ${DSSP_DOING_SERVICE_KEY:-}
-      WEATHER_ALERTS_SERVICE_KEY: ${WEATHER_ALERTS_SERVICE_KEY:-}
       KAKAO_REST_API_KEY: ${KAKAO_REST_API_KEY:-}   # Kakao Local (응답 저장 금지, ADR-011)
     volumes:
       - ./data:/app/data        # fixture 갱신·live 캡처가 호스트에 남도록

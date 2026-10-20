@@ -60,9 +60,17 @@ hazard_synonyms:
   풍랑: [풍랑, 파도, 높은 파도]
   태풍: [태풍]
   대설: [대설, 폭설, 눈이 많이, 눈이 와, 눈이 오, 적설]
-  황사: [황사, 미세먼지]
+  황사: [황사]
   폭염: [폭염, 무더위, 더위, 찜통]
   열대야: [열대야]
+  # 기상특보가 없는 유형 (행동요령만, warnVar=null). 소스는 hazard_map.json 의 source (ADR-013)
+  지진: [지진, 여진]
+  화재: [화재, 불이 나면, 불 나면, 불났을 때, 소화기]
+  산불: [산불]
+  정전: [정전, 전기가 나가, 전기가 끊]
+  교통사고: [교통사고, 접촉사고, 차 사고]
+  미세먼지: [미세먼지, 초미세먼지]
+  민방공: [민방공, 공습경보, 경계경보, 민방위 경보]
 
 # 범위 판단: 재난 유형·아래 단어·지역 단어 중 하나도 없으면 범위 밖
 generic_disaster_words: [특보, 재난, 경보, 주의보, 날씨, 위험, 안전, 대피, 재난문자, 행동요령, 기상]
@@ -118,3 +126,22 @@ api_errors:
   auth_words: [SERVICE_KEY_IS_NOT_REGISTERED, SERVICE_ACCESS_DENIED, DEADLINE_HAS_EXPIRED, UNREGISTERED_IP, TEMPORARILY_DISABLE_THE_SERVICEKEY]
   limit_codes: ["22"]
   limit_words: [LIMITED_NUMBER_OF_SERVICE_REQUESTS]
+
+# 행동요령 대상 필터 (ADR-015): 일반 시민용이 아닌 행(구조대원·관리자·전문가 작업 지침)은 근거에서 뺀다.
+# 판정은 mcp_server/guides.py for_citizens (코드). 단계명(safety_cate_nm3)·본문 키워드 기준, cate2 "*" = 모든 유형.
+# 근거: doc/API_응답_스키마.md §4 + 2026-10-20 수집 fixture 를 읽고 정함 (T-031).
+guide_audience:
+  exclude_sections:
+    - {cate2: "03013", words: [차량에서의 구조, 상황판단, 구출]}   # 교통사고: 구조대원 작업 지침 ("작업을 부여 받은 대원…")
+    - {cate2: "02022", words: [식별]}                              # 테러: 식별요령 (현재 미연결, 연결 시 대비)
+  exclude_text_words: [현장통제를 구축, 차량을 전개, "※관련근거"]
+
+# 공식 데이터에 없는 질문 (ADR-015). 모든 단어 묶음에서 하나 이상이 질문에 있으면 route=not_in_data →
+# LLM·도구 없이 "공식 데이터에 없음" 고정 응답 (지어내지 않는다). 위급 표현이 있으면 emergency 가 먼저다.
+# 근거: 행동요령 4종 1,466행 검색에서 차량+침수 0건, 지하차도·목받침 0건 (doc/API_응답_스키마.md §4)
+not_in_official_data:
+  - topic: 차량 침수 시 탈출
+    all_of:
+      - [차량, 자동차, 차가, 차 안, 차에서, 차를, 운전 중]
+      - [침수, 물에 잠, 잠기, 물이 차, 지하차도]
+      - [탈출, 빠져나, 문이 안 열, 창문, 깨고, 요령, 방법, 어떻게]

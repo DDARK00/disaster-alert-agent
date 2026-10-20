@@ -83,3 +83,16 @@
   6. `/health`에 소스별 최근 live 호출 성공·실패 시각과 원인(`source_health` 도구, 프로세스 메모리), 백엔드→MCP 연결 상태(`mcp_link`)를 노출한다. 사용자 상태가 아니므로 stateless 원칙과 충돌하지 않는다.
 - 확인: 잘못된 키로 실제 호출한 응답 모양(T-028)으로 분류 규칙을 정했다. 장애 주입(`eval/faults.py`) 5종이 서로 다른 원인 코드·문구로 나타나는 것을 테스트와 평가 항목으로 고정했다.
 - 대안: HTTP 상태만으로 분류 — safetydata는 키 오류도 HTTP 200 + resultCode 30으로 와서 구분이 안 된다.
+
+## ADR-015 행동요령 4종은 한 어댑터로, 일 1회 캐시 + 저장본 폴백, 대상 필터·'데이터에 없음'은 규칙 데이터 + 코드 판정
+- 배경: 사회재난·생활안전·민방위 행동요령이 자연재난과 같은 스키마로 확인됐다(doc/API_응답_스키마.md). 시민용이 아닌 행(구조대원 지침)이 섞여 있고, 차량 침수 탈출처럼 자주 묻지만 공식 데이터에 없는 주제가 있다.
+- 결정:
+  1. `mcp_server/guides.py` 하나가 `data/sources.yaml`의 guide 소스 4종을 같은 코드로 호출·정규화한다. 재난 유형 → (소스, 유형 코드)는 `hazard_map.json`의 `source`·`action_cate2`(코드가 정함, LLM이 고르지 않음). 연결 범위는 작게: 기존 기상 유형 + 지진·화재·산불·정전·교통사고·미세먼지·민방공.
+  2. 캐시: live는 프로세스 내 일 1회(KST 날짜 기준), 실패하면 커밋된 fixture로 폴백(`origin=fixture_fallback`, 원인 기록). replay는 fixture만. Redis 등 외부 저장소는 쓰지 않는다(작업지시서 §6). 호출 수는 기존 일자별 카운터 + 로그 한 줄, `daily_limit`(1,000)에 닿으면 호출하지 않고 `rate_limited`.
+  3. 쪽 넘기기: `totalCount`로 쪽 수를 계산하되 꽉 찬 마지막 쪽이면 한 쪽 더 본다(ADR-013 "totalCount를 믿지 않는다" 유지).
+  4. 대상 필터: 구조대원·관리자용 단계명·본문 키워드는 `config/rules.yaml` `guide_audience`(데이터), 판정은 `guides.for_citizens`(코드). 걸러 낸 행 수는 응답(`excluded_non_citizen`)에 남긴다.
+  5. 공식 데이터에 없는 질문은 `rules.yaml` `not_in_official_data`(단어 묶음 모두 포함)로 코드가 판정 → route `not_in_data`, LLM·도구 없이 고정 "정보 없음 — 해당 항목이 없습니다". 행동요령이 없는 유형(열대야·건조)도 답변에 "해당 항목이 없습니다"를 반드시 쓰게 검증기에 조각(`not_in_data`)을 추가했다(검증 강화).
+  6. 외부 응답은 pydantic(`mcp_server/schemas.py`)으로 경계 검증, 실패는 `response_invalid`(ADR-014). LangGraph State는 TypedDict 유지.
+  7. `[G#]` 근거에 소스 표시 이름(예: "생활안전 국민행동요령")을 싣고 템플릿·write 사실 데이터에 함께 보인다.
+- 대안: 소스별 모듈 — 정규화·필터·출처 표기가 어긋날 위험. 시작 시 전체 수집 — 호출 60여 건을 기동마다 쓰고, replay 재현성이 떨어진다.
+

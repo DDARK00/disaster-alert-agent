@@ -4,15 +4,20 @@
 - 서비스키는 화면·로그·저장 파일 어디에도 남기지 않는다 (URL, 응답 본문, 예외 메시지 모두 마스킹).
 - 모든 호출은 data/fixtures/<source>/ 에 JSON 한 개로 저장된다 (메타 + 본문).
 - 호출 횟수는 data/fixtures/_call_counter.json 에 일자별로 누적한다 (쿼터 낭비 방지).
-- 의존성 없음(표준 라이브러리만).
+  sources.yaml 의 daily_limit 에 닿으면 호출하지 않는다 (error_kind=daily_limit → rate_limited).
+- 소스 정의(엔드포인트·키 이름)는 data/sources.yaml (registry.py). 키는 새 이름 → 옛 이름(env_legacy) 순으로 읽고
+  옛 이름을 쓰면 경고를 한 번 남긴다 (전환 기간, doc/환경변수.md).
 
 사용:  python3 mcp_server/capture.py <probe> [<probe> ...]
 """
 from __future__ import annotations
 
 import json
+import logging
+import re
 import socket
 import sys
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -25,21 +30,13 @@ FIXTURES = ROOT / "data" / "fixtures"
 COUNTER = FIXTURES / "_call_counter.json"
 MASK = "***"
 
-# 소스별 설정: env 키 이름 / 베이스 URL / 서비스키 파라미터 이름
-SOURCES = {
-    "weather": {
-        "env": "WEATHER_ALERTS_SERVICE_KEY",
-        "base": "http://apis.data.go.kr/1360000/WthrWrnInfoService",
-    },
-    "dssp": {
-        "env": "DSSP_SERVICE_KEY",
-        "base": "https://www.safetydata.go.kr/V2/api/DSSP-IF-00247",
-    },
-    "doing": {
-        "env": "DSSP_DOING_SERVICE_KEY",
-        "base": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588",
-    },
-}
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import registry  # noqa: E402  (data/sources.yaml)
+
+log = logging.getLogger("mcp.capture")
+INLINE_COMMENT = re.compile(r"\s+#")
+_warned_legacy: set[str] = set()
+_counter_lock = threading.Lock()
 
 
 def load_env(path: Path = ROOT / ".env") -> dict[str, str]:
@@ -53,8 +50,31 @@ def load_env(path: Path = ROOT / ".env") -> dict[str, str]:
         line = line.strip()
         if line and not line.startswith("#") and "=" in line:
             k, v = line.split("=", 1)
-            env[k.strip()] = v.split("  #")[0].strip().strip("\"'")
+            # 인라인 주석은 공백 1칸 이상 + '#' (예전엔 두 칸만 잘라 키 뒤에 주석이 붙었다 — 403, T-029)
+            env[k.strip()] = INLINE_COMMENT.split(v, 1)[0].strip().strip("\"'")
     return env
+
+
+def service_key(source: str, env: dict[str, str] | None = None) -> tuple[str, str | None]:
+    """(키 값, 읽은 환경변수 이름). 새 이름이 없으면 옛 이름(env_legacy)으로 폴백하고 경고 1회."""
+    cfg = registry.get(source)
+    env = load_env() if env is None else env
+    if env.get(cfg.env):
+        return env[cfg.env], cfg.env
+    if cfg.env_legacy and env.get(cfg.env_legacy):
+        if cfg.env_legacy not in _warned_legacy:
+            _warned_legacy.add(cfg.env_legacy)
+            log.warning("옛 환경변수 이름 %s 사용 중 — %s 로 바꾸세요 (doc/환경변수.md)", cfg.env_legacy, cfg.env)
+        return env[cfg.env_legacy], cfg.env_legacy
+    return "", None
+
+
+def calls_today(source: str) -> int:
+    try:
+        data = json.loads(COUNTER.read_text()) if COUNTER.exists() else {}
+    except (OSError, ValueError):
+        return 0
+    return int(data.get(datetime.now().strftime("%Y-%m-%d"), {}).get(source, 0))
 
 
 def _key_variants(key: str) -> set[str]:
@@ -70,33 +90,44 @@ def scrub(text: str, key: str) -> str:
 
 
 def _count(source: str) -> int:
-    """호출 횟수 기록. 쓰기 불가(읽기 전용 볼륨 등)여도 호출 자체는 막지 않는다 → 0 반환."""
-    try:
-        FIXTURES.mkdir(parents=True, exist_ok=True)
-        data = json.loads(COUNTER.read_text()) if COUNTER.exists() else {}
-        today = datetime.now().strftime("%Y-%m-%d")
-        day = data.setdefault(today, {})
-        day[source] = day.get(source, 0) + 1
-        COUNTER.write_text(json.dumps(data, ensure_ascii=False, indent=2))
-        return day[source]
-    except OSError:
-        return 0
+    """호출 횟수 기록. 쓰기 불가(읽기 전용 볼륨 등)여도 호출 자체는 막지 않는다 → 0 반환.
+    도구가 스레드에서 동시에 돌므로 잠금 + 임시 파일 교체로 쓴다 (반쯤 쓴 파일을 읽어 JSON 오류가 나던 경쟁, T-030)."""
+    with _counter_lock:
+        try:
+            FIXTURES.mkdir(parents=True, exist_ok=True)
+            try:
+                data = json.loads(COUNTER.read_text()) if COUNTER.exists() else {}
+            except ValueError:
+                data = {}
+            today = datetime.now().strftime("%Y-%m-%d")
+            day = data.setdefault(today, {})
+            day[source] = day.get(source, 0) + 1
+            tmp = COUNTER.with_suffix(".tmp")
+            tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+            tmp.replace(COUNTER)
+            return day[source]
+        except OSError:
+            return 0
 
 
 def call(source: str, operation: str, params: dict, tag: str, key_param: str = "serviceKey",
          timeout: int = 20) -> dict:
     """한 번 호출하고 fixture로 저장한다. 저장된 dict를 돌려준다."""
-    cfg = SOURCES[source]
-    key = load_env().get(cfg["env"], "")
-    if not key:  # 키 미설정: 호출하지 않는다 (원인 api_auth_error, 저장·카운트 없음)
+    cfg = registry.get(source)
+
+    def skipped(error: str, kind: str) -> dict:  # 호출하지 않은 경우 (저장·카운트 없음)
         return {"meta": {"api_result_code": None, "api_result_msg": None, "api_ok": False, "source": source,
                          "operation": operation, "mode": "live", "http_status": None, "elapsed_ms": 0,
-                         "call_no_today": None, "url": None, "saved_to": None,
-                         "error": f"서비스키 미설정 ({cfg['env']})", "error_kind": "key_missing"},
+                         "call_no_today": None, "url": None, "saved_to": None, "error": error, "error_kind": kind},
                 "json": None, "text": None}
+    key, _ = service_key(source)
+    if not key:  # 키 미설정 → api_auth_error
+        return skipped(f"서비스키 미설정 ({cfg.env})", "key_missing")
+    if cfg.daily_limit and calls_today(source) >= cfg.daily_limit:  # 자체 카운터 한도 → rate_limited
+        return skipped(f"일일 호출 한도 {cfg.daily_limit}건 도달", "daily_limit")
     # 이미 인코딩된 키(%포함)가 이중 인코딩되지 않도록 한 번 디코딩 후 인코딩한다.
     query = urllib.parse.urlencode({key_param: urllib.parse.unquote(key), **params})
-    url = cfg["base"] + (f"/{operation}" if operation else "") + "?" + query
+    url = cfg.base + (f"/{operation}" if operation else "") + "?" + query
     n = _count(source)
 
     status, body, err, kind = None, None, None, None
