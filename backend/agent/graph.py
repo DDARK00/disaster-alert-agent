@@ -269,9 +269,17 @@ def build_graph(deps: Deps):
                   "note": j["note"], "gaps": j["gaps"],
                   "evidence": [{k: e[k] for k in ("id", "kind", "text") if k in e} for e in j["evidence"]]} for j in js]
         # 작은 모델이 형식 예시의 ID를 그대로 베끼거나 gap 문구를 빠뜨리지 않도록 데이터에서 지시를 만든다 (T-021)
-        ids = [e["id"] for j in js for e in j["evidence"]]
-        user = prompt("write", "user", facts=json.dumps(facts, ensure_ascii=False),
-                      ids=", ".join(f"[{i}]" for i in ids) if ids else prompt("write", "ids_none"))
+        # 근거 ID 는 지역마다 E1부터 — 지역별로 인용 가능 ID 와 반드시 인용할 특보 ID 를 준다 (validator 지역별 대조)
+        region_ids = []
+        for j in js:
+            ids = [e["id"] for e in j["evidence"]]
+            region_ids.append(prompt("write", "region_ids", region=j["region"],
+                                     ids=", ".join(f"[{i}]" for i in ids) if ids else prompt("write", "ids_none")))
+            alert_ids = [e["id"] for e in j["evidence"] if e["kind"] in ("alert", "pending")]
+            if alert_ids:
+                region_ids.append(prompt("write", "must_cite", region=j["region"],
+                                         alert_ids=", ".join(f"[{i}]" for i in alert_ids)))
+        user = prompt("write", "user", facts=json.dumps(facts, ensure_ascii=False), region_ids="\n".join(region_ids))
         must = []
         for j in js:
             # 템플릿(compose)과 같은 표준 문구를 요구한다 — 문구 정의는 prompts/messages.yaml 한 곳

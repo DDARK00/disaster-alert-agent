@@ -19,7 +19,7 @@ PROMPTS_DIR = ROOT / "prompts"
 REQUIRED_PROMPTS = {
     "intent": ["system"],
     "plan": ["system", "user"],
-    "write": ["user", "ids_none", "must_header", "must"],
+    "write": ["user", "region_ids", "must_cite", "ids_none", "must_header", "must"],
     "rewrite": ["user"],
     "briefing": ["system"],
 }
