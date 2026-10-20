@@ -24,3 +24,6 @@ data/fixtures/_call_counter.json
 
 # live 모드 호출 결과는 일시적 캡처 (replay 원본 아님)
 data/fixtures/*/*_live__*.json
+
+# 공식 API 가이드·원문 복사본은 저장소에 넣지 않는다 (루트 api_spec/ 에 별도 보관)
+doc/api_spec/
