@@ -8,6 +8,20 @@ from config.catalog import RULES, msg
 FORBIDDEN: list[str] = RULES["forbidden"]
 MK: dict[str, str] = msg("markers")
 CITE = re.compile(r"\[([EMG]\d+)\]")
+URL = re.compile(r"https?://|www\.|kakao\.com", re.I)
+KAKAO_LINK = re.compile(r"https://map\.kakao\.com/link/(map|to)/\d+")
+
+
+def validate_links(links: dict, notice: str | None, region: str) -> dict | None:
+    """지도 링크 칩 검사 (ADR-011): 공식 형식(장소 ID)만, 고정 안내 문구 필수. 어기면 칩을 내보내지 않는다."""
+    if notice != msg("kakao.route_notice"):
+        return None
+    urls = [links.get("map"), links.get("route")]
+    if not all(isinstance(u, str) and KAKAO_LINK.fullmatch(u) for u in urls):
+        return None
+    return {"region": region, "notice": notice,
+            "chips": [{"kind": "map", "label": msg("kakao.map_label"), "url": urls[0]},
+                      {"kind": "route", "label": msg("kakao.route_label"), "url": urls[1]}]}
 
 
 def validate(answer: str, judgements: list[dict]) -> dict:
@@ -19,6 +33,9 @@ def validate(answer: str, judgements: list[dict]) -> dict:
             v.append(f"금지 표현: '{w}'")
     if MK["official"] not in answer or MK["emergency_call"] not in answer:
         v.append("공식 경보 아님/119 안내 문구 누락")
+
+    if URL.search(answer):  # 링크는 코드가 만든 칩으로만 (LLM 이 지어낸 링크 차단)
+        v.append("답변 본문에 링크 금지")
 
     cited = set(CITE.findall(answer))
     for c in cited - ids:

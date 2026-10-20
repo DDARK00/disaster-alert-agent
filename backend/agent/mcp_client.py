@@ -14,7 +14,7 @@ from pathlib import Path
 
 from fastmcp import Client
 from fastmcp.client.transports import StdioTransport
-from langsmith import traceable
+from langsmith import traceable, tracing_context
 
 from config.settings import Settings
 
@@ -51,6 +51,14 @@ class MCPGateway:
         if r.data is not None:
             return r.data
         return json.loads(r.content[0].text)
+
+    # Kakao 결과는 트레이스에 요약값만 남긴다 (ADR-011): 상태·법정동 코드·결과 수. 링크·장소 ID 는 남기지 않는다.
+    @traceable(run_type="tool", name="resolve_place",
+               process_inputs=lambda i: {"query": i.get("query")},
+               process_outputs=lambda o: {k: o.get(k) for k in ("status", "b_code", "result_count", "region_id")})
+    async def place(self, query: str) -> dict:
+        with tracing_context(enabled=False):  # 하위 mcp_tool span 에 원문이 남지 않도록
+            return await self.tool("resolve_place", {"query": query})
 
     async def prompt(self, name: str, args: dict) -> str:
         assert self._client is not None

@@ -36,6 +36,12 @@ def sse(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
+def with_links(final: dict, events: list[dict]) -> dict:
+    """지도 링크 칩은 그래프 상태(=트레이스)에 두지 않고 이벤트로만 받아 응답에 붙인다 (ADR-011)."""
+    links = [e for e in events if e.get("event") == "links"]
+    return {**final, "links": {k: v for k, v in links[-1].items() if k != "event"} if links else None}
+
+
 def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -87,8 +93,9 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
                    browser_region_id: str | None = None):
         run_id = uuid.uuid4().hex[:12]
         init = init_state(message, mode, as_of, history_region_id, browser_region_id, run_id)
-        state = await app.state.graph.ainvoke(init, config=trace_config(init))
-        return state["final"]
+        side: list[dict] = []
+        state = await app.state.graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": side.append}})
+        return with_links(state["final"], side)
 
     @app.get("/chat/stream")
     async def chat_stream(message: str = Query(..., min_length=1, max_length=500), mode: str | None = None,
@@ -98,10 +105,16 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
         queue: asyncio.Queue = asyncio.Queue()
         init = init_state(message, mode, as_of, history_region_id, browser_region_id, run_id)
 
+        side: list[dict] = []
+
+        def emit(ev: dict) -> None:
+            side.append(ev)
+            queue.put_nowait(ev)
+
         async def runner():
             try:
-                state = await app.state.graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": queue.put_nowait}})
-                final = state["final"]
+                state = await app.state.graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": emit}})
+                final = with_links(state["final"], side)
                 text = final["answer"]
                 for i in range(0, len(text), CHUNK):  # 검증을 통과한 답변만 스트리밍 (validate-then-stream)
                     queue.put_nowait({"event": "token", "text": text[i:i + CHUNK]})

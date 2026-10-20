@@ -62,7 +62,9 @@ def resolve_place(query: str) -> dict:
     out = {"status": r["status"], "query": query, "result_count": r.get("result_count", 0), "detail": r.get("detail"),
            "region_id": None, "b_code": None, "region_names": [], "place_id": None, "links": None}
     if r["status"] == "ok":
-        out.update(region_id=region_for_admin(r["region_names"]), b_code=r["b_code"], region_names=r["region_names"],
+        rid = region_for_admin(r["region_names"])
+        out.update(region_id=rid, region_display=load_regions()[rid]["display"] if rid else None,
+                   b_code=r["b_code"], region_names=r["region_names"],
                    place_id=r["place_id"], links=kakao.links(r["place_id"]), notice=msg("kakao.route_notice"))
     return out
 

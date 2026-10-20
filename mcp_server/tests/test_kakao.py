@@ -82,6 +82,7 @@ class Tool(unittest.TestCase):
         r = self.call({"status": "ok", "place_id": "12345", "result_count": 3, "b_code": "1220000000",
                        "region_names": ["전남광주통합특별시", "광산구"]})
         self.assertEqual((r["status"], r["region_id"], r["place_id"]), ("ok", "gwangju_metro", "12345"))
+        self.assertEqual(r["region_display"], "광주광역시 (전남광주통합특별시 광주권)")
         self.assertEqual(r["links"]["route"], "https://map.kakao.com/link/to/12345")
         self.assertEqual(r["notice"], "경로상의 도로 통제·침수 여부는 반영되지 않았습니다.")
         self.assertNotIn("place_name", r)

@@ -28,7 +28,7 @@ from . import compose, judge, rules
 from .deps import Deps
 from .llm import LLMError, extract_json
 from .retry import with_retry
-from .validator import validate
+from .validator import validate, validate_links
 
 ALLOWED_INTENTS = {"status", "go_out", "guide"}
 ALLOWED_STEPS = ["alerts", "messages", "guide"]
@@ -45,6 +45,7 @@ class State(TypedDict, total=False):
     intent: str
     hazards: list
     hazard_source: str
+    place: str
     location: dict
     regions: list
     region_names: dict
@@ -118,7 +119,7 @@ def build_graph(deps: Deps):
         rule_h = [h for h in rules.parse_hazards(q)["hazards"] if h in names]
         rule_i = rules.detect_intent(q)
         errors = list(state.get("llm_errors", []))
-        intent, hazards, source = rule_i, list(rule_h), "rules"
+        intent, hazards, source, place = rule_i, list(rule_h), "rules", ""
         try:
             raw = await deps.llm.complete(
                 prompt("intent", hazard_names=", ".join(f'"{n}"' for n in names)),
@@ -128,11 +129,12 @@ def build_graph(deps: Deps):
                 intent = obj["intent"]
             llm_h = [h for h in (obj.get("hazards") or []) if h in names]
             hazards = list(dict.fromkeys(llm_h + rule_h))  # recall 우선: 합집합
+            place = rules.place_candidate(obj.get("place"), q)  # 원문에 있는 장소 표현만 (코드 검사)
             source = "llm+rules"
         except (LLMError, ValueError, TypeError) as e:
             errors.append(f"parse_intent: {type(e).__name__}: {e}")
         writer({"event": "intent", "intent": intent, "hazards": hazards, "hazard_source": source})
-        return {"intent": intent, "hazards": hazards, "hazard_source": source, "llm_errors": errors}
+        return {"intent": intent, "hazards": hazards, "hazard_source": source, "place": place, "llm_errors": errors}
 
     # ── gate (코드) ──
     async def gate(state: State, writer):
@@ -140,6 +142,26 @@ def build_graph(deps: Deps):
             "text": state["query"], "history_region_id": state.get("history_region_id") or None,
             "browser_region_id": state.get("browser_region_id") or None}))
         names = {c["id"]: c["name"] for c in loc["candidates"]}
+        pid, links = None, None
+        if state.get("place"):
+            # 카카오 장소 → 행정구역은 보조 신호. 명시 지역을 덮지 않고, 추정과 어긋나면 둘 다 보여준다 (ADR-011)
+            try:
+                p = await deps.mcp.place(state["place"])
+            except Exception as e:  # noqa: BLE001 — 장소 조회 실패는 지역 해석에 영향 없음
+                p = {"status": "failed", "detail": type(e).__name__}
+            pid = p.get("region_id") if p.get("status") == "ok" else None
+            loc = {**loc, "place": {"status": p.get("status"), "region_id": pid, "result_count": p.get("result_count", 0)}}
+            if pid:
+                names.setdefault(pid, p["region_display"])
+                links = {"links": p["links"], "notice": p.get("notice")}
+                kakao_cand = {"id": pid, "name": p["region_display"], "score": 0, "reasons": ["카카오 장소 검색 1위의 행정구역"]}
+                explicit = any(r.startswith("명시 표현") for c in loc["candidates"] for r in c["reasons"])
+                if loc["status"] == "none":
+                    loc.update(status="assumed", chosen=pid, candidates=[kakao_cand])
+                elif not explicit and loc["status"] != "ambiguous" and loc["chosen"] != pid:
+                    # 이력·브라우저 위치로 정한 지역과 장소의 지역이 다르면 추측하지 않고 둘 다 보여준다
+                    loc.update(status="ambiguous", chosen=None,
+                               candidates=[c for c in loc["candidates"] if c["id"] != pid] + [kakao_cand])
         if loc["status"] == "none":
             regions = []
         elif loc["status"] == "ambiguous":
@@ -147,6 +169,10 @@ def build_graph(deps: Deps):
         else:
             regions = [loc["chosen"]]
         writer({"event": "location", **loc, "regions": regions})
+        if links and pid in regions:
+            chips = validate_links(links["links"], links["notice"], names[pid])
+            if chips:  # 링크는 답변 본문이 아니라 칩으로만, 상태(트레이스)에 넣지 않고 이벤트로만 보낸다
+                writer({"event": "links", **chips})
         return {"location": loc, "regions": regions, "region_names": names}
 
     async def ask_region(state: State, writer):

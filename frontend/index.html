@@ -47,6 +47,8 @@ label{display:flex;gap:6px;align-items:center}
 .step.done{background:var(--none-bg);color:var(--ink)}
 .step small{opacity:.7;margin-left:4px}
 .chip{display:inline-block;font-size:13px;border:1px dashed var(--line);border-radius:8px;padding:4px 10px;margin:4px 6px 0 0}
+a.chip{border-style:solid;color:inherit;text-decoration:none}
+#links .meta{display:block;margin-top:4px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .card h3{margin:0;padding:10px 14px;font-size:15px}
@@ -102,6 +104,7 @@ label{display:flex;gap:6px;align-items:center}
   <section class="panel" aria-live="polite">
     <div class="steps" id="steps"></div>
     <div id="loc"></div>
+    <div id="links"></div>
     <div class="badges" id="badges"></div>
   </section>
 
@@ -138,7 +141,7 @@ async function loadScenarios(){
 }
 
 function resetView(){
-  $("steps").replaceChildren(); $("loc").replaceChildren(); $("badges").replaceChildren();
+  $("steps").replaceChildren(); $("loc").replaceChildren(); $("links").replaceChildren(); $("badges").replaceChildren();
   $("cards").replaceChildren(); $("answer").replaceChildren(); $("meta").replaceChildren(); evById={};
   $("ansPanel").style.display="none";
   NODES.forEach(n=>{ const s=el("span","step",NODE_KO[n]); s.id="st-"+n; $("steps").appendChild(s); });
@@ -155,6 +158,16 @@ function showLocation(d){
   const label={resolved:"지역 확정",assumed:"가정한 지역",ambiguous:"모호함 — 후보를 모두 조회",none:"지역 미확인"}[d.status]||d.status;
   box.appendChild(el("span","chip",label));
   d.candidates.forEach(c=>box.appendChild(el("span","chip",c.name+" ("+c.score+")")));
+}
+// 카카오맵 링크 칩 (경로 판단 없음 — 카카오맵으로 넘기기까지만). 서버 검사 후에도 형식을 다시 확인한다
+const KAKAO_LINK=/^https:\/\/map\.kakao\.com\/link\/(map|to)\/\d+$/;
+function showLinks(d){
+  const box=$("links"); box.replaceChildren();
+  const ok=(d.chips||[]).filter(c=>KAKAO_LINK.test(c.url));
+  if(!ok.length||!d.notice) return;
+  box.appendChild(el("span","chip",d.region));
+  ok.forEach(c=>{ const a=el("a","chip",c.label); a.href=c.url; a.target="_blank"; a.rel="noopener noreferrer"; box.appendChild(a); });
+  box.appendChild(el("span","meta",d.notice));
 }
 function badge(text,cls){ const b=el("span","badge"+(cls?" "+cls:""),text); $("badges").appendChild(b); }
 
@@ -224,6 +237,7 @@ function run(){
   on("route",d=>badge("분기: "+d.route));
   on("intent",d=>{ badge("의도 "+d.intent); badge("재난 "+(d.hazards.join("·")||"미지정")+" ("+d.hazard_source+")"); });
   on("location",showLocation);
+  on("links",showLinks);
   on("plan",d=>badge("조회 "+d.steps.join("+")+" ("+d.source+")"));
   on("source",d=>{ if(d.status!=="ok") badge("⚠ "+d.name+" "+d.status); });
   on("judgement",d=>showJudgements(d.judgements));

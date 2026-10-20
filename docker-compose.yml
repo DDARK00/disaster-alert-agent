@@ -10,6 +10,7 @@ services:
       DSSP_SERVICE_KEY: ${DSSP_SERVICE_KEY:-}
       DSSP_DOING_SERVICE_KEY: ${DSSP_DOING_SERVICE_KEY:-}
       WEATHER_ALERTS_SERVICE_KEY: ${WEATHER_ALERTS_SERVICE_KEY:-}
+      KAKAO_REST_API_KEY: ${KAKAO_REST_API_KEY:-}   # Kakao Local (응답 저장 금지, ADR-011)
     volumes:
       - ./data:/app/data        # fixture 갱신·live 캡처가 호스트에 남도록
     expose:

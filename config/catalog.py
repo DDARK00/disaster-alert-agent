@@ -40,7 +40,7 @@ MARKER_CHECKS = {
     "emergency_call": ["disclaimer", "fixed.emergency"],
 }
 REQUIRED_RULES = ["emergency_words", "intent_words", "hazard_synonyms", "generic_disaster_words", "region_words",
-                  "forbidden", "levels", "evidence", "niche_words"]
+                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes"]
 SECTION = re.compile(r"^=== (\w+) ===\n", re.M)
 
 
