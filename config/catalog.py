@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import re
 from pathlib import Path
 from string import Template
@@ -18,7 +19,7 @@ PROMPTS_DIR = ROOT / "prompts"
 REQUIRED_PROMPTS = {
     "intent": ["system"],
     "plan": ["system", "user"],
-    "write": ["user", "ids_none", "must_header", "must_none", "must_unknown", "must_gap"],
+    "write": ["user", "ids_none", "must_header", "must"],
     "rewrite": ["user"],
     "briefing": ["system"],
 }
@@ -29,6 +30,14 @@ REQUIRED_MESSAGES = [
     "mcp.alert_failed", "mcp.alert_active", "mcp.alert_none", "mcp.alert_none_pending", "mcp.alert_none_no_pending",
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
 ]
+# 표준 문구가 검증기 기준 조각을 포함해야 템플릿 fallback 이 항상 검증을 통과한다
+MARKER_CHECKS = {
+    "no_info": ["answer.unknown", "answer.gap", "mcp.alert_failed", "mcp.alert_unreachable", "mcp.messages_failed"],
+    "no_risk": ["answer.none", "mcp.alert_none"],
+    "no_guarantee": ["answer.none"],
+    "official": ["disclaimer", "fixed.emergency"],
+    "emergency_call": ["disclaimer", "fixed.emergency"],
+}
 REQUIRED_RULES = ["emergency_words", "intent_words", "hazard_synonyms", "generic_disaster_words", "region_words",
                   "forbidden", "levels", "evidence", "niche_words"]
 SECTION = re.compile(r"^=== (\w+) ===\n", re.M)
@@ -73,6 +82,37 @@ def _load_prompt(name: str, sections: list[str]) -> dict[str, str]:
 RULES = _load_yaml(RULES_PATH, REQUIRED_RULES)
 MESSAGES = _load_yaml(PROMPTS_DIR / "messages.yaml", REQUIRED_MESSAGES)
 PROMPTS = {name: _load_prompt(name, secs) for name, secs in REQUIRED_PROMPTS.items()}
+
+
+def _check_consistency() -> None:
+    errs = []
+    for mk, keys in MARKER_CHECKS.items():
+        frag = _get(MESSAGES, f"markers.{mk}")
+        errs += [f"{k} 에 '{frag}' 없음" for k in keys if frag not in _get(MESSAGES, k)]
+
+    def strings(d):
+        if isinstance(d, dict):
+            for v in d.values():
+                yield from strings(v)
+        elif isinstance(d, str):
+            yield d
+    for s in list(strings(MESSAGES)) + [t for p in PROMPTS.values() for t in p.values()]:
+        errs += [f"금지 표현 '{w}' 포함: {s[:30]}" for w in RULES["forbidden"] if w in s and f"'{w}'" not in s]
+    if errs:
+        raise RuntimeError("문구·규칙 불일치: " + "; ".join(errs))
+
+
+_check_consistency()
+
+
+def _sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:8]
+
+
+# LangSmith 메타데이터용: 어떤 프롬프트·문구·규칙 버전으로 답했는지 추적
+VERSIONS = {**{f"prompt:{n}": _sha(PROMPTS_DIR / f"{n}.md") for n in REQUIRED_PROMPTS},
+            "messages": _sha(PROMPTS_DIR / "messages.yaml"), "rules": _sha(RULES_PATH)}
+VERSION_TAG = "prompts@" + hashlib.sha256("".join(sorted(VERSIONS.values())).encode()).hexdigest()[:8]
 
 
 def render(template: str, **kw) -> str:

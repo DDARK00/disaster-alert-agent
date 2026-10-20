@@ -21,6 +21,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from agent.deps import Deps, Settings  # noqa: E402
+from config.catalog import VERSION_TAG, VERSIONS  # noqa: E402
 from config.settings import load_dotenv_file  # noqa: E402
 from agent.graph import build_graph  # noqa: E402
 from agent.llm import BaseLLM, make_llm  # noqa: E402
@@ -52,8 +53,8 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
                        allow_methods=["GET"], allow_headers=["*"])
 
     def trace_config(init: dict) -> dict:  # LangSmith 루트 이름·검색용 메타데이터 (트레이싱 꺼져 있으면 무시됨)
-        return {"run_name": "disaster_chat", "tags": [init["mode"]],
-                "metadata": {"run_id": init["run_id"], "mode": init["mode"], "llm": app.state.deps.llm.name}}
+        return {"run_name": "disaster_chat", "tags": [init["mode"], VERSION_TAG],
+                "metadata": {"run_id": init["run_id"], "mode": init["mode"], "llm": app.state.deps.llm.name, **VERSIONS}}
 
     def init_state(message, mode, as_of, history_region_id, browser_region_id, run_id):
         return {"query": message, "mode": mode or app.state.deps.settings.data_mode, "as_of": as_of or "",

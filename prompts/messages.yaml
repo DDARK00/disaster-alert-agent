@@ -3,6 +3,14 @@
 
 supported_regions: 광주광역시, 경기도 광주시
 
+# 검증기가 답변에서 찾는 표준 문구 조각. 아래 문구들이 이 조각을 포함하는지 기동 시 검사한다 (config/catalog.py).
+markers:
+  no_info: 정보 없음              # 조회 실패·범위 밖
+  no_risk: 확인된 위험 정보 없음  # 위험 없음의 유일한 표현
+  no_guarantee: 안전을 보장       # "안전을 보장하지 않습니다" 줄은 인용 없이 허용
+  official: 공식 경보             # 면책
+  emergency_call: "119"
+
 disclaimer: 공식 경보가 아닙니다. 위급할 때는 119·112, 공식 채널(기상청, 재난문자, 국민재난안전포털)을 확인하세요.
 
 # route / gate 고정 응답 (LLM 미사용)

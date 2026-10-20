@@ -248,13 +248,15 @@ def build_graph(deps: Deps):
                       ids=", ".join(f"[{i}]" for i in ids) if ids else prompt("write", "ids_none"))
         must = []
         for j in js:
+            # 템플릿(compose)과 같은 표준 문구를 요구한다 — 문구 정의는 prompts/messages.yaml 한 곳
+            sentences = []
             if j["level"] == "none":
-                must.append(prompt("write", "must_none", region=j["region"], as_of=j["as_of"]))
+                sentences.append(msg("answer.none", as_of=j["as_of"], zones=", ".join(j["zones"])))
             if j["level"] == "unknown":
-                must.append(prompt("write", "must_unknown", region=j["region"]))
-            for g in j["gaps"]:
-                if g["status"] in ("failed", "no_coverage"):
-                    must.append(prompt("write", "must_gap", region=j["region"], source=g["source"], status=g["status"]))
+                sentences.append(msg("answer.unknown"))
+            sentences += [msg("answer.gap", source=g["source"], status=g["status"])
+                          for g in j["gaps"] if g["status"] in ("failed", "no_coverage")]
+            must += [prompt("write", "must", region=j["region"], sentence=s) for s in sentences]
         if must:
             user += "\n" + prompt("write", "must_header") + "\n" + "\n".join(f"* {m}" for m in must)
         if state.get("feedback"):

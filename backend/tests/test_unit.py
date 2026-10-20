@@ -141,6 +141,41 @@ class Validator(unittest.TestCase):
         self.assertFalse(validate("### 경기도 광주시\n특보가 없습니다.\n" + compose.DISCLAIMER, js)["ok"])
 
 
+class Catalog(unittest.TestCase):
+    """config/, prompts/ 로 옮긴 데이터가 안전 기준을 약하게 만들지 않는지 고정한다 (ADR-012)."""
+
+    def test_validator_markers_and_forbidden_are_not_weakened(self):
+        from agent import validator
+        self.assertEqual(validator.MK, {"no_info": "정보 없음", "no_risk": "확인된 위험 정보 없음", "no_guarantee": "안전을 보장",
+                                        "official": "공식 경보", "emergency_call": "119"})
+        for w in ["안전합니다", "안전해요", "걱정하지 마", "문제없", "괜찮습니다", "위험 없", "안심하"]:
+            self.assertIn(w, validator.FORBIDDEN)
+
+    def test_emergency_words_compile_with_flexible_spaces(self):
+        for t in ["물이차오르고", "물  차올라", "불이 났어요", "의식이없어요", "대피하고  있어요", "지금당장"]:
+            self.assertTrue(rules.is_emergency(t), t)
+        self.assertFalse(rules.is_emergency("물 마시기"))
+
+    def test_missing_marker_or_forbidden_wording_fails_at_startup(self):
+        from config import catalog
+        orig = catalog.MESSAGES["answer"]["unknown"]
+        try:
+            catalog.MESSAGES["answer"]["unknown"] = "조회하지 못했습니다."
+            with self.assertRaises(RuntimeError):
+                catalog._check_consistency()
+            catalog.MESSAGES["answer"]["unknown"] = orig + " 지금은 안전합니다."
+            with self.assertRaises(RuntimeError):
+                catalog._check_consistency()
+        finally:
+            catalog.MESSAGES["answer"]["unknown"] = orig
+        catalog._check_consistency()
+
+    def test_missing_prompt_section_fails(self):
+        from config import catalog
+        with self.assertRaises(RuntimeError):
+            catalog._load_prompt("write", ["user", "없는_구역"])
+
+
 class Infra(unittest.TestCase):
     def test_retry_recovers_transient_but_not_permanent(self):
         calls = {"n": 0}
