@@ -13,6 +13,7 @@ STRESS_TO_LEVEL: dict[str, str] = RULES["levels"]["stress_to_level"]
 RANK: dict[str, int] = RULES["levels"]["rank"]
 MAX_MESSAGES, MAX_GUIDE_PER_HAZARD = RULES["evidence"]["max_messages"], RULES["evidence"]["max_guide_per_hazard"]
 NICHE_WORDS = tuple(RULES["niche_words"])
+FORBIDDEN = tuple(RULES["forbidden"])
 
 
 def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -> dict:
@@ -78,7 +79,9 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
             gaps.append({"source": f"행동요령({hz})", "status": "unavailable",
                          "detail": g.get("reason", "행동요령 없음")})
             continue
-        for r in g["rows"][:MAX_GUIDE_PER_HAZARD]:
+        # 공식 원문이라도 금지 표현("…지붕이 안전하니…")이 든 행은 근거로 쓰지 않는다 — 고쳐 쓰지 않고 뺀다 (T-024)
+        rows = [r for r in g["rows"] if not any(w in r["text"] for w in FORBIDDEN)]
+        for r in rows[:MAX_GUIDE_PER_HAZARD]:
             guide_rows.append({"id": f"G{len(guide_rows) + 1}", "kind": "guide", "hazard": hz, "phase": r["phase"],
                                "text": r["text"], "ref": r["id"]})
     ev.extend(guide_rows)

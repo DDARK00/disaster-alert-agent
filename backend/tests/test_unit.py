@@ -151,6 +151,14 @@ class Catalog(unittest.TestCase):
         for w in ["안전합니다", "안전해요", "걱정하지 마", "문제없", "괜찮습니다", "위험 없", "안심하"]:
             self.assertIn(w, validator.FORBIDDEN)
 
+    def test_guide_rows_with_forbidden_words_are_excluded(self):
+        # 실제 폭풍해일 행동요령 1행: "…지붕이 안전하니 높은 곳으로…" → 근거에서 빠지고 템플릿이 검증을 통과해야 한다
+        rows = [{"phase": "during", "text": "경우에 따라서는 지붕이 안전하니 높은 곳으로 이동합시다.", "id": "g-1"},
+                {"phase": "during", "text": "높은 곳으로 대피합니다.", "id": "g-2"}]
+        js = [judge.judge_region(alert_resp(alerts=[("폭풍해일", "경보")]), None, {"폭풍해일": {"available": True, "rows": rows}})]
+        self.assertEqual([e["ref"] for e in js[0]["evidence"] if e["kind"] == "guide"], ["g-2"])
+        self.assertTrue(validate(compose.render_answer(js), js)["ok"])
+
     def test_emergency_words_compile_with_flexible_spaces(self):
         for t in ["물이차오르고", "물  차올라", "불이 났어요", "의식이없어요", "대피하고  있어요", "지금당장"]:
             self.assertTrue(rules.is_emergency(t), t)
