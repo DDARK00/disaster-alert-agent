@@ -78,6 +78,7 @@ class HttpLLM(unittest.TestCase):
         self.assertEqual((body["model"], body["temperature"]), ("qwen3:9b", 0))
         self.assertEqual(body["response_format"], {"type": "json_object"})
         self.assertTrue(body["messages"][1]["content"].endswith("/no_think"))
+        self.assertEqual(body["reasoning_effort"], "none")
         self.assertEqual(auth, "Bearer k")
 
     def test_http_error_and_bad_shape_raise_llmerror(self):

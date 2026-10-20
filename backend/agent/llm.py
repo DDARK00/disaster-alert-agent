@@ -84,6 +84,8 @@ class OpenAICompatLLM(BaseLLM):
             user = user + "\n/no_think"
         body = {"model": self.model, "temperature": 0, "max_tokens": max_tokens,
                 "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}
+        if self.no_think:  # Ollama 0.32 /v1 은 '/no_think' 문구를 무시하고 사고에 토큰을 다 쓴다 (T-020)
+            body["reasoning_effort"] = "none"
         if json_mode:
             body["response_format"] = {"type": "json_object"}
         headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
