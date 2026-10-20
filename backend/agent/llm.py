@@ -12,6 +12,7 @@ import os
 import re
 
 import httpx
+from langsmith import traceable
 
 from . import compose
 
@@ -79,6 +80,8 @@ class OpenAICompatLLM(BaseLLM):
         self.timeout = timeout
         self.no_think = no_think
 
+    # LANGSMITH_TRACING=true 일 때만 기록된다. payload 는 FakeLLM 용이라 트레이스에서 뺀다.
+    @traceable(run_type="llm", name="llm", process_inputs=lambda i: {k: i.get(k) for k in ("system", "user", "task", "json_mode")})
     async def complete(self, system, user, *, json_mode=False, task="", payload=None, max_tokens=900):
         if self.no_think:
             user = user + "\n/no_think"

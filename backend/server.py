@@ -63,6 +63,10 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
     app.add_middleware(CORSMiddleware, allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
                        allow_methods=["GET"], allow_headers=["*"])
 
+    def trace_config(init: dict) -> dict:  # LangSmith 루트 이름·검색용 메타데이터 (트레이싱 꺼져 있으면 무시됨)
+        return {"run_name": "disaster_chat", "tags": [init["mode"]],
+                "metadata": {"run_id": init["run_id"], "mode": init["mode"], "llm": app.state.deps.llm.name}}
+
     def init_state(message, mode, as_of, history_region_id, browser_region_id, run_id):
         return {"query": message, "mode": mode or app.state.deps.settings.data_mode, "as_of": as_of or "",
                 "history_region_id": history_region_id or "", "browser_region_id": browser_region_id or "",
@@ -92,7 +96,8 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
                    as_of: str | None = None, history_region_id: str | None = None,
                    browser_region_id: str | None = None):
         run_id = uuid.uuid4().hex[:12]
-        state = await app.state.graph.ainvoke(init_state(message, mode, as_of, history_region_id, browser_region_id, run_id))
+        init = init_state(message, mode, as_of, history_region_id, browser_region_id, run_id)
+        state = await app.state.graph.ainvoke(init, config=trace_config(init))
         return state["final"]
 
     @app.get("/chat/stream")
@@ -105,7 +110,7 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
 
         async def runner():
             try:
-                state = await app.state.graph.ainvoke(init, config={"configurable": {"emit": queue.put_nowait}})
+                state = await app.state.graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": queue.put_nowait}})
                 final = state["final"]
                 text = final["answer"]
                 for i in range(0, len(text), CHUNK):  # 검증을 통과한 답변만 스트리밍 (validate-then-stream)

@@ -14,6 +14,7 @@ from pathlib import Path
 
 from fastmcp import Client
 from fastmcp.client.transports import StdioTransport
+from langsmith import traceable
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -42,6 +43,7 @@ class MCPGateway:
             await self._client.__aexit__(None, None, None)
             self._client = None
 
+    @traceable(run_type="tool", name="mcp_tool", process_inputs=lambda i: {"name": i.get("name"), "args": i.get("args")})
     async def tool(self, name: str, args: dict) -> dict:
         assert self._client is not None, "MCPGateway.start() 먼저"
         r = await self._client.call_tool(name, args)
