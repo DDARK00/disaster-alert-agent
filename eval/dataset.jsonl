@@ -1,0 +1,27 @@
+{"id": "gg_heat_pending", "message": "경기도 광주 폭염 어때?", "as_of": "2026-08-23 10:30", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "upcoming"}}, "basis": "L1013400 폭염주의보 08-23 10:00 발표, 11:00 발효 → 예고"}
+{"id": "gg_heat_advisory", "message": "경기 광주 지금 더워? 나가도 돼?", "as_of": "2026-08-23 12:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "advisory"}}, "basis": "폭염주의보 08-23 11:00 발효"}
+{"id": "gg_heat_warning", "message": "경기도 광주 폭염특보 났는데 지금 나가도 돼?", "as_of": "2026-08-24 12:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "warning"}}, "basis": "08-24 10:00 변경발표(7) 경보, 11:00 발효"}
+{"id": "gg_heat_warning_tropical_pending", "message": "경기도 광주 열대야 어때?", "as_of": "2026-08-24 17:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "warning"}}, "basis": "폭염경보 발효 중 + 열대야주의보 18:00 발효 예고. 열대야 행동요령 없음"}
+{"id": "gg_alias_gonjiam", "message": "곤지암 폭염 상황 알려줘", "as_of": "2026-08-25 12:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "warning"}}, "basis": "경보는 08-25 16:00 주의보로 변경되기 전"}
+{"id": "gg_alias_opo", "message": "오포 쪽 더위 괜찮아?", "as_of": "2026-08-26 12:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "advisory"}}, "basis": "08-25 16:00 폭염 주의보로 변경 + 열대야주의보"}
+{"id": "gg_none_after_release", "message": "경기도 광주시 날씨 위험해?", "as_of": "2026-08-29 12:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "none"}}, "basis": "열대야 08-27 16:00, 폭염 08-28 16:00 해제"}
+{"id": "gg_no_coverage", "message": "경기도 광주 폭염 어때?", "as_of": "2026-06-01 12:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "unknown"}}, "basis": "replay 범위(08-21~) 밖 → 정보 없음"}
+{"id": "gg_messages_only", "message": "경기도 광주 강풍 상황 알려줘", "as_of": "2026-10-18 16:30", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "none"}}, "basis": "특보 없음, 안내 문자만 (문자는 수준을 올리지 않음)"}
+{"id": "gj_tropical_before_window", "message": "광주광역시 열대야 어때?", "as_of": "2026-08-22 12:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory"}}, "basis": "L1130110 창 안 첫 이벤트가 08-23 16:00 열대야주의보 해제 → 08-22에는 발효 중 (위험 놓침 탐지용)"}
+{"id": "gj_tropical_active", "message": "광주광역시 열대야 있어?", "as_of": "2026-08-26 20:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory"}}, "basis": "광주서부 열대야주의보 08-26 18:00 발효"}
+{"id": "gj_rain_active", "message": "광주광역시 호우 어때?", "as_of": "2026-08-27 16:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory"}}, "basis": "광주동부 호우주의보 15:45 발효"}
+{"id": "gj_alias_sangmu", "message": "상무지구 비 많이 와?", "as_of": "2026-08-27 19:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory"}}, "basis": "호우는 18:00 해제, 광주서부 열대야주의보는 발효 중"}
+{"id": "gj_alias_gwangsan", "message": "광산구 폭염특보 있어?", "as_of": "2026-08-28 11:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory"}}, "basis": "08-28 10:00 폭염주의보(변경발표 7) 양 구역"}
+{"id": "gj_none_after_release", "message": "광주광역시 날씨 위험해?", "as_of": "2026-09-04 12:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "none"}}, "basis": "열대야 09-02, 폭염 09-03 해제, 호우 08-30 해제"}
+{"id": "gj_calm", "message": "광주광역시 날씨 위험해?", "as_of": "2026-10-19 12:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "none"}}, "basis": "발효 특보 없음"}
+{"id": "gj_no_coverage", "message": "광주광역시 호우 어때?", "as_of": "2026-07-01 12:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "unknown"}}, "basis": "replay 범위 밖"}
+{"id": "amb_rain", "message": "광주 호우 어때?", "as_of": "2026-08-27 17:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory", "gyeonggi_gwangju": "advisory"}}, "basis": "모호 → 두 지역. 광주권 호우, 경기 광주 폭염주의보"}
+{"id": "amb_mixed", "message": "광주 날씨 위험해?", "as_of": "2026-08-24 12:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory", "gyeonggi_gwangju": "warning"}}, "basis": "광주서부 열대야는 08-23 해제지만 광주동부 열대야는 창 안 첫 이벤트가 09-02 해제 → 발효 중. 경기 광주 폭염경보"}
+{"id": "amb_both_none", "message": "광주 폭염 어때?", "as_of": "2026-09-04 12:00", "expect": {"route": "disaster", "levels": {"gwangju_metro": "none", "gyeonggi_gwangju": "none"}}, "basis": "양쪽 모두 해제 후"}
+{"id": "history_region", "message": "지금 비 와?", "as_of": "2026-08-27 17:00", "history_region_id": "gwangju_metro", "expect": {"route": "disaster", "levels": {"gwangju_metro": "advisory"}}, "basis": "지역 없음 → 클라이언트가 보낸 이전 지역"}
+{"id": "guide_intent", "message": "경기도 광주 폭염 때 행동요령 알려줘", "as_of": "2026-08-24 12:00", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "warning"}, "guide": true}, "basis": "폭염경보 + 폭염 행동요령"}
+{"id": "emg_underpass", "message": "지하차도에 물이 차오르고 있어", "as_of": "", "expect": {"route": "emergency"}, "basis": "위급 → 고정 119/112"}
+{"id": "emg_trapped", "message": "집에 물이 차올라서 갇혔어요 살려주세요", "as_of": "", "expect": {"route": "emergency"}, "basis": "위급"}
+{"id": "emg_fire", "message": "경기도 광주인데 불이 났어요", "as_of": "", "expect": {"route": "emergency"}, "basis": "위급(지역이 있어도 고정 응답 우선)"}
+{"id": "ask_region", "message": "폭염 특보 있어?", "as_of": "", "expect": {"route": "ask_region"}, "basis": "지역 없음 → 되묻기"}
+{"id": "out_of_scope", "message": "오늘 점심 뭐 먹지", "as_of": "", "expect": {"route": "out_of_scope"}, "basis": "범위 밖 고정 안내"}
