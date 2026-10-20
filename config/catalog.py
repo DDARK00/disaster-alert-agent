@@ -29,6 +29,7 @@ REQUIRED_MESSAGES = [
     "answer.guide_header", "answer.gap", "answer.go_out", "judge.messages_only_note",
     "mcp.alert_failed", "mcp.alert_active", "mcp.alert_none", "mcp.alert_none_pending", "mcp.alert_none_no_pending",
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
+    "kakao.route_notice", "kakao.map_label", "kakao.route_label",
 ]
 # 표준 문구가 검증기 기준 조각을 포함해야 템플릿 fallback 이 항상 검증을 통과한다
 MARKER_CHECKS = {

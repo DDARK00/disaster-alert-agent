@@ -42,6 +42,12 @@ answer:
 judge:
   messages_only_note: 기상특보는 확인되지 않았지만 최근 해당 지역에 안내 문자가 있습니다. 문자는 수준 판정에 쓰지 않고 참고로만 표시합니다.
 
+# 카카오맵 링크 칩 (ADR-011). 경로를 판단하지 않는다 — 링크로 넘기기까지만
+kakao:
+  route_notice: 경로상의 도로 통제·침수 여부는 반영되지 않았습니다.
+  map_label: 카카오맵에서 보기
+  route_label: 카카오맵 길찾기
+
 # MCP 도구 응답의 statement
 mcp:
   alert_failed: 정보 없음 — 특보를 조회하지 못했습니다($status). 이는 안전하다는 뜻이 아닙니다.

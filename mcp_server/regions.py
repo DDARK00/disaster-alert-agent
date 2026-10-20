@@ -62,6 +62,15 @@ def resolve_location(text: str, history_region_id: str | None = None,
     return {"status": "ambiguous", "chosen": None, "candidates": cands}
 
 
+def region_for_admin(names: list[str]) -> str | None:
+    """Kakao 행정구역 이름 ['시도', '시군구'] → 내부 지역 ID (지원 지역이 아니면 None)."""
+    full = " ".join(n for n in names if n).strip()
+    for rid, r in load_regions().items():
+        if any(full == p or full.startswith(p + " ") for p in r.get("kakao_prefixes", [])):
+            return rid
+    return None
+
+
 def message_applies(region_id: str, rcptn_rgn_nm: str) -> str | None:
     """'direct' | 'sido_wide' | None.  RCPTN_RGN_NM 은 쉼표 결합, 끝 공백, '전체' 접미가 섞여 있다."""
     r = load_regions()[region_id]

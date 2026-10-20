@@ -20,7 +20,8 @@ from fastmcp import FastMCP  # noqa: E402
 
 import sources  # noqa: E402
 from alert_state import fold_alerts  # noqa: E402
-from regions import load_regions, resolve_location as _resolve  # noqa: E402
+import kakao  # noqa: E402
+from regions import load_regions, region_for_admin, resolve_location as _resolve  # noqa: E402
 from config.catalog import msg, prompt  # noqa: E402
 from config.settings import Settings  # noqa: E402
 
@@ -50,6 +51,20 @@ def resolve_location(text: str, history_region_id: str | None = None,
     """사용자 표현에서 지역 후보를 해석한다. status: resolved/assumed/ambiguous/none.
     ambiguous 이면 호출자는 후보를 모두 조회해 둘 다 보여준다(위급하지 않으면 되묻지 않음)."""
     return _resolve(text, history_region_id, browser_region_id)
+
+
+@mcp.tool()
+def resolve_place(query: str) -> dict:
+    """장소·주소 표현 → 행정구역(지원 지역이면 내부 지역 ID)과 카카오맵 링크 (ADR-011).
+    Kakao Local 을 요청마다 라이브 호출하고 결과를 저장하지 않는다. 장소명·좌표는 돌려주지 않는다.
+    status: ok | not_found | failed | unavailable(키 없음). 경로를 계산하지 않는다 — links 는 카카오맵으로 넘기는 용도."""
+    r = kakao.lookup(query)
+    out = {"status": r["status"], "query": query, "result_count": r.get("result_count", 0), "detail": r.get("detail"),
+           "region_id": None, "b_code": None, "region_names": [], "place_id": None, "links": None}
+    if r["status"] == "ok":
+        out.update(region_id=region_for_admin(r["region_names"]), b_code=r["b_code"], region_names=r["region_names"],
+                   place_id=r["place_id"], links=kakao.links(r["place_id"]), notice=msg("kakao.route_notice"))
+    return out
 
 
 @mcp.tool()
