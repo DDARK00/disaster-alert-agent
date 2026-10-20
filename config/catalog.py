@@ -19,14 +19,15 @@ PROMPTS_DIR = ROOT / "prompts"
 REQUIRED_PROMPTS = {
     "intent": ["system"],
     "plan": ["system", "user"],
-    "write": ["user", "region_ids", "must_cite", "ids_none", "must_header", "must"],
+    "write": ["user", "region_ids", "must_cite", "guide_groups", "ids_none", "must_header", "must"],
     "rewrite": ["user"],
     "briefing": ["system"],
 }
 REQUIRED_MESSAGES = [
     "supported_regions", "disclaimer", "fixed.emergency", "fixed.out_of_scope", "fixed.ask_region", "fixed.service_unavailable", "fixed.not_in_data",
     "answer.unknown", "answer.none", "answer.level", "answer.uncertain_suffix", "answer.message_scope",
-    "answer.guide_header", "answer.gap", "answer.gap_unavailable", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",
+    "answer.guide_header", "answer.guide_group", "guide_groups.now", "guide_groups.now_inactive",
+    "guide_groups.prepare", "guide_groups.dont", "answer.gap", "answer.gap_unavailable", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",
     "mcp.alert_failed", "mcp.alert_active", "mcp.alert_none", "mcp.alert_none_pending", "mcp.alert_none_no_pending",
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
     "kakao.route_notice", "kakao.map_label", "kakao.route_label",
@@ -45,7 +46,7 @@ MARKER_CHECKS = {
     "not_in_data": ["causes.not_in_data", "fixed.not_in_data"],
 }
 REQUIRED_RULES = ["emergency_words", "intent_words", "hazard_synonyms", "generic_disaster_words", "region_words",
-                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "api_errors", "guide_audience", "not_in_official_data"]
+                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "api_errors", "guide_audience", "not_in_official_data", "guide_groups"]
 SECTION = re.compile(r"^=== (\w+) ===\n", re.M)
 
 

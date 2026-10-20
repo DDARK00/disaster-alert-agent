@@ -116,7 +116,7 @@ levels:
 # 근거 개수 상한과 일반 시민 대상이 아닌 행동요령 문구(뒤로 미룸, 삭제하지 않음)
 evidence:
   max_messages: 3
-  max_guide_per_hazard: 4
+  max_guide_per_hazard: 7   # = guide_groups.limits 합 (묶음별 상한이 실제 기준)
 niche_words: [가축, 어류, 양식, 축사, 농작물, 비닐하우스, 작업장, 건설 현장, 건설현장, 어선, 선박]
 
 # 외부 API 오류 분류용 코드·키워드 (mcp_server/failures.py 가 판정, ADR-014).
@@ -145,3 +145,13 @@ not_in_official_data:
       - [차량, 자동차, 차가, 차 안, 차에서, 차를, 운전 중]
       - [침수, 물에 잠, 잠기, 물이 차, 지하차도]
       - [탈출, 빠져나, 문이 안 열, 창문, 깨고, 요령, 방법, 어떻게]
+
+# 행동요령 구조화 "그래서 어떻게" (ADR-016). 판정은 backend/agent/judge.py group_guides (코드), 여기는 데이터만.
+#   1) 본문에 dont_words 가 있으면 '하지 말 것'  2) 아니면 단계(hazard_map phases, cate3 기준)로 phase_to_group
+#   info·after 단계는 묶음에 넣지 않는다(참고·사후 정보). 특보 발효 중인 유형은 now 를 먼저, 아니면 prepare 를 먼저 보인다.
+guide_groups:
+  dont_words: [맙시다, 마십시오, 말아야, 지 않습니다, 삼가]   # 2026-10-20 fixture 에서 확인 ('말고'·'피합니다'는 행동 지시와 섞여 제외)
+  phase_to_group: {during: now, prepare: prepare}
+  limits: {now: 3, prepare: 2, dont: 2}
+  order_active: [now, prepare, dont]
+  order_inactive: [prepare, now, dont]

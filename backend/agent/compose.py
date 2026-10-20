@@ -10,6 +10,11 @@ def _cite(e: dict) -> str:
     return f"[{e['id']}]"
 
 
+def zone_text(j: dict) -> str:
+    """조회 구역은 표시 이름으로 (특보구역 코드는 사용자에게 보이지 않는다, 개발자 상세에만)."""
+    return "·".join(j.get("zone_names") or j["zones"])
+
+
 def gap_line(g: dict) -> str:
     """조회 실패·범위 밖·데이터에 없음 표준 문구 — 원인별 사유를 붙인다 (ADR-014). 템플릿과 write 지시문이 같은 문구를 쓴다."""
     if g["status"] == "unavailable":
@@ -27,7 +32,7 @@ def render_answer(judgements: list[dict], intent: str = "status") -> str:
         if j["level"] == "unknown":
             out.append(msg("answer.unknown"))
         elif j["level"] == "none":
-            out.append(msg("answer.none", as_of=j["as_of"], zones=", ".join(j["zones"])))
+            out.append(msg("answer.none", as_of=j["as_of"], zones=zone_text(j)))
         else:
             out.append(msg("answer.level", level_label=j["level_label"], as_of=j["as_of"]))
         for e in alerts:
@@ -41,7 +46,12 @@ def render_answer(judgements: list[dict], intent: str = "status") -> str:
         guides = [x for x in evs if x["kind"] == "guide"]
         if guides:
             out.append(msg("answer.guide_header"))
-            for e in guides:
+            last = None
+            for e in guides:  # judge 가 묶음 순서대로 골라 둔 것을 그대로 (지금 할 일 / 미리 대비할 일 / 하지 말 것)
+                head = (e["hazard"], e.get("group_label"))
+                if e.get("group_label") and head != last:
+                    out.append(msg("answer.guide_group", label=e["group_label"], hazard=e["hazard"]))
+                    last = head
                 src = f" · {e['source']}" if e.get("source") else ""
                 out.append(f"- [{e['hazard']}{src}] {e['text']} {_cite(e)}")
         for g in j["gaps"]:

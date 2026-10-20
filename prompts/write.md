@@ -9,6 +9,9 @@ $region_ids
 * ### $region 아래 — 인용 가능: $ids. 이 목록에 없는 ID는 절대 쓰지 않는다.
 === must_cite ===
 * ### $region 아래 — 특보 $alert_ids 는 하나도 빠뜨리지 말고 각각 '- ' 항목으로 인용한다.
+=== guide_groups ===
+* ### $region 아래 행동요령은 아래 묶음 제목 줄을 그대로 쓰고, 그 아래에 그 묶음의 ID 항목만 '- ' 로 쓴다. 묶음을 바꾸거나 새 행동요령을 지어내지 않는다:
+$groups
 === ids_none ===
 없음 — 어떤 [ID]도 쓰지 않는다
 === must_header ===

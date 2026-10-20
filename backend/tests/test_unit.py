@@ -158,7 +158,7 @@ class Catalog(unittest.TestCase):
 
     def test_validator_markers_and_forbidden_are_not_weakened(self):
         from agent import validator
-        self.assertEqual(validator.MK, {"no_info": "정보 없음", "no_risk": "확인된 위험 정보 없음", "no_guarantee": "안전을 보장",
+        self.assertEqual(validator.MK, {"no_info": "정보 없음", "no_risk": "확인된 위험 정보 없음", "no_guarantee": "공식 채널도 함께 확인",
                                         "official": "공식 경보", "emergency_call": "119",
                                         "not_in_data": "해당 항목이 없습니다"})
         for w in ["안전합니다", "안전해요", "걱정하지 마", "문제없", "괜찮습니다", "위험 없", "안심하"]:
@@ -179,6 +179,31 @@ class Catalog(unittest.TestCase):
         js = [judge.judge_region(alert_resp(), None, {"미세먼지": {"available": True, "rows": rows}})]
         self.assertEqual([e["ref"] for e in js[0]["evidence"] if e["kind"] == "guide"], ["g-2"])
         self.assertTrue(validate(compose.render_answer(js), js)["ok"])
+
+    def test_guide_groups_now_prepare_dont(self):
+        rows = [{"phase": "during", "text": "실내에서 휴식합니다.", "id": "d1"},
+                {"phase": "during", "text": "외출을 하지 맙시다.", "id": "d2"},
+                {"phase": "prepare", "text": "생수를 준비합니다.", "id": "p1"},
+                {"phase": "info", "text": "폭염이란 무엇인가", "id": "i1"}]
+        js = [judge.judge_region(alert_resp(alerts=[("폭염", "경보")]), None, {"폭염": {"available": True, "rows": rows}})]
+        got = [(e["group"], e["ref"]) for e in js[0]["evidence"] if e["kind"] == "guide"]
+        self.assertEqual(got, [("now", "d1"), ("prepare", "p1"), ("dont", "d2")])  # info 제외, 금지 키워드가 단계보다 먼저
+        text = compose.render_answer(js)
+        for label in ("지금 할 일", "미리 대비할 일", "하지 말 것"):
+            self.assertIn(label, text)
+        self.assertTrue(validate(text, js)["ok"])
+        # 특보가 없는 유형: 미리 대비할 일이 먼저, '지금 할 일' 대신 '발생하면 할 일'
+        js = [judge.judge_region(alert_resp(), None, {"폭염": {"available": True, "rows": rows}})]
+        self.assertEqual([e["group_label"] for e in js[0]["evidence"] if e["kind"] == "guide"],
+                         ["미리 대비할 일", "발생하면 할 일", "하지 말 것"])
+
+    def test_zone_codes_not_in_answer(self):
+        a = alert_resp()
+        a["zone_names"] = ["광주시"]
+        js = [judge.judge_region(a, None, {})]
+        text = compose.render_answer(js)
+        self.assertIn("조회 구역 광주시", text)
+        self.assertNotIn("L1", text)
 
     def test_not_in_official_data_route(self):
         for q in ["차가 물에 잠기면 어떻게 탈출해?", "지하차도 차량 침수 시 탈출 방법 알려줘"]:

@@ -51,14 +51,14 @@ class Tools(unittest.TestCase):
         self.assertEqual(r["alerts"], [])
         self.assertIn("확인된 위험 정보 없음", r["statement"])
         self.assertNotIn("안전합니다", r["statement"])
-        self.assertIn("안전을 보장하지 않습니다", r["statement"])
+        self.assertIn("공식 채널도 함께 확인", r["statement"])
 
     def test_out_of_coverage_is_not_reported_as_no_risk(self):
         r = run(call("get_alert_status", {"region_id": G, "as_of": "2026-06-01 12:00"}))
         self.assertEqual(r["source"]["status"], "no_coverage")
         self.assertEqual(r["alerts"], [])
         self.assertIn("정보 없음", r["statement"])
-        self.assertIn("안전하다는 뜻이 아닙니다", r["statement"])
+        self.assertIn("위험 여부를 알 수 없으니", r["statement"])
         self.assertNotIn("확인된 위험 정보 없음", r["statement"])
 
     def test_messages_scope_for_gyeonggi_gwangju(self):

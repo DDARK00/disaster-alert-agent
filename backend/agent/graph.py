@@ -284,25 +284,24 @@ def build_graph(deps: Deps):
         # 행동요령: 특보가 알려 준 재난 + 사용자가 말한 재난 (재난문자 라벨은 신뢰도 문제로 제외, T-010)
         guides: dict[str, dict] = {}
         if "guide" in steps:
+            # 모든 단계를 한 번에 받고, 지금 할 일 / 미리 대비할 일 / 하지 말 것 묶음은 judge 가 고른다 (ADR-016)
             wanted: dict[str, set] = {}
             for rid in regions:
                 a = alerts[rid]
-                active = {x["hazard"] for x in a["alerts"]}
-                pending = {x["hazard"] for x in a["pending"]}
-                for hz in dict.fromkeys(list(active) + list(pending) + list(state.get("hazards", []))):
-                    wanted.setdefault(rid, set()).add((hz, "during" if hz in active else "prepare"))
-            calls = {k for v in wanted.values() for k in v}
+                for hz in [x["hazard"] for x in a["alerts"] + a["pending"]] + list(state.get("hazards", [])):
+                    wanted.setdefault(rid, set()).add(hz)
+            calls = {hz for v in wanted.values() for hz in v}
 
-            async def guide(hz: str, ph: str):
+            async def guide(hz: str):
                 try:
-                    r = await with_retry(lambda: deps.mcp.tool("search_action_guide", {"hazard": hz, "phase": ph, "mode": mode}))
+                    r = await with_retry(lambda: deps.mcp.tool("search_action_guide", {"hazard": hz, "limit": 300, "mode": mode}))
                 except Exception as e:  # noqa: BLE001 — '없음'(unavailable)이 아니라 '조회 실패'(failed)로 둔다
                     r = {"hazard": hz, "available": False, "cause": mcp_cause(e),
                          "reason": f"조회 실패: {type(e).__name__}", "rows": []}
-                return (hz, ph), r
-            got = dict(await asyncio.gather(*[guide(h, p) for h, p in calls]))
+                return hz, r
+            got = dict(await asyncio.gather(*[guide(h) for h in calls]))
             for rid, items in wanted.items():
-                guides[rid] = {hz: got[(hz, ph)] for hz, ph in sorted(items)}
+                guides[rid] = {hz: got[hz] for hz in sorted(items)}
             bad = [r for r in got.values() if r.get("cause")]
             writer({"event": "source", "name": "행동요령", "status": "failed" if bad else "ok",
                     "cause": bad[0]["cause"] if bad else None, "count": len(calls)})
@@ -331,9 +330,10 @@ def build_graph(deps: Deps):
         rules_text = await deps.mcp.prompt("disaster_briefing_prompt", {
             "region": ", ".join(j["region"] for j in js), "hazards": ", ".join(state.get("hazards", [])) or "미지정",
             "question": state["query"]})
-        facts = [{"region": j["region"], "level": j["level_label"], "as_of": j["as_of"], "zones": j["zones"],
+        facts = [{"region": j["region"], "level": j["level_label"], "as_of": j["as_of"], "zones": j["zone_names"],
                   "note": j["note"], "gaps": j["gaps"],
-                  "evidence": [{k: e[k] for k in ("id", "kind", "text", "source") if k in e} for e in j["evidence"]]} for j in js]
+                  "evidence": [{k: e[k] for k in ("id", "kind", "text", "source", "group_label") if k in e}
+                               for e in j["evidence"]]} for j in js]
         # 작은 모델이 형식 예시의 ID를 그대로 베끼거나 gap 문구를 빠뜨리지 않도록 데이터에서 지시를 만든다 (T-021)
         # 근거 ID 는 지역마다 E1부터 — 지역별로 인용 가능 ID 와 반드시 인용할 특보 ID 를 준다 (validator 지역별 대조)
         region_ids = []
@@ -345,13 +345,21 @@ def build_graph(deps: Deps):
             if alert_ids:
                 region_ids.append(prompt("write", "must_cite", region=j["region"],
                                          alert_ids=", ".join(f"[{i}]" for i in alert_ids)))
+            # 행동요령 묶음(지금 할 일 / 미리 대비할 일 / 하지 말 것)은 judge 가 정했다 — LLM 은 풀어 쓰기만 (ADR-016)
+            groups: dict[str, list[str]] = {}
+            for e in j["evidence"]:
+                if e["kind"] == "guide" and e.get("group_label"):
+                    groups.setdefault(msg("answer.guide_group", label=e["group_label"], hazard=e["hazard"]), []).append(e["id"])
+            if groups:
+                region_ids.append(prompt("write", "guide_groups", region=j["region"], groups="\n".join(
+                    f"  {head}: " + ", ".join(f"[{i}]" for i in ids) for head, ids in groups.items())))
         user = prompt("write", "user", facts=json.dumps(facts, ensure_ascii=False), region_ids="\n".join(region_ids))
         must = []
         for j in js:
             # 템플릿(compose)과 같은 표준 문구를 요구한다 — 문구 정의는 prompts/messages.yaml 한 곳
             sentences = []
             if j["level"] == "none":
-                sentences.append(msg("answer.none", as_of=j["as_of"], zones=", ".join(j["zones"])))
+                sentences.append(msg("answer.none", as_of=j["as_of"], zones=compose.zone_text(j)))
             if j["level"] == "unknown":
                 sentences.append(msg("answer.unknown"))
             sentences += [compose.gap_line(g) for g in j["gaps"] if g["status"] in ("failed", "no_coverage", "unavailable")]

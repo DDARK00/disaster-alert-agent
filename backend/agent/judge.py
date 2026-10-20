@@ -13,9 +13,34 @@ from .validator import URL  # 본문 링크 금지와 같은 기준
 LEVEL_LABEL: dict[str, str] = RULES["levels"]["labels"]
 STRESS_TO_LEVEL: dict[str, str] = RULES["levels"]["stress_to_level"]
 RANK: dict[str, int] = RULES["levels"]["rank"]
-MAX_MESSAGES, MAX_GUIDE_PER_HAZARD = RULES["evidence"]["max_messages"], RULES["evidence"]["max_guide_per_hazard"]
+MAX_MESSAGES = RULES["evidence"]["max_messages"]
+GROUPS = RULES["guide_groups"]
 NICHE_WORDS = tuple(RULES["niche_words"])
 FORBIDDEN = tuple(RULES["forbidden"])
+
+
+def guide_group(r: dict) -> str | None:
+    """행 하나 → 묶음 (now | prepare | dont | None). 금지 표현 키워드가 단계보다 먼저다."""
+    if r["phase"] in ("info",):
+        return None
+    if any(w in r["text"] for w in GROUPS["dont_words"]):
+        return "dont"
+    return GROUPS["phase_to_group"].get(r["phase"])
+
+
+def group_label(group: str, active: bool) -> str:
+    return msg(f"guide_groups.{'now_inactive' if group == 'now' and not active else group}")
+
+
+def group_guides(rows: list[dict], active: bool) -> list[tuple[str, dict]]:
+    """'그래서 어떻게': 지금 할 일 / 미리 대비할 일 / 하지 말 것 (ADR-016). 묶음별 상한, 원문 순서 유지.
+    LLM 은 여기서 고른 항목만 풀어 쓴다."""
+    order = GROUPS["order_active"] if active else GROUPS["order_inactive"]
+    out = []
+    for grp in order:
+        picked = [r for r in rows if guide_group(r) == grp][:GROUPS["limits"][grp]]
+        out += [(grp, r) for r in picked]
+    return out
 
 
 def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -> dict:
@@ -77,6 +102,7 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
         ev.extend(msg_rows)
 
     guide_rows = []
+    active_hazards = {a["hazard"] for a in alerts["alerts"]} if weather_ok else set()
     for hz, g in guides.items():
         if g.get("available"):
             # 일반 시민 대상: 축산·농업·작업장 대상 문구는 뒤로 미룬다 (안정 정렬, 삭제하지 않음)
@@ -91,9 +117,10 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
         # 공식 원문이라도 금지 표현("…지붕이 안전하니…")이 든 행은 근거로 쓰지 않는다 — 고쳐 쓰지 않고 뺀다 (T-024)
         # 본문 링크는 검증기가 막으므로(링크는 칩으로만) URL 이 든 원문 행도 근거에서 뺀다 (T-030)
         rows = [r for r in g["rows"] if not any(w in r["text"] for w in FORBIDDEN) and not URL.search(r["text"])]
-        for r in rows[:MAX_GUIDE_PER_HAZARD]:
+        for group, r in group_guides(rows, active=hz in active_hazards):
             # [G#] 인용에 소스(기관·API 이름)를 함께 싣는다 (ADR-013)
             guide_rows.append({"id": f"G{len(guide_rows) + 1}", "kind": "guide", "hazard": hz, "phase": r["phase"],
+                               "group": group, "group_label": group_label(group, hz in active_hazards),
                                "text": r["text"], "ref": r["id"], "source": g.get("source_label") or g.get("source")})
     ev.extend(guide_rows)
 
@@ -102,4 +129,4 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
         note = msg("judge.messages_only_note")
     return {"region_id": region_id, "region": alerts["region"], "level": level, "level_label": LEVEL_LABEL[level],
             "hazards": hazards, "uncertain": uncertain, "as_of": alerts["as_of"], "mode": alerts["mode"],
-            "zones": alerts["zones"], "evidence": ev, "gaps": gaps, "note": note, "statement": alerts["statement"]}
+            "zones": alerts["zones"], "zone_names": alerts.get("zone_names") or alerts["zones"], "evidence": ev, "gaps": gaps, "note": note, "statement": alerts["statement"]}

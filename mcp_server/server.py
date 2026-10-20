@@ -79,8 +79,9 @@ def get_alert_status(region_id: str, as_of: str | None = None, mode: str | None 
     region = load_regions()[region_id]
     zones = sources.region_zones(region_id)
     src = sources.get_weather_events(zones, t, mode)
+    zone_names = [region.get("kma_zone_names", {}).get(z, z) for z in zones]  # 사용자 표시는 이름, 코드는 개발자용
     out = {"region_id": region_id, "region": region["display"], "mode": mode, "as_of": _fmt(t),
-           "zones": zones, "source": {"name": "기상청 기상특보 조회서비스 (WthrWrnInfoService)",
+           "zones": zones, "zone_names": zone_names, "source": {"name": "기상청 기상특보 조회서비스 (WthrWrnInfoService)",
                                       "status": src["status"], "cause": src.get("cause"), "detail": src["detail"],
                                       "window": src["window"]},
            "alerts": [], "pending": [], "recently_released": [], "disclaimer": DISCLAIMER}
@@ -104,7 +105,7 @@ def get_alert_status(region_id: str, as_of: str | None = None, mode: str | None 
     else:
         pending = (msg("mcp.alert_none_pending", count=len(out["pending"])) if out["pending"]
                    else msg("mcp.alert_none_no_pending"))
-        out["statement"] = msg("mcp.alert_none", as_of=_fmt(t), zones=", ".join(zones), pending=pending)
+        out["statement"] = msg("mcp.alert_none", as_of=_fmt(t), zones="·".join(zone_names), pending=pending)
     return out
 
 

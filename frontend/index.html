@@ -81,7 +81,7 @@ a.chip{border-style:solid;color:inherit;text-decoration:none}
 </style>
 </head>
 <body>
-<div class="banner" role="note"><b>공식 경보가 아닙니다.</b> 위급하면 즉시 119·112 · 공식 채널(기상청, 재난문자, 국민재난안전포털)을 확인하세요.</div>
+<div class="banner" role="note">공식 경보를 대신하지 않습니다 · 위급하면 <b>119·112</b> · 공식 채널에서 최종 확인</div>
 <div class="wrap">
   <h1>재난·특보 상황 판단</h1>
   <p class="lead">특보·재난문자·행동요령을 지역별로 모아, 확인된 근거와 함께 정리합니다. 위험 수준은 코드가 판정하고 AI는 설명만 합니다.</p>
@@ -176,7 +176,9 @@ function showJudgements(list){
   list.forEach(j=>{
     const c=el("article","card"); c.appendChild(el("h3",null,j.region));
     const lv=el("div","lv "+j.level,j.level_label);
-    lv.appendChild(el("small",null,"기준 "+j.as_of+" · 구역 "+j.zones.join(", ")+(j.uncertain?" · 해석 불확실 코드 포함":"")));
+    // 특보구역은 이름으로 보이고 코드는 툴팁(개발자용)에만
+    const sm=el("small",null,"기준 "+j.as_of+" · 구역 "+(j.zone_names||j.zones).join("·")+(j.uncertain?" · 해석 불확실 코드 포함":""));
+    sm.title="특보구역 코드: "+j.zones.join(", "); lv.appendChild(sm);
     c.appendChild(lv);
     if(j.note) c.appendChild(el("div","note",j.note));
     const ul=el("ul","ev");
@@ -190,7 +192,7 @@ function showJudgements(list){
     j.gaps.filter(g=>g.status!=="not_queried").forEach(g=>{
       const li=el("li"); li.appendChild(el("span","tag gap","정보 없음"));
       // 사용자 문구는 백엔드가 준 원인별 문구(reason), 원인 코드·상세는 툴팁(개발자용)에만
-      const sp=el("span","gap",g.source+" — "+(g.reason||"불러오지 못했습니다")+(g.status==="unavailable"?"":" (안전하다는 뜻이 아님)"));
+      const sp=el("span","gap",g.source+" — "+(g.reason||"불러오지 못했습니다")+(g.status==="unavailable"?"":" — 위험 여부는 공식 채널에서 확인"));
       sp.title=[g.cause||g.status,g.detail||""].join(" · "); li.appendChild(sp);
       ul.appendChild(li);
     });
@@ -250,7 +252,7 @@ function run(){
     const j=(f.judgements||[]); if(j.length===1) lastRegion=j[0].region_id; else if(f.location&&f.location.chosen) lastRegion=f.location.chosen;
     es.close(); es=null; $("send").disabled=false;
   });
-  on("error",d=>{ ans.className=""; $("ansPanel").style.display=""; ans.replaceChildren(el("p","err","오류: "+d.message+" — 이는 안전하다는 뜻이 아닙니다.")); es&&es.close(); es=null; $("send").disabled=false; });
+  on("error",d=>{ ans.className=""; $("ansPanel").style.display=""; ans.replaceChildren(el("p","err","정보 없음 — 답변을 만들지 못했습니다. 위험 여부는 공식 채널에서 확인해 주세요. ("+d.message+")")); es&&es.close(); es=null; $("send").disabled=false; });
   es.onerror=()=>{ if(es&&es.readyState===EventSource.CLOSED){ $("send").disabled=false; } };
 }
 $("f").addEventListener("submit",e=>{ e.preventDefault(); document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); run(); });
