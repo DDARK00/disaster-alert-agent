@@ -45,3 +45,10 @@
 
 ## 테스트
 `sh/test.sh` — MCP 41건(선택 스모크 2건 skip) + 백엔드 64건. Kakao는 mock만. 외부 API·LLM 없이 fixture, 프로세스 내 MCP, FakeLLM, 가짜 OpenAI 호환 HTTP 서버로 돈다.
+
+## 평가 (`eval/`)
+- `eval/dataset.jsonl` 27건: 경기 광주 9 · 광주광역시 8 · 모호 '광주' 3 · 이력 1 · 행동요령 1 · 위급 3 · 되묻기 1 · 범위 밖 1. 기대값은 커밋된 fixture의 **원본 특보 이벤트**를 사람이 읽고 정했다(`basis`). 시스템 판정 코드로 만들지 않는다.
+- 지표: `route` `regions` `level` `no_missed_risk`(특보가 있는데 none/unknown) `no_forbidden` `grounded`(백엔드 검증기 그대로) `emergency_fixed`.
+- 실행: `.venv/bin/python eval/run_eval.py` (로컬 채점) / `--langsmith --prefix <이름>` (데이터셋 `disaster-advisor-eval-<sha8>`, 내용이 바뀌면 새 데이터셋).
+- 결과(2026-10-20): fake 27/27, qwen3:8b 27/27 (실험 `qwen3-8b-d5faa9d6`, 답변 출처 llm 21·fixed 5·template_fallback 1). 첫 실행에서 위험 놓침 1건을 찾아 고침(T-026).
+- 시연 시나리오 회귀: `.venv/bin/python eval/run_scenarios.py [--live]`.

@@ -112,14 +112,15 @@ def run_langsmith(base: str, prefix: str) -> int:
 
     res = evaluate(target, data=name, evaluators=[make(m) for m in METRICS], experiment_prefix=prefix,
                    metadata={"base": base, "dataset_sha": digest}, max_concurrency=1, client=client)
-    df = res.to_pandas() if hasattr(res, "to_pandas") else None
-    print(f"실험: {res.experiment_name}  데이터셋: {name}")
-    if df is not None:
-        for m in METRICS:
-            col = f"feedback.{m}"
-            if col in df:
-                print(f"  {m:<16} {int(df[col].sum())}/{len(df)}")
-    return 0
+    total, n = {m: 0 for m in METRICS}, 0
+    for r in res:  # pandas 없이 요약
+        n += 1
+        for e in r["evaluation_results"]["results"]:
+            total[e.key] = total.get(e.key, 0) + int(e.score or 0)
+    print(f"실험: {res.experiment_name}  데이터셋: {name}  ({n}건)")
+    for m in METRICS:
+        print(f"  {m:<16} {total[m]}/{n}")
+    return 0 if all(total[m] == n for m in METRICS) else 1
 
 
 def main() -> int:
