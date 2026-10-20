@@ -46,6 +46,7 @@ class RealFixtures(unittest.TestCase):
         self.assertEqual(st[0]["status"], "pending_start")
         h = by_hazard(in_effect(fold_alerts(items, t("202608241200"), z)))
         self.assertEqual(h["폭염"]["stress_name"], "경보")  # 변경발표로 경보 상향
+        self.assertEqual(h["폭염"]["since"], t("202608241100"))  # 경보로 바뀐 시각 (최초 주의보 발효 08-23 11:00 아님)
         h = by_hazard(in_effect(fold_alerts(items, t("202608261200"), z)))
         self.assertEqual(h["폭염"]["stress_name"], "주의보")  # 08-25 16:00 변경발표(주의보로 하향)
         self.assertIn("열대야", h)

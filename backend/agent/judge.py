@@ -17,6 +17,7 @@ LEVEL_LABEL = {
 STRESS_TO_LEVEL = {"주의보": "advisory", "경보": "warning", "중대경보": "severe"}
 RANK = {"none": 1, "upcoming": 2, "advisory": 3, "warning": 4, "severe": 5}
 MAX_MESSAGES, MAX_GUIDE_PER_HAZARD = 3, 4
+NICHE_WORDS = ("가축", "어류", "양식", "축사", "농작물", "비닐하우스", "작업장", "건설 현장", "건설현장", "어선", "선박")
 
 
 def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -> dict:
@@ -75,6 +76,9 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
 
     guide_rows = []
     for hz, g in guides.items():
+        if g.get("available"):
+            # 일반 시민 대상: 축산·농업·작업장 대상 문구는 뒤로 미룬다 (안정 정렬, 삭제하지 않음)
+            g = {**g, "rows": sorted(g["rows"], key=lambda r: any(k in r["text"] for k in NICHE_WORDS))}
         if not g.get("available"):
             gaps.append({"source": f"행동요령({hz})", "status": "unavailable",
                          "detail": g.get("reason", "행동요령 없음")})

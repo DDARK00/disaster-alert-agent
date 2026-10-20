@@ -1,0 +1,13 @@
+.git
+.venv
+.env
+.env.*
+!.env.example
+**/__pycache__
+**/*.pyc
+doc
+eval
+sh
+**/tests
+data/fixtures/*/*_live__*.json
+data/fixtures/_call_counter.json

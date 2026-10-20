@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>재난·특보 상황 판단</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#fff; --ink:#1b2430; --sub:#5b6676; --line:#dfe3ea; --accent:#2457c5;
+  --none:#5b6676; --none-bg:#eef1f5; --up:#8a6d00; --up-bg:#fff6d6; --adv:#9a5b00; --adv-bg:#ffe9c7;
+  --warn:#b23a00; --warn-bg:#ffd9c7; --sev:#9b111e; --sev-bg:#ffd0d4; --unk:#4b3a8f; --unk-bg:#e8e3fa;
+  --ban:#1b2430; --ban-ink:#fff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151c; --card:#18202a; --ink:#e7ecf3; --sub:#9aa6b6; --line:#2a3544; --accent:#7ba2ff;
+    --none:#aeb8c6; --none-bg:#222c39; --up:#f0d36a; --up-bg:#3a3213; --adv:#ffbf69; --adv-bg:#40300f;
+    --warn:#ff9a6b; --warn-bg:#44200f; --sev:#ff8f98; --sev-bg:#47141a; --unk:#b9a8ff; --unk-bg:#2b2450;
+    --ban:#0b0f14; --ban-ink:#e7ecf3;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.banner{background:var(--ban);color:var(--ban-ink);font-size:13px;padding:8px 16px;text-align:center}
+.banner b{font-weight:700}
+h1{font-size:20px;margin:20px 0 4px}
+.lead{color:var(--sub);margin:0 0 16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.scn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.scn:hover,.scn:focus-visible{border-color:var(--accent);outline:none}
+.scn[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+form{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+form .opts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;font-size:13px;color:var(--sub)}
+input,select,button.go{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:9px 10px}
+input[type=text]{width:100%}
+button.go{background:var(--accent);color:#fff;border-color:var(--accent);cursor:pointer;padding:9px 18px}
+button.go:disabled{opacity:.55;cursor:wait}
+label{display:flex;gap:6px;align-items:center}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0}
+.badge{font-size:12px;border-radius:6px;padding:2px 8px;background:var(--none-bg);color:var(--sub)}
+.badge.mode{background:var(--unk-bg);color:var(--unk);font-weight:600}
+.steps{display:flex;flex-wrap:wrap;gap:6px}
+.step{font-size:12px;padding:3px 9px;border-radius:6px;border:1px solid var(--line);color:var(--sub)}
+.step.run{border-color:var(--accent);color:var(--accent)}
+.step.done{background:var(--none-bg);color:var(--ink)}
+.step small{opacity:.7;margin-left:4px}
+.chip{display:inline-block;font-size:13px;border:1px dashed var(--line);border-radius:8px;padding:4px 10px;margin:4px 6px 0 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.card h3{margin:0;padding:10px 14px;font-size:15px}
+.lv{padding:10px 14px;font-weight:700;font-size:16px}
+.lv.none{background:var(--none-bg);color:var(--none)}
+.lv.upcoming{background:var(--up-bg);color:var(--up)}
+.lv.advisory{background:var(--adv-bg);color:var(--adv)}
+.lv.warning{background:var(--warn-bg);color:var(--warn)}
+.lv.severe{background:var(--sev-bg);color:var(--sev)}
+.lv.unknown{background:repeating-linear-gradient(135deg,var(--unk-bg),var(--unk-bg) 8px,transparent 8px,transparent 16px);color:var(--unk)}
+.lv small{display:block;font-weight:400;font-size:12px;opacity:.85}
+.ev{list-style:none;margin:0;padding:8px 14px 12px}
+.ev li{font-size:13px;padding:5px 0;border-top:1px solid var(--line);display:flex;gap:8px}
+.ev li:first-child{border-top:0}
+.tag{flex:none;font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;background:var(--none-bg);color:var(--sub);height:fit-content}
+.gap{color:var(--unk)}
+.note{padding:0 14px 8px;font-size:13px;color:var(--sub)}
+#answer{white-space:normal}
+#answer h4{margin:14px 0 4px;font-size:15px}
+#answer p{margin:4px 0}
+#answer ul{margin:4px 0;padding-left:20px}
+.cite{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:3px;cursor:pointer}
+.cite.hl{background:var(--accent);color:#fff}
+.meta{font-size:12px;color:var(--sub);word-break:break-all}
+.meta .bad{color:var(--sev);font-weight:700}
+.err{color:var(--sev);font-weight:600}
+.caret::after{content:"▍";animation:b 1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+@media (max-width:560px){form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="banner" role="note"><b>공식 경보가 아닙니다.</b> 위급하면 즉시 119·112 · 공식 채널(기상청, 재난문자, 국민재난안전포털)을 확인하세요.</div>
+<div class="wrap">
+  <h1>재난·특보 상황 판단</h1>
+  <p class="lead">특보·재난문자·행동요령을 지역별로 모아, 확인된 근거와 함께 정리합니다. 위험 수준은 코드가 판정하고 AI는 설명만 합니다.</p>
+
+  <section class="panel" aria-label="시나리오">
+    <div class="row" id="scenarios" role="group" aria-label="시연 시나리오"></div>
+    <div id="scnNote" class="meta" style="margin-top:8px"></div>
+    <form id="f">
+      <input type="text" id="q" placeholder="예: 경기도 광주 폭염특보 났는데 지금 나가도 돼?" maxlength="500" aria-label="질문" required>
+      <button class="go" id="send" type="submit">물어보기</button>
+      <div class="opts">
+        <label>데이터
+          <select id="mode"><option value="replay">replay (저장된 실제 데이터)</option><option value="live">live (지금 조회)</option></select>
+        </label>
+        <label>기준 시각 <input type="text" id="asof" placeholder="2026-08-24 12:00" size="16" aria-label="기준 시각"></label>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel" aria-live="polite">
+    <div class="steps" id="steps"></div>
+    <div id="loc"></div>
+    <div class="badges" id="badges"></div>
+  </section>
+
+  <section id="cards" class="cards" aria-label="판정 카드"></section>
+
+  <section class="panel" id="ansPanel" style="display:none;margin-top:14px">
+    <div id="answer" class="caret"></div>
+  </section>
+  <div class="meta" id="meta"></div>
+</div>
+
+<script>
+"use strict";
+const API = new URLSearchParams(location.search).get("api") || "/api";
+const NODES = ["route","parse_intent","gate","plan","research","judge","write","validate","finalize"];
+const NODE_KO = {route:"분기",parse_intent:"의도",gate:"지역",plan:"계획",research:"조회",judge:"판정",write:"작성",validate:"검증",finalize:"완료",fallback:"대체",fixed_response:"고정응답",ask_region:"되묻기"};
+const KIND_KO = {alert:"특보",pending:"예고",released:"해제",message:"문자",guide:"행동요령"};
+const $ = id => document.getElementById(id);
+let es = null, lastRegion = "", evById = {};
+
+function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+
+async function loadScenarios(){
+  try{
+    const list = await (await fetch(API+"/scenarios")).json();
+    const box = $("scenarios");
+    list.forEach(s=>{
+      const b = el("button","scn",s.title); b.type="button"; b.setAttribute("aria-pressed","false");
+      b.onclick = ()=>{ document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true");
+        $("q").value=s.message; $("mode").value=s.mode; $("asof").value=s.as_of||""; $("scnNote").textContent=s.note||""; run(); };
+      box.appendChild(b);
+    });
+  }catch(e){ $("scnNote").textContent="시나리오를 불러오지 못했습니다 ("+e.message+")"; $("scnNote").className="meta err"; }
+}
+
+function resetView(){
+  $("steps").replaceChildren(); $("loc").replaceChildren(); $("badges").replaceChildren();
+  $("cards").replaceChildren(); $("answer").replaceChildren(); $("meta").replaceChildren(); evById={};
+  $("ansPanel").style.display="none";
+  NODES.forEach(n=>{ const s=el("span","step",NODE_KO[n]); s.id="st-"+n; $("steps").appendChild(s); });
+}
+function stepEvent(d){
+  let s = $("st-"+d.node);
+  if(!s){ s=el("span","step",NODE_KO[d.node]||d.node); s.id="st-"+d.node; $("steps").appendChild(s); }
+  s.className = "step "+(d.status==="start"?"run":"done");
+  s.querySelector("small")?.remove();
+  if(d.ms!=null){ s.appendChild(el("small",null,d.ms+"ms")); }
+}
+function showLocation(d){
+  const box=$("loc"); box.replaceChildren();
+  const label={resolved:"지역 확정",assumed:"가정한 지역",ambiguous:"모호함 — 후보를 모두 조회",none:"지역 미확인"}[d.status]||d.status;
+  box.appendChild(el("span","chip",label));
+  d.candidates.forEach(c=>box.appendChild(el("span","chip",c.name+" ("+c.score+")")));
+}
+function badge(text,cls){ const b=el("span","badge"+(cls?" "+cls:""),text); $("badges").appendChild(b); }
+
+function showJudgements(list){
+  const box=$("cards"); box.replaceChildren();
+  list.forEach(j=>{
+    const c=el("article","card"); c.appendChild(el("h3",null,j.region));
+    const lv=el("div","lv "+j.level,j.level_label);
+    lv.appendChild(el("small",null,"기준 "+j.as_of+" · 구역 "+j.zones.join(", ")+(j.uncertain?" · 해석 불확실 코드 포함":"")));
+    c.appendChild(lv);
+    if(j.note) c.appendChild(el("div","note",j.note));
+    const ul=el("ul","ev");
+    j.evidence.forEach(e=>{
+      evById[e.id]=e;
+      const li=el("li"); li.dataset.id=e.id;
+      li.appendChild(el("span","tag",e.id+" "+(KIND_KO[e.kind]||e.kind)));
+      li.appendChild(el("span",null,e.text));
+      ul.appendChild(li);
+    });
+    j.gaps.filter(g=>g.status!=="not_queried").forEach(g=>{
+      const li=el("li"); li.appendChild(el("span","tag gap","정보 없음"));
+      li.appendChild(el("span","gap",g.source+" — "+(g.status==="unavailable"?"해당 행동요령이 API에 없음":"조회 불가("+g.status+"), 안전하다는 뜻이 아님")));
+      ul.appendChild(li);
+    });
+    c.appendChild(ul); box.appendChild(c);
+  });
+}
+
+// 안전한 마크다운 일부(###, -, [E1]) — 모든 텍스트는 textContent 로만 삽입
+function renderAnswer(text){
+  const root=$("answer"); root.replaceChildren(); let ul=null;
+  const addCites=(parent,s)=>{
+    s.split(/(\[[EMG]\d+\])/).forEach(part=>{
+      const m=/^\[([EMG]\d+)\]$/.exec(part);
+      if(m){ const c=el("span","cite",m[1]); c.onclick=()=>{ document.querySelectorAll(".ev li").forEach(li=>li.style.background=li.dataset.id===m[1]?"var(--none-bg)":""); };
+        c.title=(evById[m[1]]||{}).text||""; parent.appendChild(c);} else if(part) parent.appendChild(document.createTextNode(part));
+    });
+  };
+  text.split("\n").forEach(line=>{
+    if(line.startsWith("### ")){ ul=null; root.appendChild(el("h4",null,line.slice(4))); }
+    else if(line.startsWith("- ")){ if(!ul){ ul=el("ul"); root.appendChild(ul);} const li=el("li"); addCites(li,line.slice(2)); ul.appendChild(li); }
+    else if(line.trim()){ ul=null; const p=el("p"); addCites(p,line); root.appendChild(p); }
+  });
+}
+
+function showMeta(f){
+  const m=f.meta, box=$("meta"); box.replaceChildren();
+  const v=f.validation; const t=Object.entries(m.timings_ms||{}).map(([k,x])=>k+" "+x+"ms").join(" · ");
+  box.appendChild(document.createTextNode("run "+m.run_id+" · LLM "+m.llm+" · 답변 출처 "+(f.answer_source||"-")+" · 검증 "));
+  box.appendChild(el("span",v&&v.ok?null:"bad",v?(v.ok?"통과":"위반"):"-"));
+  if(m.llm_errors&&m.llm_errors.length) box.appendChild(document.createTextNode(" · LLM 오류 "+m.llm_errors.length+"건(규칙/템플릿으로 대체)"));
+  box.appendChild(document.createElement("br")); box.appendChild(document.createTextNode(t));
+}
+
+function run(){
+  const q=$("q").value.trim(); if(!q) return;
+  if(es){ es.close(); es=null; }
+  resetView(); $("send").disabled=true;
+  const p=new URLSearchParams({message:q, mode:$("mode").value});
+  if($("asof").value.trim()) p.set("as_of",$("asof").value.trim());
+  if(lastRegion) p.set("history_region_id",lastRegion);   // 서버는 상태를 갖지 않는다 — 이전 지역은 클라이언트가 전달
+  const ans=$("answer"); let started=false;
+  es=new EventSource(API+"/chat/stream?"+p);
+  const on=(name,fn)=>es.addEventListener(name,e=>fn(JSON.parse(e.data)));
+  on("start",d=>{ badge("데이터 "+d.mode,"mode"); if(d.as_of) badge("기준 "+d.as_of); });
+  on("step",stepEvent);
+  on("route",d=>badge("분기: "+d.route));
+  on("intent",d=>{ badge("의도 "+d.intent); badge("재난 "+(d.hazards.join("·")||"미지정")+" ("+d.hazard_source+")"); });
+  on("location",showLocation);
+  on("plan",d=>badge("조회 "+d.steps.join("+")+" ("+d.source+")"));
+  on("source",d=>{ if(d.status!=="ok") badge("⚠ "+d.name+" "+d.status); });
+  on("judgement",d=>showJudgements(d.judgements));
+  on("validation",d=>{ if(!d.ok) badge("검증 위반 → "+(d.attempt==="template"?"템플릿":"재작성")); });
+  on("token",d=>{ if(!started){ started=true; $("ansPanel").style.display=""; ans.className="caret"; ans.textContent=""; } ans.textContent+=d.text; });
+  on("final",f=>{
+    ans.className=""; $("ansPanel").style.display=""; renderAnswer(f.answer); showMeta(f);
+    const j=(f.judgements||[]); if(j.length===1) lastRegion=j[0].region_id; else if(f.location&&f.location.chosen) lastRegion=f.location.chosen;
+    es.close(); es=null; $("send").disabled=false;
+  });
+  on("error",d=>{ ans.className=""; $("ansPanel").style.display=""; ans.replaceChildren(el("p","err","오류: "+d.message+" — 이는 안전하다는 뜻이 아닙니다.")); es&&es.close(); es=null; $("send").disabled=false; });
+  es.onerror=()=>{ if(es&&es.readyState===EventSource.CLOSED){ $("send").disabled=false; } };
+}
+$("f").addEventListener("submit",e=>{ e.preventDefault(); document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); run(); });
+resetView(); loadScenarios();
+</script>
+</body>
+</html>

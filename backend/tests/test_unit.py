@@ -83,6 +83,13 @@ class Judge(unittest.TestCase):
                                {"건조": {"available": False, "reason": "없음", "rows": []}})
         self.assertTrue(any("행동요령(건조)" in g["source"] for g in j["gaps"]))
 
+    def test_guide_rows_prefer_general_public(self):
+        rows = [{"phase": "during", "text": "가축 폐사 시 신고합니다", "id": "a"},
+                {"phase": "during", "text": "충분한 물을 마십니다", "id": "b"}]
+        j = judge.judge_region(alert_resp(alerts=[("폭염", "경보")]), None, {"폭염": {"available": True, "rows": rows}})
+        g = [e for e in j["evidence"] if e["kind"] == "guide"]
+        self.assertEqual([e["ref"] for e in g], ["b", "a"])  # 순서만 바뀌고 삭제되지 않음
+
     def test_evidence_ids_unique(self):
         j = judge.judge_region(alert_resp(alerts=[("폭염", "경보")]), msg_resp(2),
                                {"폭염": {"available": True, "rows": [{"phase": "during", "text": "물을 마신다", "id": "g-1"}]}})

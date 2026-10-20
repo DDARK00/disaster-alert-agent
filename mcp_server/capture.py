@@ -68,13 +68,17 @@ def scrub(text: str, key: str) -> str:
 
 
 def _count(source: str) -> int:
-    FIXTURES.mkdir(parents=True, exist_ok=True)
-    data = json.loads(COUNTER.read_text()) if COUNTER.exists() else {}
-    today = datetime.now().strftime("%Y-%m-%d")
-    day = data.setdefault(today, {})
-    day[source] = day.get(source, 0) + 1
-    COUNTER.write_text(json.dumps(data, ensure_ascii=False, indent=2))
-    return day[source]
+    """호출 횟수 기록. 쓰기 불가(읽기 전용 볼륨 등)여도 호출 자체는 막지 않는다 → 0 반환."""
+    try:
+        FIXTURES.mkdir(parents=True, exist_ok=True)
+        data = json.loads(COUNTER.read_text()) if COUNTER.exists() else {}
+        today = datetime.now().strftime("%Y-%m-%d")
+        day = data.setdefault(today, {})
+        day[source] = day.get(source, 0) + 1
+        COUNTER.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+        return day[source]
+    except OSError:
+        return 0
 
 
 def call(source: str, operation: str, params: dict, tag: str, key_param: str = "serviceKey",
@@ -130,12 +134,16 @@ def call(source: str, operation: str, params: dict, tag: str, key_param: str = "
         "json": body,
         "text": None if body is not None else text[:20000],
     }
-    out = FIXTURES / source
-    out.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    path = out / f"{tag}__{stamp}.json"
-    path.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
-    record["meta"]["saved_to"] = str(path.relative_to(ROOT))
+    try:  # 저장 실패(권한 등)는 조회 결과를 버리지 않는다
+        out = FIXTURES / source
+        out.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        path = out / f"{tag}__{stamp}.json"
+        path.write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8")
+        record["meta"]["saved_to"] = str(path.relative_to(ROOT))
+    except OSError as e:
+        record["meta"]["saved_to"] = None
+        record["meta"]["save_error"] = type(e).__name__
     return record
 
 

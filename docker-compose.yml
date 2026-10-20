@@ -1,0 +1,53 @@
+# mcp / backend / frontend 3컨테이너.  실행: docker compose up --build   →  http://localhost:8080
+# 서비스키는 mcp 컨테이너에만 전달한다 (최소 권한). LLM/LangSmith 설정은 backend 에만 전달한다.
+services:
+  mcp:
+    build:
+      context: .
+      dockerfile: mcp_server/Dockerfile
+    environment:
+      DATA_MODE: ${DATA_MODE:-replay}
+      DSSP_SERVICE_KEY: ${DSSP_SERVICE_KEY:-}
+      DSSP_DOING_SERVICE_KEY: ${DSSP_DOING_SERVICE_KEY:-}
+      WEATHER_ALERTS_SERVICE_KEY: ${WEATHER_ALERTS_SERVICE_KEY:-}
+    volumes:
+      - ./data:/app/data        # fixture 갱신·live 캡처가 호스트에 남도록
+    expose:
+      - "8200"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      MCP_URL: http://mcp:8200/mcp
+      DATA_MODE: ${DATA_MODE:-replay}
+      LLM_BACKEND: ${LLM_BACKEND:-fake}
+      # 호스트의 Ollama (Docker Desktop: 그대로 동작 / Linux: OLLAMA_HOST=0.0.0.0 필요)
+      LLM_BASE_URL: ${LLM_BASE_URL_DOCKER:-http://host.docker.internal:11434/v1}
+      LLM_MODEL: ${LLM_MODEL:-qwen3:8b}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_NO_THINK: ${LLM_NO_THINK:-1}
+      LANGSMITH_TRACING: ${LANGSMITH_TRACING:-false}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+      LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-disaster-advisor}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      mcp:
+        condition: service_healthy
+    expose:
+      - "8100"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped

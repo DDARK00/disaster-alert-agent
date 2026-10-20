@@ -14,6 +14,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 HERE = Path(__file__).resolve().parent
@@ -58,6 +59,9 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
         await gw.stop()
 
     app = FastAPI(title="재난·특보 상황 판단 에이전트", version=VERSION, lifespan=lifespan)
+    # 읽기 전용 GET API. nginx 프록시(same-origin)에서는 불필요하고, 로컬에서 FE 를 다른 포트로 열 때만 쓴다.
+    app.add_middleware(CORSMiddleware, allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
+                       allow_methods=["GET"], allow_headers=["*"])
 
     def init_state(message, mode, as_of, history_region_id, browser_region_id, run_id):
         return {"query": message, "mode": mode or app.state.deps.settings.data_mode, "as_of": as_of or "",

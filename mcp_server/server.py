@@ -163,7 +163,11 @@ def disaster_briefing_prompt(region: str, hazards: str, question: str) -> str:
 
 
 if __name__ == "__main__":
-    try:
+    import os
+
+    if os.environ.get("MCP_TRANSPORT", "stdio") == "http":  # 컨테이너: Streamable HTTP
+        mcp.run(transport="http", host=os.environ.get("MCP_HOST", "0.0.0.0"),
+                port=int(os.environ.get("MCP_PORT", "8200")), path=os.environ.get("MCP_PATH", "/mcp"),
+                show_banner=False)
+    else:  # 로컬 개발: stdio (백엔드가 서브프로세스로 기동)
         mcp.run(show_banner=False)
-    except TypeError:
-        mcp.run()

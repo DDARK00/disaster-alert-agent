@@ -94,7 +94,9 @@ def fold_alerts(items, as_of: datetime, area_codes: set[str] | None = None) -> l
             stress = e["warnStress"]
         new = {**_base(e, hazards), "stress": stress, "stress_name": STRESS_NAME.get(stress, str(stress)),
                "status": "active" if eff <= as_of else "pending_start",
-               "since": eff if (cur is None or cur["status"] == "released") else cur.get("since", eff),
+               # since = 현재 등급이 시작된 시각 (등급이 바뀌면 그 효력 시각, 같으면 유지)
+               "since": eff if (cur is None or cur["status"] == "released" or cur.get("stress") != stress)
+               else cur.get("since", eff),
                "release_at": None, "uncertain": uncertain or (cur or {}).get("uncertain", False) and cmd == CMD_EXTEND,
                "last_event": _ev(e)}
         if eff > as_of and cur and cur["status"] == "active":

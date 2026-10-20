@@ -25,4 +25,4 @@
 - replay에서 `as_of`를 생략하면 2026-10-19 23:59.
 
 ## 테스트
-`.venv/bin/python -m unittest discover -s mcp_server/tests` — 27건 (상태 접기 11, 지역 7, 서버 통합 9).
+`sh/test.sh` (MCP 31건: 상태 접기 11, 지역 7, 서버 통합 9, capture 4). 컨테이너 실행은 `MCP_TRANSPORT=http` (`doc/도커.md`).
