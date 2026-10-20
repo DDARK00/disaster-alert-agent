@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "api_result_code": "00",
+    "api_result_msg": "NORMAL SERVICE",
+    "api_ok": true,
+    "source": "shelter",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T06:49:53+00:00",
+    "http_status": 200,
+    "elapsed_ms": 135,
+    "call_no_today": 12,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-10941?serviceKey=***&numOfRows=100&pageNo=1&returnType=json&startLat=37.28&endLat=37.53&startLot=127.14&endLot=127.48&shlt_se_cd=4",
+    "error": null,
+    "error_kind": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 100,
+    "pageNo": 1,
+    "totalCount": 0,
+    "body": null
+  },
+  "text": null
+}

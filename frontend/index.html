@@ -121,7 +121,7 @@ a.chip{border-style:solid;color:inherit;text-decoration:none}
 const API = new URLSearchParams(location.search).get("api") || "/api";
 const NODES = ["route","parse_intent","gate","plan","research","judge","write","validate","finalize"];
 const NODE_KO = {route:"분기",parse_intent:"의도",gate:"지역",plan:"계획",research:"조회",judge:"판정",write:"작성",validate:"검증",finalize:"완료",fallback:"대체",fixed_response:"고정응답",ask_region:"되묻기"};
-const KIND_KO = {alert:"특보",pending:"예고",released:"해제",message:"문자",guide:"행동요령"};
+const KIND_KO = {alert:"특보",pending:"예고",released:"해제",message:"문자",guide:"행동요령",shelter:"쉼터"};
 const $ = id => document.getElementById(id);
 let es = null, lastRegion = "", evById = {};
 
@@ -161,6 +161,8 @@ function showLocation(d){
 }
 // 카카오맵 링크 칩 (경로 판단 없음 — 카카오맵으로 넘기기까지만). 서버 검사 후에도 형식을 다시 확인한다
 const KAKAO_LINK=/^https:\/\/map\.kakao\.com\/link\/(map|to)\/\d+$/;
+// 쉼터: 이름·주소 검색 링크 (서버가 만든 형식만). 운영 여부·경로는 반영되지 않는다
+const KAKAO_SEARCH=/^https:\/\/map\.kakao\.com\/link\/search\/[0-9A-Za-z%._~-]+$/;
 function showLinks(d){
   const box=$("links"); box.replaceChildren();
   const ok=(d.chips||[]).filter(c=>KAKAO_LINK.test(c.url));
@@ -187,6 +189,10 @@ function showJudgements(list){
       const li=el("li"); li.dataset.id=e.id;
       li.appendChild(el("span","tag",e.id+" "+(KIND_KO[e.kind]||e.kind)));
       li.appendChild(el("span",null,e.text));
+      if(e.kind==="shelter"&&KAKAO_SEARCH.test(e.map_url||"")){
+        const a=el("a","chip","카카오맵에서 찾기"); a.href=e.map_url; a.target="_blank"; a.rel="noopener noreferrer";
+        a.title="이름·주소 검색 결과로 넘어갑니다. 운영 여부와 경로상의 통제·침수 여부는 반영되지 않았습니다."; li.appendChild(a);
+      }
       ul.appendChild(li);
     });
     j.gaps.filter(g=>g.status!=="not_queried").forEach(g=>{
@@ -204,8 +210,8 @@ function showJudgements(list){
 function renderAnswer(text){
   const root=$("answer"); root.replaceChildren(); let ul=null;
   const addCites=(parent,s)=>{
-    s.split(/(\[[EMG]\d+\])/).forEach(part=>{
-      const m=/^\[([EMG]\d+)\]$/.exec(part);
+    s.split(/(\[[EMGS]\d+\])/).forEach(part=>{
+      const m=/^\[([EMGS]\d+)\]$/.exec(part);
       if(m){ const c=el("span","cite",m[1]); c.onclick=()=>{ document.querySelectorAll(".ev li").forEach(li=>li.style.background=li.dataset.id===m[1]?"var(--none-bg)":""); };
         c.title=(evById[m[1]]||{}).text||""; parent.appendChild(c);} else if(part) parent.appendChild(document.createTextNode(part));
     });

@@ -3,7 +3,7 @@
 route ─┬─ emergency / not_in_data / out_of_scope ─→ fixed_response ─→ END   (LLM 미사용)
        └─ disaster → parse_intent(LLM+규칙) → gate(코드) ─┬─ ask_region ─→ END
                                                           ├─ unavailable (MCP 불가, 원인 문구) ─→ END
-                                                          └─ plan(LLM+제약) → research(병렬+재시도)
+                                                          └─ plan(LLM+제약) → research(병렬+재시도, 쉼터는 코드가 붙임)
                                                              → judge(코드) → write(LLM) → validate(코드)
                                                                  ├ ok → finalize
                                                                  ├ 위반 & 재작성 가능 → write
@@ -56,6 +56,7 @@ class State(TypedDict, total=False):
     alerts: dict
     messages: dict
     guides: dict
+    shelters: dict
     judgements: list
     answer: str
     answer_source: str
@@ -107,6 +108,7 @@ def emitter(config: RunnableConfig):
 
 def build_graph(deps: Deps):
     hazard_names: list[str] = []
+    shelter_hazards: set[str] = set()  # 쉼터 구분이 연결된 유형 (hazard_map shelter — 폭염·한파·지진)
 
     async def allowed_hazards() -> list[str]:
         if not hazard_names:
@@ -115,6 +117,7 @@ def build_graph(deps: Deps):
             except Exception:  # noqa: BLE001 — MCP 불가여도 규칙 사전의 유형 이름으로 계속 (gate 에서 원인과 함께 멈춘다)
                 return list(rules.HAZARD_SYNONYMS)
             hazard_names.extend(h["name"] for h in r["hazards"])
+            shelter_hazards.update(h["name"] for h in r["hazards"] if h.get("shelter"))
         return hazard_names
 
     def timed(name: str, fn):
@@ -281,15 +284,15 @@ def build_graph(deps: Deps):
         alerts = {rid: resp for k, rid, resp in results if k == "alerts"}
         messages = {rid: resp for k, rid, resp in results if k == "messages"}
 
-        # 행동요령: 특보가 알려 준 재난 + 사용자가 말한 재난 (재난문자 라벨은 신뢰도 문제로 제외, T-010)
+        # 관련 재난: 특보가 알려 준 재난 + 사용자가 말한 재난 (재난문자 라벨은 신뢰도 문제로 제외, T-010)
+        wanted: dict[str, set] = {}
+        for rid in regions:
+            a = alerts[rid]
+            for hz in [x["hazard"] for x in a["alerts"] + a["pending"]] + list(state.get("hazards", [])):
+                wanted.setdefault(rid, set()).add(hz)
         guides: dict[str, dict] = {}
         if "guide" in steps:
             # 모든 단계를 한 번에 받고, 지금 할 일 / 미리 대비할 일 / 하지 말 것 묶음은 judge 가 고른다 (ADR-016)
-            wanted: dict[str, set] = {}
-            for rid in regions:
-                a = alerts[rid]
-                for hz in [x["hazard"] for x in a["alerts"] + a["pending"]] + list(state.get("hazards", [])):
-                    wanted.setdefault(rid, set()).add(hz)
             calls = {hz for v in wanted.values() for hz in v}
 
             async def guide(hz: str):
@@ -305,20 +308,44 @@ def build_graph(deps: Deps):
             bad = [r for r in got.values() if r.get("cause")]
             writer({"event": "source", "name": "행동요령", "status": "failed" if bad else "ok",
                     "cause": bad[0]["cause"] if bad else None, "count": len(calls)})
+
+        # 쉼터·대피장소: 계획과 무관하게 코드가 붙인다 — 관련 재난 중 쉼터 구분이 있는 유형만 (호우·태풍 등은 없음)
+        await allowed_hazards()
+        pairs = sorted((rid, hz) for rid, hzs in wanted.items() for hz in hzs if hz in shelter_hazards)
+
+        async def shelter(rid: str, hz: str):
+            try:
+                r = await with_retry(lambda: deps.mcp.tool("get_shelters", {"region_id": rid, "hazard": hz, "mode": mode}))
+            except Exception as e:  # noqa: BLE001 — 쉼터 실패는 나머지 답변을 막지 않는다 (해당 항목만 '정보 없음')
+                r = {"region_id": rid, "hazard": hz, "status": "failed", "cause": mcp_cause(e),
+                     "reason": f"조회 실패: {type(e).__name__}", "shelters": []}
+            return rid, hz, r
+        shelters: dict[str, dict] = {}
+        for rid, hz, r in await asyncio.gather(*[shelter(r, h) for r, h in pairs]):
+            shelters.setdefault(rid, {})[hz] = r
+        if pairs:
+            bad_s = [r for d in shelters.values() for r in d.values() if r["status"] == "failed"]
+            writer({"event": "source", "name": msg("shelters.source_name"), "status": "failed" if bad_s else "ok",
+                    "cause": bad_s[0].get("cause") if bad_s else None,
+                    "count": sum(len(r["shelters"]) for d in shelters.values() for r in d.values())})
         fails = [{"stage": "source", "source": r["source"]["name"], "region_id": rid, "cause": r["source"].get("cause"),
                   "status": r["source"]["status"]}
                  for d in (alerts, messages) for rid, r in d.items() if r["source"]["status"] == "failed"]
         fails += [{"stage": "source", "source": f"행동요령({r['hazard']})", "cause": r["cause"], "status": "failed"}
                   for r in (got.values() if "guide" in steps else []) if r.get("cause")]
+        fails += [{"stage": "source", "source": f"{msg('shelters.source_name')}({hz})", "region_id": rid,
+                   "cause": r.get("cause"), "status": "failed"}
+                  for rid, d in shelters.items() for hz, r in d.items() if r["status"] == "failed"]
         if fails:
             log.warning("source failures: %s", [(f["source"], f.get("region_id"), f["cause"]) for f in fails])
             annotate_span(source_failures=[f"{f['source']}:{f['cause']}" for f in fails])
-        return {"alerts": alerts, "messages": messages, "guides": guides,
+        return {"alerts": alerts, "messages": messages, "guides": guides, "shelters": shelters,
                 "failures": list(state.get("failures", [])) + fails}
 
     # ── judge (코드) ──
     async def judge_node(state: State, writer):
-        js = [judge.judge_region(state["alerts"][rid], state["messages"].get(rid), state.get("guides", {}).get(rid, {}))
+        js = [judge.judge_region(state["alerts"][rid], state["messages"].get(rid), state.get("guides", {}).get(rid, {}),
+                                 state.get("shelters", {}).get(rid, {}))
               for rid in state["regions"]]
         writer({"event": "judgement", "judgements": js})
         return {"judgements": js}
@@ -353,6 +380,14 @@ def build_graph(deps: Deps):
             if groups:
                 region_ids.append(prompt("write", "guide_groups", region=j["region"], groups="\n".join(
                     f"  {head}: " + ", ".join(f"[{i}]" for i in ids) for head, ids in groups.items())))
+            # 쉼터: 제목 줄(운영 여부 미확인 안내)을 그대로, 그 아래 [S#] 항목만 — 가까움·운영 여부를 지어내지 않는다
+            sgroups: dict[str, list[str]] = {}
+            for e in j["evidence"]:
+                if e["kind"] == "shelter":
+                    sgroups.setdefault(e["group_label"], []).append(e["id"])
+            if sgroups:
+                region_ids.append(prompt("write", "shelter_groups", region=j["region"], groups="\n".join(
+                    f"  {head}\n    → " + ", ".join(f"[{i}]" for i in ids) for head, ids in sgroups.items())))
         user = prompt("write", "user", facts=json.dumps(facts, ensure_ascii=False), region_ids="\n".join(region_ids))
         must = []
         for j in js:
@@ -363,6 +398,7 @@ def build_graph(deps: Deps):
             if j["level"] == "unknown":
                 sentences.append(msg("answer.unknown"))
             sentences += [compose.gap_line(g) for g in j["gaps"] if g["status"] in ("failed", "no_coverage", "unavailable")]
+            sentences += list(dict.fromkeys(e["group_label"] for e in j["evidence"] if e["kind"] == "shelter"))
             must += [prompt("write", "must", region=j["region"], sentence=s) for s in sentences]
         if must:
             user += "\n" + prompt("write", "must_header") + "\n" + "\n".join(f"* {m}" for m in must)

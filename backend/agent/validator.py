@@ -2,14 +2,27 @@
 from __future__ import annotations
 
 import re
+import urllib.parse
 
 from config.catalog import RULES, msg
 
 FORBIDDEN: list[str] = RULES["forbidden"]
 MK: dict[str, str] = msg("markers")
-CITE = re.compile(r"\[([EMG]\d+)\]")
+CITE = re.compile(r"\[([EMGS]\d+)\]")
 URL = re.compile(r"https?://|www\.|kakao\.com", re.I)
 KAKAO_LINK = re.compile(r"https://map\.kakao\.com/link/(map|to)/\d+")
+KAKAO_SEARCH = re.compile(r"https://map\.kakao\.com/link/search/[0-9A-Za-z%._~-]+")
+PAREN = re.compile(r"\s*[(,].*$")
+
+
+def shelter_link(address: str) -> str | None:
+    """쉼터 도로명 주소 → 카카오맵 검색 링크 (카카오 API 를 호출하지 않는다 — 응답 저장 없음, 경로 없음).
+    괄호·쉼표 뒤 부가 정보는 뺀다. 형식이 어긋나면 링크를 만들지 않는다."""
+    q = PAREN.sub("", address or "").strip()
+    if not q or len(q) > 80:
+        return None
+    url = "https://map.kakao.com/link/search/" + urllib.parse.quote(q, safe="")
+    return url if KAKAO_SEARCH.fullmatch(url) else None
 
 
 def validate_links(links: dict, notice: str | None, region: str) -> dict | None:
@@ -58,6 +71,8 @@ def validate(answer: str, judgements: list[dict]) -> dict:
     cited = set(CITE.findall(answer))
     for c in cited - ids:
         v.append(f"존재하지 않는 근거 인용: [{c}]")
+    if any(c.startswith("S") for c in cited) and MK["shelter_notice"] not in answer:  # 쉼터는 운영 여부를 모른다고 밝힌다
+        v.append("쉼터 인용인데 운영 여부·시간 미확인 안내 없음")
 
     for line in answer.splitlines():
         s = line.strip()

@@ -12,6 +12,8 @@
   emergency_fixed                : 위급 표현은 LLM 없이 고정 119/112 응답
   cause                          : 장애 주입 항목(fault)에서 기대한 원인 코드가 meta.failures 에 있고 원인별 문구가 답변에 있는가
   not_in_data                    : 공식 데이터에 없는 행동요령을 "해당 항목이 없습니다"로 밝혔는가 (지어내지 않음)
+  shelter                        : 쉼터 기대값(shelter: true/false)과 같은가 — true 면 [S#] 근거가 있고 운영 여부 미확인 안내가 답변에,
+                                   false 면 쉼터 근거·안내가 없어야 한다 (호우·태풍에는 붙지 않음)
   structured                     : 기대한 행동요령 묶음(지금 할 일 / 미리 대비할 일 / 하지 말 것) 제목이 답변에 있는가 + 특보구역 코드 비노출
 검증기·판정 코드는 백엔드 것을 그대로 쓴다 — 평가용으로 느슨한 기준을 따로 만들지 않는다.
 
@@ -40,7 +42,7 @@ DATASET = HERE / "dataset.jsonl"
 RISKY = {"upcoming", "advisory", "warning", "severe"}
 ZONE_CODE = re.compile(r"\bL\d{7}\b")
 METRICS = ["route", "regions", "level", "no_missed_risk", "no_forbidden", "grounded", "emergency_fixed", "cause",
-           "not_in_data", "structured"]
+           "not_in_data", "structured", "shelter"]
 
 
 def load() -> list[dict]:
@@ -57,20 +59,23 @@ def ask_fault(ex: dict) -> dict:
     from agent.graph import build_graph
     from agent.llm import make_llm
     from agent.mcp_client import MCPGateway
-    from faults import DownGateway, api_fault
+    from faults import DownGateway, api_fault, shelter_down_gateway
 
     async def go():
-        gw = DownGateway() if ex["fault"] == "mcp_down" else MCPGateway(mcp_module.mcp)
+        gw = (DownGateway() if ex["fault"] == "mcp_down" else shelter_down_gateway() if ex["fault"] == "shelter_down"
+              else MCPGateway(mcp_module.mcp))
         await gw.start()
         try:
             llm = make_llm()
             graph = build_graph(Deps(mcp=gw, llm=llm, settings=Settings.from_env()))
-            st = await graph.ainvoke({"query": ex["message"], "mode": "live", "as_of": ""},
+            # shelter_down 은 쉼터만 실패시키고 나머지는 replay 그대로 (기준 시각 사용)
+            run = ({"mode": "replay", "as_of": ex["as_of"]} if ex["fault"] == "shelter_down" else {"mode": "live", "as_of": ""})
+            st = await graph.ainvoke({"query": ex["message"], **run},
                                      config={"configurable": {"emit": lambda e: None}})
             return st["final"], llm.name
         finally:
             await gw.stop()
-    if ex["fault"] == "mcp_down":
+    if ex["fault"] in ("mcp_down", "shelter_down"):
         f, name = asyncio.run(go())
     else:
         with api_fault(ex["fault"]):
@@ -113,6 +118,12 @@ def score(out: dict, expect: dict) -> dict[str, int]:
     s["structured"] = int(not ZONE_CODE.search(out["answer"]) and all(
         lb in out["answer"] and any(e.get("group_label") == lb for j in out["judgements"] for e in j["evidence"])
         for lb in expect.get("groups", [])))
+    sh_ev = [e for j in out["judgements"] for e in j["evidence"] if e["kind"] == "shelter"]
+    notice = msg("markers.shelter_notice") in out["answer"]
+    if "shelter" in expect:
+        s["shelter"] = int(bool(sh_ev) and notice) if expect["shelter"] else int(not sh_ev and not notice)
+    else:
+        s["shelter"] = 1
     if expect.get("guide"):
         guide_ev = [e for j in out["judgements"] for e in j["evidence"] if e["kind"] == "guide"]
         s["level"] &= int(bool(guide_ev))

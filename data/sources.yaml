@@ -141,4 +141,4 @@ sources:
     page_size: 100
     cache: region_hours
     fixture_dir: shelter
-    status: evaluating   # 작업 D(쉼터 연결)에서 검증 후 active
+    status: active   # 폭염·한파 쉼터, 지진 옥외대피장소만 (2026-10-20 연결, mcp_server/shelters.py)

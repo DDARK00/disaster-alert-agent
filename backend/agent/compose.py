@@ -54,6 +54,12 @@ def render_answer(judgements: list[dict], intent: str = "status") -> str:
                     last = head
                 src = f" · {e['source']}" if e.get("source") else ""
                 out.append(f"- [{e['hazard']}{src}] {e['text']} {_cite(e)}")
+        last = None
+        for e in [x for x in evs if x["kind"] == "shelter"]:  # 공식 목록에 있는 장소 (운영 여부 미확인 안내가 제목)
+            if e["group_label"] != last:
+                out.append(e["group_label"])
+                last = e["group_label"]
+            out.append(f"- {e['text']} {_cite(e)}")
         for g in j["gaps"]:
             if g["status"] == "not_queried":
                 continue

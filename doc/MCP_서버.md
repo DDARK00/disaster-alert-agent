@@ -10,7 +10,8 @@
 | `get_alert_status` | Tool | `region_id`, `as_of?`, `mode?` | 발효(alerts)·예고(pending)·최근 해제. 소스 상태와 문구 포함 |
 | `get_disaster_messages` | Tool | `region_id`, `as_of?`, `lookback_hours`, `hazards?` | 지역 적용 문자. scope direct/sido_wide |
 | `search_action_guide` | Tool | `hazard`, `phase?`, `mode?` | 행동요령 행(ID 포함). 소스는 hazard_map `source`로 코드가 정함(자연·사회·생활안전·민방위). `source`·`source_label`·`origin`(fixture/live/live_cache/fixture_fallback)·`excluded_non_citizen`. 없는 유형은 available=False |
-| `list_hazards` | Tool | – | 유형과 행동요령 유무 |
+| `get_shelters` | Tool | `region_id`, `hazard`, `mode?` | 공식 목록(통합대피소)에 있는 쉼터·대피장소 — 폭염(무더위쉼터)·한파(한파쉼터)·지진(옥외대피장소)만. 그 밖의 유형은 `not_applicable`. status ok/failed(cause)/no_range/no_coverage. 이름·도로명 주소·관리번호만(좌표 없음), 상한 `rules.yaml shelters.limit`, 가까운 순 아님 |
+| `list_hazards` | Tool | – | 유형과 행동요령 유무, 쉼터 구분(`shelter`) |
 | `source_health` | Tool | – | 소스별 최근 live 호출 성공·실패 시각, 원인 코드, 실패 횟수 (키·URL 없음, 프로세스 메모리) |
 | `guide://action/{hazard}` | Resource | – | 행동요령 전문 + 출처 |
 | `disaster_briefing_prompt` | Prompt | `region`, `hazards`, `question` | 답변 작성 규칙(안전 문구 규칙) |
@@ -27,6 +28,15 @@
 - `guides.py`: 행동요령 4종 공통 어댑터. 쪽 넘기기(totalCount + 꽉 찬 쪽이면 한 쪽 더), live 일 1회 캐시·fixture 폴백, 정규화(제목·빈 행 제외, 앞 기호 제거, `Q : … A : …` → 한 줄), 대상 필터(rules.yaml `guide_audience`). fixture 갱신: `.venv/bin/python mcp_server/guides.py capture [소스]` (실제 호출 ~20건).
 - `schemas.py`: 외부 응답 pydantic 모델(봉투·행동요령·대피소·재난문자·기상특보). live 응답 검증 실패 → `response_invalid`.
 - fixture: `data/fixtures/{doing,guide_social,guide_life,guide_civil_defense}/cate_<코드>_p<n>__<시각>.json` (2026-10-20 수집, 커밋). 예전 단일 파일(`doing/cate_<코드>__…`)은 지우지 않았고 쪽 단위 파일이 있으면 그것을 쓴다(T-031).
+
+## 쉼터·대피장소 (`shelters.py`)
+- 재난 유형 → 구분은 `hazard_map.json`의 `shelter`(heat·cold·quake, 코드가 정함). 구분 → 요청 코드·이름 필터·상한·정렬·캐시 시간은 `config/rules.yaml` `shelters`(데이터).
+- 구분 코드와 이름이 1:1이 아니다(코드 1에도 "한파쉼터,무더위쉼터"가 섞임) → 폭염은 이름에 "무더위", 한파는 "한파"가 있어야 채택. 지진은 구분 3·4.
+- 지역 범위: `regions.json` `shelter_area.bbox`(위경도 사각형)로 요청, 사각형에 섞이는 이웃 시군 시설은 `shelter_area.addr_prefixes`(도로명 주소 앞부분, 광주는 `전남광주통합특별시`·`광주광역시` 모두)로 거른다. 범위 데이터가 없는 지역은 `no_range` — 실패가 아니므로 답변에 "정보 없음"을 붙이지 않고 쉼터 없이 답한다.
+- 정렬: 사용자 좌표를 받지 않으므로 **가까운 순이 아니다**. 필터 뒤 주소·이름·관리번호 순으로 정렬해 상한(3)개. 같은 응답이면 같은 결과(응답 순서와 무관, 테스트로 고정). 주소 필터 뒤 상한이 안 차면 다음 쪽(최대 `max_pages`).
+- live: (지역, 구분) 단위 캐시 `cache_hours`(6시간, `sources.yaml cache: region_hours`), 실패하면 커밋된 fixture로 폴백(`origin=fixture_fallback`, `fallback_cause`). 저장본도 없으면 `failed`+원인 코드. 응답은 pydantic(`ShelterRow`)으로 검증, 형식 이상은 `response_invalid`. 호출 수·일일 한도는 capture 카운터.
+- replay: 커밋된 fixture `data/fixtures/shelter/<지역>_cd<코드>_p<n>__<시각>.json`(2026-10-20 수집). 쉼터 목록은 시각에 따라 접지 않으므로 replay 기준 시각과 관계없이 같은 저장본을 쓴다. 갱신: `.venv/bin/python mcp_server/shelters.py capture [지역 ID]`(지역당 약 6건).
+- 운영 여부·운영 시간 필드는 응답에 없다. 백엔드는 `[S#]` 근거와 고정 제목 문구(`messages.yaml shelters.header`, "운영 여부·운영 시간은 이 목록에 없어 확인되지 않았습니다")로만 안내하고, 이름·주소로 카카오맵 **검색 링크**(`https://map.kakao.com/link/search/…`)를 카드에 칩으로 붙인다(Kakao API 호출·응답 저장 없음, 경로 판단 없음).
 
 ## 문구·설정의 위치 (ADR-012)
 - `statement` 문구와 면책은 `prompts/messages.yaml`(`mcp.*`, `disclaimer`), 브리핑 프롬프트 원문은 `prompts/briefing.md`.

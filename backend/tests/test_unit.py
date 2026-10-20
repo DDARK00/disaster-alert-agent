@@ -137,6 +137,27 @@ class Validator(unittest.TestCase):
         self.assertIn("광주광역시: 이 지역 근거가 아닌 인용 [E2]", v)
         self.assertIn("지역 섹션 밖 인용: [E1]", validate("- [E1]\n" + bad, js)["violations"])
 
+    def test_shelter_citation_needs_existing_id_and_notice(self):
+        sh = {"폭염": {"status": "ok", "kind_label": "무더위쉼터", "source": "행정안전부 통합대피소", "source_label": "통합대피소",
+                     "shelters": [{"id": "T1", "name": "가경로당", "address": "경기도 광주시 경안로 1 (경안동)", "kind_name": "x"}]}}
+        js = [judge.judge_region(alert_resp(alerts=[("폭염", "경보")]), None, {}, sh)]
+        e = [x for x in js[0]["evidence"] if x["kind"] == "shelter"][0]
+        self.assertEqual(e["id"], "S1")
+        self.assertEqual(e["map_url"], "https://map.kakao.com/link/search/"
+                         "%EA%B2%BD%EA%B8%B0%EB%8F%84%20%EA%B4%91%EC%A3%BC%EC%8B%9C%20%EA%B2%BD%EC%95%88%EB%A1%9C%201")
+        ok = compose.render_answer(js)
+        self.assertTrue(validate(ok, js)["ok"], validate(ok, js))
+        self.assertIn("존재하지 않는 근거 인용: [S2]", validate(ok.replace("[S1]", "[S2]"), js)["violations"])
+        no_notice = "\n".join(l for l in ok.splitlines() if "운영 여부" not in l)
+        self.assertIn("쉼터 인용인데 운영 여부·시간 미확인 안내 없음", validate(no_notice, js)["violations"])
+        self.assertFalse(validate(ok + "\n가까운 쉼터로 가세요.", js)["ok"])
+
+    def test_shelter_failure_is_gap_but_no_range_is_silent(self):
+        js = judge.judge_region(alert_resp(), None, {}, {"폭염": {"status": "failed", "cause": "api_timeout", "reason": "x"},
+                                                        "한파": {"status": "no_range", "reason": "x"}})
+        self.assertEqual([(g["source"], g["cause"]) for g in js["gaps"]], [("쉼터 목록(폭염)", "api_timeout")])
+        self.assertTrue(validate(compose.render_answer([js]), [js])["ok"])
+
     def test_unknown_citation_rejected(self):
         self.assertFalse(validate(compose.render_answer(self.j) + " [E99]", self.j)["ok"])
 
@@ -160,8 +181,9 @@ class Catalog(unittest.TestCase):
         from agent import validator
         self.assertEqual(validator.MK, {"no_info": "정보 없음", "no_risk": "확인된 위험 정보 없음", "no_guarantee": "공식 채널도 함께 확인",
                                         "official": "공식 경보", "emergency_call": "119",
-                                        "not_in_data": "해당 항목이 없습니다"})
-        for w in ["안전합니다", "안전해요", "걱정하지 마", "문제없", "괜찮습니다", "위험 없", "안심하"]:
+                                        "not_in_data": "해당 항목이 없습니다",
+                                        "shelter_notice": "운영 여부·운영 시간은 이 목록에 없어"})
+        for w in ["안전합니다", "안전해요", "걱정하지 마", "문제없", "괜찮습니다", "위험 없", "안심하", "가까운 쉼터", "운영 중인 쉼터"]:
             self.assertIn(w, validator.FORBIDDEN)
 
     def test_guide_rows_with_forbidden_words_are_excluded(self):

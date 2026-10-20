@@ -1,5 +1,5 @@
 {
-  "_note": "기상특보 warnVar ↔ 재난문자 DST_SE_NM ↔ 행동요령 safety_cate2. 2026-10-20 호출로 확인. null=해당 항목 없음(폴백 금지, 답변에 '행동요령 없음' 명시) source=data/sources.yaml 의 guide 소스 이름(코드가 소스를 정한다, ADR-013). warnVar=null 은 기상특보가 없는 유형(행동요령만).",
+  "_note": "기상특보 warnVar ↔ 재난문자 DST_SE_NM ↔ 행동요령 safety_cate2. 2026-10-20 호출로 확인. null=해당 항목 없음(폴백 금지, 답변에 '행동요령 없음' 명시) source=data/sources.yaml 의 guide 소스 이름(코드가 소스를 정한다, ADR-013). warnVar=null 은 기상특보가 없는 유형(행동요령만). shelter=통합대피소 구분(config/rules.yaml shelters.kinds) — 폭염·한파·지진만, 호우·태풍 등에는 쉼터를 붙이지 않는다(데이터에 해당 구분이 없음).",
   "hazards": {
     "강풍": {
       "warnVar": 1,
@@ -41,7 +41,8 @@
       "phases": {
         "01006001": "prepare",
         "01006002": "during"
-      }
+      },
+      "shelter": "cold"
     },
     "건조": {
       "warnVar": 4,
@@ -141,7 +142,8 @@
         "01009001": "prepare",
         "01009002": "during",
         "01009003": "info"
-      }
+      },
+      "shelter": "heat"
     },
     "열대야": {
       "warnVar": 13,
@@ -164,7 +166,8 @@
         "01011012": "after",
         "01011007": "info",
         "01011008": "info"
-      }
+      },
+      "shelter": "quake"
     },
     "화재": {
       "warnVar": null,

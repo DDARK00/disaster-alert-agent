@@ -13,6 +13,7 @@ from agent.deps import Deps, Settings  # noqa: E402
 from agent.graph import build_graph  # noqa: E402
 from agent.llm import FakeLLM  # noqa: E402
 from agent.mcp_client import MCPGateway  # noqa: E402
+from config.catalog import msg  # noqa: E402
 
 
 async def run(query, *, llm=None, as_of="2026-08-24 12:00", mode="replay", mcp=None, **extra):
@@ -147,6 +148,70 @@ class Resilience(unittest.TestCase):
         self.assertEqual(final["judgements"][0]["level"], "unknown")
         self.assertIn("정보 없음", final["answer"])
         self.assertTrue(final["validation"]["ok"])
+
+
+class Shelters(unittest.TestCase):
+    """쉼터·대피장소: 폭염·한파·지진에만, 근거 [S#]·운영 여부 미확인 안내와 함께, 실패해도 나머지 답변은 정상."""
+
+    def test_heat_warning_attaches_official_list_shelters(self):
+        final, events, _ = R("경기도 광주 폭염 어때?")
+        j = final["judgements"][0]
+        sh = [e for e in j["evidence"] if e["kind"] == "shelter"]
+        self.assertEqual(len(sh), 3)
+        self.assertTrue(all(e["id"].startswith("S") and "경기도 광주시" in e["text"] for e in sh))
+        self.assertTrue(all(e["map_url"].startswith("https://map.kakao.com/link/search/") for e in sh))
+        self.assertIn(msg("markers.shelter_notice"), final["answer"])
+        self.assertIn("[S1]", final["answer"])
+        self.assertNotIn("kakao", final["answer"].lower())  # 링크는 본문이 아니라 카드 칩으로만
+        self.assertTrue(final["validation"]["ok"])
+        self.assertTrue(any(e.get("event") == "source" and e["name"] == "쉼터 목록" for e in events))
+
+    def test_cold_and_quake_attach_shelters(self):
+        for q, as_of, word in (("광주광역시 한파 대비 행동요령 알려줘", "2026-10-19 12:00", "한파쉼터"),
+                               ("광주광역시 지진 나면 어떻게 해?", "2026-10-19 12:00", "지진 옥외대피장소")):
+            final, _, _ = R(q, as_of=as_of)
+            j = final["judgements"][0]
+            sh = [e for e in j["evidence"] if e["kind"] == "shelter"]
+            self.assertTrue(sh, q)
+            self.assertIn(word, sh[0]["group_label"])
+            self.assertTrue(final["validation"]["ok"], final["validation"])
+
+    def test_rain_and_typhoon_never_get_shelters(self):
+        for q, as_of in (("광주광역시 호우 어때?", "2026-08-27 16:00"), ("광주광역시 태풍 대비 행동요령 알려줘", "2026-10-19 12:00")):
+            final, events, _ = R(q, as_of=as_of)
+            self.assertFalse([e for j in final["judgements"] for e in j["evidence"] if e["kind"] == "shelter"], q)
+            self.assertNotIn(msg("markers.shelter_notice"), final["answer"])
+            self.assertFalse([e for e in events if e.get("event") == "source" and e["name"] == "쉼터 목록"])
+
+    def test_shelter_failure_keeps_rest_of_answer(self):
+        class ShelterDown(MCPGateway):
+            async def tool(self, name, args):
+                if name == "get_shelters":
+                    from fastmcp.exceptions import ToolError
+                    raise ToolError("boom")
+                return await super().tool(name, args)
+        final, events, _ = asyncio.run(run_with(ShelterDown, "경기도 광주 폭염 어때?"))
+        j = final["judgements"][0]
+        self.assertEqual(j["level"], "warning")  # 특보 판정은 그대로
+        self.assertFalse([e for e in j["evidence"] if e["kind"] == "shelter"])
+        gap = [g for g in j["gaps"] if g["source"] == "쉼터 목록(폭염)"]
+        self.assertEqual((gap[0]["status"], gap[0]["cause"]), ("failed", "mcp_tool_error"))
+        self.assertIn("정보 없음: 쉼터 목록(폭염)", final["answer"])
+        self.assertTrue(final["validation"]["ok"])
+        self.assertIn("mcp_tool_error", {f["cause"] for f in final["meta"]["failures"]})
+
+
+async def run_with(gateway_cls, query, as_of="2026-08-24 12:00"):
+    gw = gateway_cls(mcp_module.mcp)
+    await gw.start()
+    try:
+        graph = build_graph(Deps(mcp=gw, llm=FakeLLM(), settings=Settings(data_mode="replay", max_rewrites=1)))
+        events: list = []
+        state = await graph.ainvoke({"query": query, "mode": "replay", "as_of": as_of},
+                                    config={"configurable": {"emit": events.append}})
+        return state["final"], events, None
+    finally:
+        await gw.stop()
 
 
 if __name__ == "__main__":

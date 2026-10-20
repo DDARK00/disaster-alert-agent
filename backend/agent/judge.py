@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from config.catalog import RULES, msg, reason
 
-from .validator import URL  # 본문 링크 금지와 같은 기준
+from .validator import URL, shelter_link  # 본문 링크 금지와 같은 기준
 
 LEVEL_LABEL: dict[str, str] = RULES["levels"]["labels"]
 STRESS_TO_LEVEL: dict[str, str] = RULES["levels"]["stress_to_level"]
@@ -43,8 +43,10 @@ def group_guides(rows: list[dict], active: bool) -> list[tuple[str, dict]]:
     return out
 
 
-def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -> dict:
-    """alerts/messages: MCP 도구 응답. guides: hazard → search_action_guide 응답."""
+def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict],
+                 shelters: dict[str, dict] | None = None) -> dict:
+    """alerts/messages: MCP 도구 응답. guides: hazard → search_action_guide 응답. shelters: hazard → get_shelters 응답.
+    쉼터는 근거([S#])로만 쓰고 수준을 바꾸지 않는다. 조회 실패만 '정보 없음' gap — 범위 데이터 없음 등은 조용히 뺀다."""
     ev: list[dict] = []
     gaps: list[dict] = []
     region_id = alerts["region_id"]
@@ -123,6 +125,21 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
                                "group": group, "group_label": group_label(group, hz in active_hazards),
                                "text": r["text"], "ref": r["id"], "source": g.get("source_label") or g.get("source")})
     ev.extend(guide_rows)
+
+    n_shelter = 0
+    for hz, sh in (shelters or {}).items():
+        if sh.get("status") == "failed":
+            gaps.append({"source": f"{msg('shelters.source_name')}({hz})", "status": "failed", "cause": sh.get("cause"),
+                         "reason": reason("failed", sh.get("cause")), "detail": sh.get("reason", "")})
+            continue
+        if sh.get("status") != "ok":
+            continue  # 해당 없음·범위 데이터 없음: 쉼터 없이 정상 응답 (실패가 아님)
+        header = msg("shelters.header", kind_label=sh["kind_label"], hazard=hz, source=sh.get("source_label") or sh["source"])
+        for s_ in sh["shelters"]:
+            n_shelter += 1
+            ev.append({"id": f"S{n_shelter}", "kind": "shelter", "hazard": hz, "text": f"{s_['name']} — {s_['address']}",
+                       "group_label": header, "ref": s_["id"], "source": sh.get("source_label") or sh["source"],
+                       "map_url": shelter_link(s_["address"])})
 
     note = None
     if weather_ok and level == "none" and msg_rows:

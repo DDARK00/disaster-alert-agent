@@ -19,7 +19,7 @@ PROMPTS_DIR = ROOT / "prompts"
 REQUIRED_PROMPTS = {
     "intent": ["system"],
     "plan": ["system", "user"],
-    "write": ["user", "region_ids", "must_cite", "guide_groups", "ids_none", "must_header", "must"],
+    "write": ["user", "region_ids", "must_cite", "guide_groups", "shelter_groups", "ids_none", "must_header", "must"],
     "rewrite": ["user"],
     "briefing": ["system"],
 }
@@ -31,6 +31,7 @@ REQUIRED_MESSAGES = [
     "mcp.alert_failed", "mcp.alert_active", "mcp.alert_none", "mcp.alert_none_pending", "mcp.alert_none_no_pending",
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
     "kakao.route_notice", "kakao.map_label", "kakao.route_label",
+    "shelters.header", "shelters.source_name", "shelters.map_label", "shelters.map_notice",
 ]
 # 조회 실패 원인 코드 (ADR-014). MCP(외부 API)·백엔드(MCP 연결) 공용. 문구는 messages.yaml causes.<코드>
 CAUSE_CODES = ("api_auth_error", "rate_limited", "api_http_error", "api_result_error", "api_timeout", "network_error",
@@ -44,9 +45,10 @@ MARKER_CHECKS = {
     "official": ["disclaimer", "fixed.emergency", "fixed.service_unavailable", "fixed.not_in_data"],
     "emergency_call": ["disclaimer", "fixed.emergency", "fixed.service_unavailable", "fixed.not_in_data"],
     "not_in_data": ["causes.not_in_data", "fixed.not_in_data"],
+    "shelter_notice": ["shelters.header"],
 }
 REQUIRED_RULES = ["emergency_words", "intent_words", "hazard_synonyms", "generic_disaster_words", "region_words",
-                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "api_errors", "guide_audience", "not_in_official_data", "guide_groups"]
+                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "api_errors", "guide_audience", "not_in_official_data", "guide_groups", "shelters"]
 SECTION = re.compile(r"^=== (\w+) ===\n", re.M)
 
 

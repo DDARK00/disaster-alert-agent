@@ -1,6 +1,6 @@
 """재난·특보 상황 판단 에이전트용 MCP 서버 (Tool / Resource / Prompt).
 
-- Tool     : 지역 해석, 특보 상태, 재난문자, 행동요령 검색  (모두 결정론; LLM 미사용)
+- Tool     : 지역 해석, 특보 상태, 재난문자, 행동요령 검색, 쉼터 목록  (모두 결정론; LLM 미사용)
 - Resource : guide://action/{hazard} — 행동요령 전문(정적 문서)
 - Prompt   : disaster_briefing_prompt — 답변 작성 규칙 (안전 문구 규칙 포함)
 
@@ -21,6 +21,7 @@ from fastmcp import FastMCP  # noqa: E402
 import sources  # noqa: E402
 from alert_state import fold_alerts  # noqa: E402
 import kakao  # noqa: E402
+import shelters  # noqa: E402
 from regions import load_regions, region_for_admin, resolve_location as _resolve  # noqa: E402
 import failures  # noqa: E402
 from config.catalog import msg, prompt, reason  # noqa: E402
@@ -151,10 +152,25 @@ def search_action_guide(hazard: str, phase: str | None = None, limit: int = 30, 
 
 
 @mcp.tool()
+def get_shelters(region_id: str, hazard: str, mode: str | None = None) -> dict:
+    """공식 목록(행정안전부 통합대피소)에 있는 쉼터·대피장소 — 폭염·한파 쉼터, 지진 옥외대피장소만.
+    재난 유형 → 구분은 hazard_map 의 shelter (코드). 그 밖의 유형(호우·태풍 등)은 status=not_applicable.
+    가까운 순이 아니고(좌표를 받지 않는다) 운영 여부·시간은 데이터에 없다 — '공식 목록에 있는 장소'로만 안내한다.
+    status: ok | failed(cause) | no_range(지역 범위 데이터 없음) | no_coverage(replay 저장본 없음) | not_applicable."""
+    mode = mode or sources.default_mode()
+    kind = (sources._hazard_map().get(hazard) or {}).get("shelter")
+    if not kind:
+        return {"region_id": region_id, "hazard": hazard, "status": "not_applicable", "shelters": [],
+                "reason": f"'{hazard}'에 연결된 쉼터·대피장소 구분이 없음"}
+    return {"region_id": region_id, "hazard": hazard, "mode": mode, **shelters.load(region_id, kind, mode)}
+
+
+@mcp.tool()
 def list_hazards() -> dict:
-    """지원 재난 유형과 행동요령 유무."""
+    """지원 재난 유형과 행동요령·쉼터 구분 유무."""
     return {"hazards": [{"name": n, "warn_var": v["warnVar"], "has_action_guide": bool(v["action_cate2"]),
-                         "guide_source": v.get("source")} for n, v in sources._hazard_map().items()]}
+                         "guide_source": v.get("source"), "shelter": v.get("shelter")}
+                        for n, v in sources._hazard_map().items()]}
 
 
 @mcp.tool()

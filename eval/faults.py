@@ -8,6 +8,7 @@ API 장애 (프로세스 내 MCP 서버, mode=live 로 호출):
   rate_limited    resultCode 22 (LIMITED_NUMBER_OF_SERVICE_REQUESTS_EXCEEDS_ERROR)
 MCP 장애:
   mcp_down        모든 MCP 호출이 연결 실패 (DownGateway)
+  shelter_down    쉼터 도구(get_shelters)만 실패, 나머지는 replay 그대로 (ShelterDownGateway) — 쉼터가 빠져도 답변은 정상
 키는 가짜 값이며 fixture·카운터는 임시 폴더에 쓴다 (저장소의 data/ 를 건드리지 않는다).
 """
 from __future__ import annotations
@@ -30,9 +31,10 @@ for p in (ROOT / "mcp_server", ROOT / "backend", ROOT):
 
 API_FAULTS = ("wrong_key", "result_99", "truncated_json", "timeout", "rate_limited")
 EXPECTED_CAUSE = {"wrong_key": "api_auth_error", "result_99": "api_result_error", "truncated_json": "response_invalid",
-                  "timeout": "api_timeout", "rate_limited": "rate_limited", "mcp_down": "mcp_unreachable"}
+                  "timeout": "api_timeout", "rate_limited": "rate_limited", "mcp_down": "mcp_unreachable",
+                  "shelter_down": "mcp_tool_error"}
 FAKE_KEYS = {"WEATHER_ALERTS_SERVICE_KEY": "FAKEKEY0001", "DSSP_SERVICE_KEY": "FAKEKEY0002",
-             "DSSP_MESSAGE_SERVICE_KEY": "FAKEKEY0002"}
+             "DSSP_MESSAGE_SERVICE_KEY": "FAKEKEY0002", "DSSP_SHELTER_SERVICE_KEY": "FAKEKEY0003"}
 
 
 class _Resp(io.BytesIO):
@@ -111,3 +113,18 @@ class DownGateway:
 
     async def prompt(self, name, args):
         return await self.tool(name, args)
+
+
+def shelter_down_gateway():
+    """쉼터 도구만 도구 내부 오류(ToolError)로 실패하는 게이트웨이 (프로세스 내 MCP 서버)."""
+    from fastmcp.exceptions import ToolError
+
+    from agent.mcp_client import MCPGateway
+
+    class ShelterDownGateway(MCPGateway):
+        async def tool(self, name, args):
+            if name == "get_shelters":
+                raise ToolError("shelter tool failed (fault injection)")
+            return await super().tool(name, args)
+    import server as mcp_module
+    return ShelterDownGateway(mcp_module.mcp)
