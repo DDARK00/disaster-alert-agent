@@ -22,6 +22,8 @@ from typing import Any, TypedDict
 from langgraph.graph import END, START, StateGraph
 from langchain_core.runnables import RunnableConfig
 
+from config.catalog import msg, prompt
+
 from . import compose, judge, rules
 from .deps import Deps
 from .llm import LLMError, extract_json
@@ -65,7 +67,7 @@ def _failed_alert(rid: str, name: str, mode: str, why: str) -> dict:
     return {"region_id": rid, "region": name, "mode": mode, "as_of": "-", "zones": [],
             "source": {"name": "기상특보", "status": "failed", "detail": why, "window": None},
             "alerts": [], "pending": [], "recently_released": [],
-            "statement": "정보 없음 — 특보를 조회하지 못했습니다. 이는 안전하다는 뜻이 아닙니다."}
+            "statement": msg("mcp.alert_unreachable")}
 
 
 def _failed_messages(rid: str, why: str) -> dict:
@@ -119,9 +121,7 @@ def build_graph(deps: Deps):
         intent, hazards, source = rule_i, list(rule_h), "rules"
         try:
             raw = await deps.llm.complete(
-                "사용자 질문의 의도와 재난 유형을 JSON으로만 답하세요. "
-                f'형식: {{"intent": "status|go_out|guide", "hazards": [{", ".join(chr(34) + n + chr(34) for n in names)} 중 해당하는 것]}}. '
-                "위 목록에 없는 유형은 넣지 마세요.",
+                prompt("intent", hazard_names=", ".join(f'"{n}"' for n in names)),
                 q, json_mode=True, task="intent", payload={"text": q, "rule_hazards": rule_h, "rule_intent": rule_i})
             obj = extract_json(raw)
             if obj.get("intent") in ALLOWED_INTENTS:
@@ -160,8 +160,8 @@ def build_graph(deps: Deps):
         errors = list(state.get("llm_errors", []))
         try:
             raw = await deps.llm.complete(
-                f'필요한 조회 단계를 JSON으로만 답하세요: {{"steps": {ALLOWED_STEPS} 중 필요한 것, "reason": "한 줄"}}',
-                f"질문: {state['query']}\n의도: {intent}\n재난 유형: {state.get('hazards')}",
+                prompt("plan", steps=str(ALLOWED_STEPS)),
+                prompt("plan", "user", query=state["query"], intent=intent, hazards=str(state.get("hazards"))),
                 json_mode=True, task="plan", payload={"intent": intent})
             proposed = [s for s in (extract_json(raw).get("steps") or []) if s in ALLOWED_STEPS]
             steps = [s for s in ALLOWED_STEPS if s in set(proposed) | set(mandatory)]
@@ -242,25 +242,23 @@ def build_graph(deps: Deps):
         facts = [{"region": j["region"], "level": j["level_label"], "as_of": j["as_of"], "zones": j["zones"],
                   "note": j["note"], "gaps": j["gaps"],
                   "evidence": [{k: e[k] for k in ("id", "kind", "text") if k in e} for e in j["evidence"]]} for j in js]
-        user = "근거 데이터(JSON):\n" + json.dumps(facts, ensure_ascii=False)
         # 작은 모델이 형식 예시의 ID를 그대로 베끼거나 gap 문구를 빠뜨리지 않도록 데이터에서 지시를 만든다 (T-021)
         ids = [e["id"] for j in js for e in j["evidence"]]
-        user += ("\n\n출력 형식: 지역마다 '### 지역명' 제목, 항목은 '- ' 로 시작하고 끝에 대괄호로 근거 ID를 붙인다."
-                 f"\n인용 가능한 근거 ID: {', '.join(f'[{i}]' for i in ids) if ids else '없음 — 어떤 [ID]도 쓰지 않는다'}."
-                 " 이 목록에 없는 ID는 절대 쓰지 않는다.")
+        user = prompt("write", "user", facts=json.dumps(facts, ensure_ascii=False),
+                      ids=", ".join(f"[{i}]" for i in ids) if ids else prompt("write", "ids_none"))
         must = []
         for j in js:
             if j["level"] == "none":
-                must.append(f"### {j['region']} 아래에 '확인된 위험 정보 없음 (기준 {j['as_of']})' 문장")
+                must.append(prompt("write", "must_none", region=j["region"], as_of=j["as_of"]))
             if j["level"] == "unknown":
-                must.append(f"### {j['region']} 아래에 '정보 없음 — 안전하다는 뜻이 아닙니다.' 문장")
+                must.append(prompt("write", "must_unknown", region=j["region"]))
             for g in j["gaps"]:
                 if g["status"] in ("failed", "no_coverage"):
-                    must.append(f"### {j['region']} 아래에 '- 정보 없음: {g['source']} ({g['status']}) — 안전하다는 뜻이 아닙니다.'")
+                    must.append(prompt("write", "must_gap", region=j["region"], source=g["source"], status=g["status"]))
         if must:
-            user += "\n반드시 그대로 포함할 문장:\n" + "\n".join(f"* {m}" for m in must)
+            user += "\n" + prompt("write", "must_header") + "\n" + "\n".join(f"* {m}" for m in must)
         if state.get("feedback"):
-            user += "\n\n이전 답변이 다음 이유로 반려되었습니다. 고쳐서 다시 작성하세요:\n- " + "\n- ".join(state["feedback"])
+            user += "\n\n" + prompt("rewrite", "user", violations="\n".join(f"- {v}" for v in state["feedback"]))
         try:
             text = await deps.llm.complete(rules_text, user, task="write", payload={"judgements": js, "intent": intent})
             source = "llm" if deps.llm.name != "fake" else "fake"

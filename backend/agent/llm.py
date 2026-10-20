@@ -8,11 +8,12 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 
 import httpx
 from langsmith import traceable
+
+from config.settings import Settings
 
 from . import compose
 
@@ -107,12 +108,9 @@ class OpenAICompatLLM(BaseLLM):
 
 
 def make_llm(env: dict | None = None) -> BaseLLM:
-    env = env if env is not None else os.environ
-    backend = env.get("LLM_BACKEND", "fake")
-    if backend == "fake":
+    s = Settings.from_env(env)
+    if s.llm_backend == "fake":
         return FakeLLM()
-    if backend == "openai_compat":
-        return OpenAICompatLLM(env.get("LLM_BASE_URL", "http://localhost:11434/v1"), env.get("LLM_MODEL", "qwen3:8b"),
-                               env.get("LLM_API_KEY", ""), float(env.get("LLM_TIMEOUT", "120")),
-                               env.get("LLM_NO_THINK", "0") == "1")
-    raise ValueError(f"알 수 없는 LLM_BACKEND: {backend}")
+    if s.llm_backend == "openai_compat":
+        return OpenAICompatLLM(s.llm_base_url, s.llm_model, s.llm_api_key, s.llm_timeout, s.llm_no_think)
+    raise ValueError(f"알 수 없는 LLM_BACKEND: {s.llm_backend}")

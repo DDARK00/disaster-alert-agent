@@ -11,7 +11,7 @@ from __future__ import annotations
 import glob
 import hashlib
 import json
-import os
+import sys
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -20,6 +20,9 @@ from alert_state import normalize_items
 from regions import load_regions, message_applies
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:  # config/ (Settings)
+    sys.path.insert(0, str(ROOT))
+from config.settings import Settings  # noqa: E402
 FIX = ROOT / "data" / "fixtures"
 KST = timezone(timedelta(hours=9))
 CONTIGUOUS_TOLERANCE = timedelta(minutes=2)
@@ -42,7 +45,7 @@ def parse_as_of(s: str | None) -> datetime | None:
 
 
 def default_mode() -> str:
-    return os.environ.get("DATA_MODE", "replay")
+    return Settings.from_env().data_mode
 
 
 def _load(path: str) -> dict:

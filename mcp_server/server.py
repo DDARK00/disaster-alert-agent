@@ -14,16 +14,19 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # config/, prompts/
 
 from fastmcp import FastMCP  # noqa: E402
 
 import sources  # noqa: E402
 from alert_state import fold_alerts  # noqa: E402
 from regions import load_regions, resolve_location as _resolve  # noqa: E402
+from config.catalog import msg, prompt  # noqa: E402
+from config.settings import Settings  # noqa: E402
 
 mcp = FastMCP(name="disaster-advisor")
 
-DISCLAIMER = "공식 경보가 아닙니다. 위급할 때는 119·112, 공식 채널(기상청, 재난문자, 국민재난안전포털)을 확인하세요."
+DISCLAIMER = msg("disclaimer")
 RECENT_RELEASE_HOURS = 6
 
 
@@ -63,7 +66,7 @@ def get_alert_status(region_id: str, as_of: str | None = None, mode: str | None 
                                       "status": src["status"], "detail": src["detail"], "window": src["window"]},
            "alerts": [], "pending": [], "recently_released": [], "disclaimer": DISCLAIMER}
     if src["status"] != "ok":
-        out["statement"] = f"정보 없음 — 특보를 조회하지 못했습니다({src['status']}). 이는 안전하다는 뜻이 아닙니다."
+        out["statement"] = msg("mcp.alert_failed", status=src["status"])
         return out
     for s in fold_alerts(src["events"], t, set(zones)):
         row = {"zone": s["area_code"], "zone_name": s["area_name"], "hazard": s["hazard"], "warn_var": s["warn_var"],
@@ -78,10 +81,11 @@ def get_alert_status(region_id: str, as_of: str | None = None, mode: str | None 
             row["released_at"] = _fmt(s["released_at"])
             out["recently_released"].append(row)
     if out["alerts"]:
-        out["statement"] = f"발효 중인 특보 {len(out['alerts'])}건 (기준 {_fmt(t)})"
+        out["statement"] = msg("mcp.alert_active", count=len(out["alerts"]), as_of=_fmt(t))
     else:
-        out["statement"] = (f"확인된 위험 정보 없음 (기준 {_fmt(t)}, 조회 구역 {', '.join(zones)}, "
-                            f"기상특보 {'예고 ' + str(len(out['pending'])) + '건 있음' if out['pending'] else '발효 중 없음'}). 안전을 보장하지 않습니다.")
+        pending = (msg("mcp.alert_none_pending", count=len(out["pending"])) if out["pending"]
+                   else msg("mcp.alert_none_no_pending"))
+        out["statement"] = msg("mcp.alert_none", as_of=_fmt(t), zones=", ".join(zones), pending=pending)
     return out
 
 
@@ -96,14 +100,14 @@ def get_disaster_messages(region_id: str, as_of: str | None = None, lookback_hou
            "source": {"name": "행정안전부 긴급재난문자 (DSSP-IF-00247)", "status": src["status"], "detail": src["detail"]},
            "messages": [], "total_matched": 0, "label_note": "재해구분 라벨은 본문과 다를 수 있음"}
     if src["status"] != "ok":
-        out["statement"] = f"정보 없음 — 재난문자를 조회하지 못했습니다({src['status']}). 이는 문자가 없다는 뜻이 아닙니다."
+        out["statement"] = msg("mcp.messages_failed", status=src["status"])
         return out
     msgs = src["messages"]
     if hazards:
         msgs = [m for m in msgs if m["label"] in hazards]
     out["total_matched"] = len(msgs)
     out["messages"] = msgs[:limit]
-    out["statement"] = f"최근 {lookback_hours}시간 해당 지역 재난문자 {len(msgs)}건"
+    out["statement"] = msg("mcp.messages_count", hours=lookback_hours, count=len(msgs))
     return out
 
 
@@ -145,29 +149,13 @@ def action_guide_doc(hazard: str) -> str:
 
 @mcp.prompt()
 def disaster_briefing_prompt(region: str, hazards: str, question: str) -> str:
-    """답변 작성 규칙 — write 노드가 이 규칙을 따른다."""
-    return f"""사용자 질문에 대해 아래 도구 결과만 근거로 답하세요.
-
-## 상황
-- 지역: {region}
-- 관련 재난: {hazards}
-- 질문: {question}
-
-## 규칙 (반드시 지킬 것)
-1. 도구 결과에 없는 사실, 수치, 행동요령은 쓰지 않는다. 문장마다 근거(특보 이벤트, 문자 SN, 행동요령 ID)를 붙인다.
-2. '안전합니다' 같은 단정은 금지. 위험 정보가 없으면 "확인된 위험 정보 없음 (기준 시각, 조회 범위)"로 쓴다.
-3. 조회 실패·범위 밖(source.status != ok)은 '정보 없음'이라고 쓴다. 안전하다는 뜻이 아니다.
-4. 행동요령이 없는 유형(available=False)은 대체하지 말고 없다고 밝힌다.
-5. 마지막에 항상: {DISCLAIMER}
-"""
+    """답변 작성 규칙 — write 노드가 이 규칙을 따른다. (원문: prompts/briefing.md)"""
+    return prompt("briefing", region=region, hazards=hazards, question=question, disclaimer=DISCLAIMER)
 
 
 if __name__ == "__main__":
-    import os
-
-    if os.environ.get("MCP_TRANSPORT", "stdio") == "http":  # 컨테이너: Streamable HTTP
-        mcp.run(transport="http", host=os.environ.get("MCP_HOST", "0.0.0.0"),
-                port=int(os.environ.get("MCP_PORT", "8200")), path=os.environ.get("MCP_PATH", "/mcp"),
-                show_banner=False)
+    cfg = Settings.from_env()
+    if cfg.mcp_transport == "http":  # 컨테이너: Streamable HTTP
+        mcp.run(transport="http", host=cfg.mcp_host, port=cfg.mcp_port, path=cfg.mcp_path, show_banner=False)
     else:  # 로컬 개발: stdio (백엔드가 서브프로세스로 기동)
         mcp.run(show_banner=False)

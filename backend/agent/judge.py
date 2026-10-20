@@ -6,18 +6,13 @@
 """
 from __future__ import annotations
 
-LEVEL_LABEL = {
-    "unknown": "정보 없음",
-    "none": "확인된 위험 정보 없음",
-    "upcoming": "특보 발효 예고",
-    "advisory": "주의보 발효 중",
-    "warning": "경보 발효 중",
-    "severe": "중대경보 발효 중",
-}
-STRESS_TO_LEVEL = {"주의보": "advisory", "경보": "warning", "중대경보": "severe"}
-RANK = {"none": 1, "upcoming": 2, "advisory": 3, "warning": 4, "severe": 5}
-MAX_MESSAGES, MAX_GUIDE_PER_HAZARD = 3, 4
-NICHE_WORDS = ("가축", "어류", "양식", "축사", "농작물", "비닐하우스", "작업장", "건설 현장", "건설현장", "어선", "선박")
+from config.catalog import RULES, msg
+
+LEVEL_LABEL: dict[str, str] = RULES["levels"]["labels"]
+STRESS_TO_LEVEL: dict[str, str] = RULES["levels"]["stress_to_level"]
+RANK: dict[str, int] = RULES["levels"]["rank"]
+MAX_MESSAGES, MAX_GUIDE_PER_HAZARD = RULES["evidence"]["max_messages"], RULES["evidence"]["max_guide_per_hazard"]
+NICHE_WORDS = tuple(RULES["niche_words"])
 
 
 def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -> dict:
@@ -90,7 +85,7 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
 
     note = None
     if weather_ok and level == "none" and msg_rows:
-        note = "기상특보는 확인되지 않았지만 최근 해당 지역에 안내 문자가 있습니다. 문자는 수준 판정에 쓰지 않고 참고로만 표시합니다."
+        note = msg("judge.messages_only_note")
     return {"region_id": region_id, "region": alerts["region"], "level": level, "level_label": LEVEL_LABEL[level],
             "hazards": hazards, "uncertain": uncertain, "as_of": alerts["as_of"], "mode": alerts["mode"],
             "zones": alerts["zones"], "evidence": ev, "gaps": gaps, "note": note, "statement": alerts["statement"]}

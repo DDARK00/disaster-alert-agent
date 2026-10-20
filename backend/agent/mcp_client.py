@@ -16,17 +16,18 @@ from fastmcp import Client
 from fastmcp.client.transports import StdioTransport
 from langsmith import traceable
 
+from config.settings import Settings
+
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def make_target(env: dict | None = None):
-    env = env if env is not None else os.environ
-    url = env.get("MCP_URL")
-    if url:
-        return url
-    return StdioTransport(command=env.get("MCP_PYTHON", sys.executable),
+    s = Settings.from_env(env)
+    if s.mcp_url:
+        return s.mcp_url
+    return StdioTransport(command=s.mcp_python or sys.executable,
                           args=[str(ROOT / "mcp_server" / "server.py")],
-                          env={"DATA_MODE": env.get("DATA_MODE", "replay"), "PATH": os.environ.get("PATH", "")})
+                          env={"DATA_MODE": s.data_mode, "PATH": os.environ.get("PATH", "")})
 
 
 class MCPGateway:

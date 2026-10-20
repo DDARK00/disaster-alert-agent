@@ -5,6 +5,8 @@ WORKDIR /app
 COPY mcp_server/requirements.txt mcp_server/requirements.txt
 RUN pip install --no-cache-dir -r mcp_server/requirements.txt
 COPY mcp_server/ mcp_server/
+COPY config/ config/
+COPY prompts/ prompts/
 COPY data/ data/
 ENV MCP_TRANSPORT=http MCP_HOST=0.0.0.0 MCP_PORT=8200 MCP_PATH=/mcp DATA_MODE=replay
 EXPOSE 8200

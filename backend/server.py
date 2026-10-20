@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 import sys
 import uuid
 from contextlib import asynccontextmanager
@@ -22,6 +21,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from agent.deps import Deps, Settings  # noqa: E402
+from config.settings import load_dotenv_file  # noqa: E402
 from agent.graph import build_graph  # noqa: E402
 from agent.llm import BaseLLM, make_llm  # noqa: E402
 from agent.mcp_client import MCPGateway, make_target  # noqa: E402
@@ -29,19 +29,6 @@ from agent.mcp_client import MCPGateway, make_target  # noqa: E402
 VERSION = "0.1.0"
 SENTINEL = object()
 CHUNK = 24
-
-
-def load_dotenv_file(path: Path) -> None:
-    """로컬 개발용: .env 를 읽어 비어 있는 환경변수만 채운다. (컨테이너는 env_file 로 주입)"""
-    if not path.exists():
-        return
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if line and not line.startswith("#") and "=" in line:
-            k, v = line.split("=", 1)
-            v = v.split("  #")[0].strip().strip("\"'")
-            if v:
-                os.environ.setdefault(k.strip(), v)
 
 
 def sse(event: str, data: dict) -> str:
@@ -61,7 +48,7 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
 
     app = FastAPI(title="재난·특보 상황 판단 에이전트", version=VERSION, lifespan=lifespan)
     # 읽기 전용 GET API. nginx 프록시(same-origin)에서는 불필요하고, 로컬에서 FE 를 다른 포트로 열 때만 쓴다.
-    app.add_middleware(CORSMiddleware, allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
+    app.add_middleware(CORSMiddleware, allow_origins=Settings.from_env().cors_origins.split(","),
                        allow_methods=["GET"], allow_headers=["*"])
 
     def trace_config(init: dict) -> dict:  # LangSmith 루트 이름·검색용 메타데이터 (트레이싱 꺼져 있으면 무시됨)

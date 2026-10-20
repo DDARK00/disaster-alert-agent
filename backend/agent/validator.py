@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import re
 
-FORBIDDEN = ["안전합니다", "안전해요", "안전하니", "안전합니다만", "걱정하지 마", "걱정 마", "문제없", "문제 없", "괜찮습니다",
-             "괜찮아요", "위험하지 않", "위험 없", "안심하"]
+from config.catalog import RULES
+
+FORBIDDEN: list[str] = RULES["forbidden"]
 CITE = re.compile(r"\[([EMG]\d+)\]")
 
 
