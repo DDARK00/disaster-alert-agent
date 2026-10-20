@@ -24,6 +24,24 @@ def validate_links(links: dict, notice: str | None, region: str) -> dict | None:
                       {"kind": "route", "label": msg("kakao.route_label"), "url": urls[1]}]}
 
 
+def _sections(answer: str, judgements: list[dict]) -> tuple[dict[str, str], str]:
+    """'### 지역' 제목으로 답변을 지역별로 나눈다. 반환: (지역 → 본문, 어느 지역에도 속하지 않는 본문).
+    지역이 하나면 답변 전체가 그 지역의 본문이다."""
+    if len(judgements) == 1:
+        return {judgements[0]["region"]: answer}, ""
+    out: dict[str, list[str]] = {}
+    outside: list[str] = []
+    cur = None
+    for line in answer.splitlines():
+        if line.lstrip().startswith("#"):
+            cur = next((j["region"] for j in judgements if j["region"] in line), None)
+            if cur is not None:
+                out.setdefault(cur, [])
+            continue
+        (out[cur] if cur is not None else outside).append(line)
+    return {k: "\n".join(v) for k, v in out.items()}, "\n".join(outside)
+
+
 def validate(answer: str, judgements: list[dict]) -> dict:
     v: list[str] = []
     ids = {e["id"] for j in judgements for e in j["evidence"]}
@@ -60,4 +78,23 @@ def validate(answer: str, judgements: list[dict]) -> dict:
         for g in j["gaps"]:
             if g["status"] in ("failed", "no_coverage") and MK["no_info"] not in answer:
                 v.append(f"{g['source']} 조회 실패 미표기")
+
+    # 지역별 대조: 근거 ID 는 지역마다 E1 부터 다시 시작하므로 전체 합집합이 아니라 그 지역 섹션 안에서 검사한다
+    sections, outside = _sections(answer, judgements)
+    if len(judgements) > 1:
+        for c in sorted(set(CITE.findall(outside))):
+            v.append(f"지역 섹션 밖 인용: [{c}]")
+    for j in judgements:
+        if j["region"] not in sections:
+            if len(judgements) > 1:
+                v.append(f"지역 섹션 없음: '### {j['region']}'")
+            continue
+        own = {e["id"] for e in j["evidence"]}
+        sec_cited = set(CITE.findall(sections[j["region"]]))
+        for c in sorted(sec_cited - own):
+            v.append(f"{j['region']}: 이 지역 근거가 아닌 인용 [{c}]")
+        # 발효 중·예고 특보는 하나도 빠짐없이 인용 (일부만 말하면 위험을 줄여 전달하게 된다)
+        for e in j["evidence"]:
+            if e["kind"] in ("alert", "pending") and e["id"] not in sec_cited:
+                v.append(f"{j['region']}: 특보 근거 [{e['id']}] 인용 없음")
     return {"ok": not v, "violations": v}

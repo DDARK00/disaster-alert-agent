@@ -125,6 +125,18 @@ class Validator(unittest.TestCase):
         self.assertFalse(v["ok"])
         self.assertTrue(any("근거 없는 항목" in x for x in v["violations"]))
 
+    def test_cross_region_citation_and_partial_alerts_rejected(self):
+        g = judge.judge_region(alert_resp(alerts=[("폭염", "경보"), ("열대야", "주의보")]), None, {})
+        m = judge.judge_region({**alert_resp(alerts=[("호우", "주의보")]), "region": "광주광역시"}, None, {})
+        js = [g, m]
+        self.assertTrue(validate(compose.render_answer(js), js)["ok"])
+        # 경기 광주 섹션에서 E2 를 빼고, 광주광역시 섹션에 없는 E2 를 인용
+        bad = ("### 경기도 광주시\n- 폭염경보 [E1]\n\n### 광주광역시\n- 호우주의보 [E1] [E2]\n\n" + compose.DISCLAIMER)
+        v = validate(bad, js)["violations"]
+        self.assertIn("경기도 광주시: 특보 근거 [E2] 인용 없음", v)
+        self.assertIn("광주광역시: 이 지역 근거가 아닌 인용 [E2]", v)
+        self.assertIn("지역 섹션 밖 인용: [E1]", validate("- [E1]\n" + bad, js)["violations"])
+
     def test_unknown_citation_rejected(self):
         self.assertFalse(validate(compose.render_answer(self.j) + " [E99]", self.j)["ok"])
 
