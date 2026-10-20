@@ -88,7 +88,7 @@ def get_alert_status(region_id: str, as_of: str | None = None, mode: str | None 
     for s in fold_alerts(src["events"], t, set(zones)):
         row = {"zone": s["area_code"], "zone_name": s["area_name"], "hazard": s["hazard"], "warn_var": s["warn_var"],
                "level": s["stress_name"], "since": _fmt(s["since"]), "uncertain": s["uncertain"],
-               "release_at": _fmt(s.get("release_at")),
+               "release_at": _fmt(s.get("release_at")), "inferred": s.get("inferred", False),
                "announced_at": _fmt(s["last_event"]["tmFc"]), "source_event": f"{s['area_code']}/{s['last_event']['tmFc']:%Y%m%d%H%M}/{s['last_event']['tmSeq']}"}
         if s["status"] == "active":
             out["alerts"].append(row)

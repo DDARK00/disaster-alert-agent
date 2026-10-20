@@ -26,7 +26,7 @@ REQUIRED_PROMPTS = {
 REQUIRED_MESSAGES = [
     "supported_regions", "disclaimer", "fixed.emergency", "fixed.out_of_scope", "fixed.ask_region",
     "answer.unknown", "answer.none", "answer.level", "answer.uncertain_suffix", "answer.message_scope",
-    "answer.guide_header", "answer.gap", "answer.go_out", "judge.messages_only_note",
+    "answer.guide_header", "answer.gap", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",
     "mcp.alert_failed", "mcp.alert_active", "mcp.alert_none", "mcp.alert_none_pending", "mcp.alert_none_no_pending",
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
     "kakao.route_notice", "kakao.map_label", "kakao.route_label",

@@ -44,7 +44,9 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
                 hazards.append(a["hazard"])
             uncertain = uncertain or a["uncertain"]
             ev.append({"id": f"E{len(ev) + 1}", "kind": "alert", "hazard": a["hazard"], "level": a["level"],
-                       "text": f"{a['hazard']}{a['level']} 발효 중 ({a['zone_name']}, 발효 {a['since']})"
+                       "text": f"{a['hazard']}{a['level']} 발효 중 ({a['zone_name']}, "
+                               + (f"발효 {a['since']}" if a.get("since") else msg("judge.since_before_window"))
+                               + ")"
                                + (", 해제 예정 " + a["release_at"] if a.get("release_at") else ""),
                        "ref": a["source_event"], "uncertain": a["uncertain"]})
         if level == "none" and alerts["pending"]:

@@ -62,6 +62,23 @@ class RealFixtures(unittest.TestCase):
         h = by_hazard(in_effect(fold_alerts(items, t("202608271900"), z)))
         self.assertNotIn("호우", h)
 
+    def test_release_first_in_window_means_active_before(self):  # T-026 (평가 세트가 찾은 놓침)
+        items = load("getPwnCd_L1130110_60d__*.json")
+        z = {"L1130110"}
+        h = by_hazard(in_effect(fold_alerts(items, t("202608221200"), z)))
+        self.assertIn("열대야", h)  # 창 안 첫 이벤트가 08-23 16:00 해제 → 08-22 에는 발효 중
+        self.assertTrue(h["열대야"]["inferred"])
+        self.assertIsNone(h["열대야"]["since"])
+        self.assertNotIn("열대야", by_hazard(in_effect(fold_alerts(items, t("202608231700"), z))))  # 해제 후
+
+    def test_release_first_synthetic(self):
+        rel = {"areaCode": "L1", "warnVar": 13, "warnStress": 0, "command": "2", "cancel": "0", "tmFc": 202608231600,
+               "tmSeq": 1, "startTime": 0, "endTime": 202608231600}
+        self.assertEqual(in_effect(fold_alerts([rel], t("202608231700"))), [])  # 해제 이후
+        self.assertEqual(len(in_effect(fold_alerts([rel], t("202608221200")))), 1)
+        ann = {**rel, "command": "1", "tmFc": 202608231000, "startTime": 202608231100, "endTime": 0}
+        self.assertEqual(in_effect(fold_alerts([ann, rel], t("202608221200"))), [])  # 첫 이벤트가 발표면 그 전엔 없음
+
     def test_no_events_means_empty_not_safe(self):
         # 빈 결과는 '위험 없음 확정'이 아니다. 판정 계층에서 '확인된 위험 정보 없음'으로 표현한다.
         self.assertEqual(fold_alerts([], t("202610201200")), [])

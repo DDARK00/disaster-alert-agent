@@ -7,6 +7,8 @@ API는 현재 상태가 아니라 발표/해제 이벤트 로그를 준다 (트�
 - 시각은 KST 문자열 YYYYMMDDHHmm 이며 JSON에서는 int 로도 온다.
 
 보수 원칙: 의미가 불확실한 코드는 '발효 중'으로 둔다(놓침이 오탐보다 위험). uncertain=True 로 표시.
+- 조회 창 안에서 (구역, 종류)의 첫 이벤트가 as_of 이후 효력의 '해제'면, as_of 에는 발효 중이었다
+  (발표는 창 이전). since=None, inferred=True 로 표시한다 (T-026). live 는 as_of=현재라 해당 없음.
 """
 from __future__ import annotations
 
@@ -65,10 +67,10 @@ def fold_alerts(items, as_of: datetime, area_codes: set[str] | None = None) -> l
 
     반환은 (구역, 종류)별 1건이며 released 도 포함한다 (호출자가 필터).
     """
-    events = [e for e in normalize_items(items)
-              if e["cancel"] != "1" and e["tmFc"] and e["tmFc"] <= as_of
-              and (area_codes is None or e["areaCode"] in area_codes)]
-    events.sort(key=lambda e: (e["tmFc"], e["tmSeq"]))
+    all_events = [e for e in normalize_items(items)
+                  if e["cancel"] != "1" and e["tmFc"] and (area_codes is None or e["areaCode"] in area_codes)]
+    all_events.sort(key=lambda e: (e["tmFc"], e["tmSeq"]))
+    events = [e for e in all_events if e["tmFc"] <= as_of]
     hazards = _hazards_by_var()
 
     state: dict[tuple[str, int], dict] = {}
@@ -105,6 +107,16 @@ def fold_alerts(items, as_of: datetime, area_codes: set[str] | None = None) -> l
             cur["last_event"] = _ev(e)
             continue
         state[key] = new
+
+    # 창 이전에 발표돼 as_of 에 발효 중이던 특보: 첫 이벤트가 as_of 이후 효력의 해제 (T-026)
+    first: dict[tuple[str, int], dict] = {}
+    for e in all_events:
+        first.setdefault((e["areaCode"], e["warnVar"]), e)
+    for key, e in first.items():
+        if key in state or e["command"] != CMD_RELEASE or (e["endTime"] or e["tmFc"]) <= as_of:
+            continue
+        state[key] = {**_base(e, hazards), "status": "active", "since": None, "inferred": True,
+                      "release_at": None, "last_event": _ev(e)}  # 해제 시각은 as_of 에는 몰랐던 정보 → 표시 안 함
     return sorted(state.values(), key=lambda s: (s["area_code"], s["warn_var"]))
 
 
