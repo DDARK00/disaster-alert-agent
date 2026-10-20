@@ -24,7 +24,7 @@ REQUIRED_PROMPTS = {
     "briefing": ["system"],
 }
 REQUIRED_MESSAGES = [
-    "supported_regions", "disclaimer", "fixed.emergency", "fixed.out_of_scope", "fixed.ask_region", "fixed.service_unavailable", "fixed.not_in_data",
+    "supported_regions", "disclaimer", "fixed.emergency", "fixed.out_of_scope", "fixed.ask_region", "fixed.ask_region_candidates", "fixed.ask_region_province", "region.district_scope", "fixed.service_unavailable", "fixed.not_in_data",
     "answer.unknown", "answer.none", "answer.level", "answer.uncertain_suffix", "answer.message_scope",
     "answer.guide_header", "answer.guide_group", "guide_groups.now", "guide_groups.now_inactive",
     "guide_groups.prepare", "guide_groups.dont", "answer.gap", "answer.gap_unavailable", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",

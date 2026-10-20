@@ -65,8 +65,12 @@ class RegionMapping(unittest.TestCase):
     def test_admin_names_to_internal_region(self):
         self.assertEqual(region_for_admin(["전남광주통합특별시", "서구"]), "gwangju_metro")
         self.assertEqual(region_for_admin(["경기도", "광주시"]), "gyeonggi_gwangju")
-        self.assertIsNone(region_for_admin(["전남광주통합특별시", "순천시"]))  # 전남권은 지원 지역 아님
-        self.assertIsNone(region_for_admin(["서울특별시", "강남구"]))
+        # 전국 확대(ADR-017): 전남권은 신구 시도 명칭 모두 해당 시군으로, 광역시 구는 광역시로 (가장 긴 접두어)
+        self.assertEqual(region_for_admin(["전남광주통합특별시", "순천시"]), "kr_L1051200")
+        self.assertEqual(region_for_admin(["전라남도", "순천시"]), "kr_L1051200")
+        self.assertEqual(region_for_admin(["서울특별시", "강남구"]), "kr_L1100000")
+        self.assertEqual(region_for_admin(["강원특별자치도", "고성군"]), "kr_L1022200")
+        self.assertIsNone(region_for_admin(["경기도"]))   # 도 이름만은 지역이 아님
         self.assertIsNone(region_for_admin([]))
 
 

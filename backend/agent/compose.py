@@ -27,6 +27,8 @@ def render_answer(judgements: list[dict], intent: str = "status") -> str:
     scope_label = msg("answer.message_scope")
     for j in judgements:
         out.append(f"### {j['region']}")
+        if j.get("scope_note"):
+            out.append(j["scope_note"])
         evs = j["evidence"]
         alerts = [e for e in evs if e["kind"] in ("alert", "pending", "released")]
         if j["level"] == "unknown":

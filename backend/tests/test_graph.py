@@ -201,6 +201,56 @@ class Shelters(unittest.TestCase):
         self.assertIn("mcp_tool_error", {f["cause"] for f in final["meta"]["failures"]})
 
 
+def synthetic_weather(tmp: Path, area: str, warn_var: int, day: str = "20261019") -> None:
+    """replay 원본이 없는 지역용 합성 기상특보 fixture (임시 폴더에만 — 저장소 replay 원본에 섞지 않는다)."""
+    import json
+    (tmp / "weather").mkdir(parents=True)
+    (tmp / "dssp").symlink_to(ROOT / "data/fixtures/dssp")
+    item = {"areaCode": area, "areaName": "합성", "cancel": "0", "command": "1", "endTime": 0, "stnId": "108",
+            "tmFc": int(day + "1000"), "tmSeq": 1, "warnVar": warn_var, "warnStress": 0, "startTime": int(day + "1100")}
+    rec = {"meta": {"source": "weather", "operation": "getPwnCd", "mode": "live", "fetched_at": "2026-10-20T01:00:00+00:00",
+                    "http_status": 200, "api_ok": True,
+                    "url": f"http://x/getPwnCd?serviceKey=***&numOfRows=1000&pageNo=1&dataType=JSON&fromTmFc={day}&toTmFc={day}"},
+           "json": {"response": {"header": {"resultCode": "00"}, "body": {"items": {"item": [item]}, "totalCount": 1}}}}
+    (tmp / "weather" / f"getPwnCd_synthetic__{day}_000000.json").write_text(json.dumps(rec), encoding="utf-8")
+
+
+class Nationwide(unittest.TestCase):
+    """전국 확대 (ADR-017): 광역시 구 이름 → 시 전체 기준 안내, 동명·도 이름 → 되묻기, replay 원본 없는 지역 → 정보 없음."""
+
+    def test_metro_district_uses_city_wide_alerts_and_says_so(self):
+        import tempfile
+        from unittest import mock
+        import sources
+        with tempfile.TemporaryDirectory() as t:
+            synthetic_weather(Path(t), "L1082500", 2)  # 부산동부 호우주의보 (합성)
+            with mock.patch.object(sources, "FIX", Path(t)):
+                final, _, _ = R("해운대구 호우 어때?", as_of="2026-10-19 12:00")
+        j = final["judgements"][0]
+        self.assertEqual((j["region"], j["level"]), ("부산광역시", "advisory"))
+        self.assertIn("'해운대구' 단위가 아니라 부산광역시 전체 기준", final["answer"])
+        self.assertFalse([e for e in j["evidence"] if e["kind"] == "shelter"])
+        self.assertTrue(final["validation"]["ok"], final["validation"])
+
+    def test_region_without_replay_data_is_no_info_and_no_shelter_range_is_silent(self):
+        final, _, _ = R("수원시 폭염 어때?", as_of="2026-08-24 12:00")  # 전국 fixture(10-17~) 밖
+        j = final["judgements"][0]
+        self.assertEqual((j["region"], j["level"]), ("경기도 수원시", "unknown"))  # 정보 없음 ≠ 안전
+        self.assertIn("정보 없음", final["answer"])
+        self.assertFalse([g for g in j["gaps"] if "쉼터" in g["source"]])  # 범위 데이터 없음은 실패가 아님
+        self.assertTrue(final["validation"]["ok"])
+
+    def test_same_name_and_province_only_ask(self):
+        final, _, llm = R("고성 대설 어때?")
+        self.assertEqual(final["route"], "ask_region")
+        self.assertIn("강원특별자치도 고성군, 경상남도 고성군", final["answer"])
+        final, _, _ = R("경기도 폭염 어때?")
+        self.assertEqual(final["route"], "ask_region")
+        self.assertIn("경기도 전체를 한 번에 확인하지는 않습니다", final["answer"])
+        final, _, _ = R("광주 폭염 어때?")  # ADR-006 묶음은 그대로 둘 다
+        self.assertEqual(len(final["judgements"]), 2)
+
+
 async def run_with(gateway_cls, query, as_of="2026-08-24 12:00"):
     gw = gateway_cls(mcp_module.mcp)
     await gw.start()

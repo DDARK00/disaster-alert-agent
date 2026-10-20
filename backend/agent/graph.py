@@ -213,7 +213,8 @@ def build_graph(deps: Deps):
         if loc["status"] == "none":
             regions = []
         elif loc["status"] == "ambiguous":
-            regions = [c["id"] for c in loc["candidates"]]  # 되묻지 않고 둘 다 조회
+            # '광주'처럼 정해 둔 묶음은 되묻지 않고 둘 다 조회, 그 밖의 동명(고성군·같은 구 이름)은 되묻기 (ADR-006, ADR-017)
+            regions = [] if loc.get("ask") else [c["id"] for c in loc["candidates"]]
         else:
             regions = [loc["chosen"]]
         writer({"event": "location", **loc, "regions": regions})
@@ -224,7 +225,15 @@ def build_graph(deps: Deps):
         return {"location": loc, "regions": regions, "region_names": names}
 
     async def ask_region(state: State, writer):
-        return {"answer": rules.ASK_REGION_TEXT, "answer_source": "fixed", "judgements": []}
+        loc = state.get("location") or {}
+        if loc.get("ask") and loc.get("candidates"):
+            names = [c["name"] for c in loc["candidates"]]
+            text = msg("fixed.ask_region_candidates", candidates=", ".join(names), example=names[0])
+        elif loc.get("province"):
+            text = msg("fixed.ask_region_province", province=loc["province"], example=f"{loc['province']} ○○시")
+        else:
+            text = rules.ASK_REGION_TEXT
+        return {"answer": text, "answer_source": "fixed", "judgements": []}
 
     async def unavailable(state: State, writer):
         return {"route": "unavailable", "answer": msg("fixed.service_unavailable", reason=reason("failed", state["service_down"])),
@@ -347,6 +356,11 @@ def build_graph(deps: Deps):
         js = [judge.judge_region(state["alerts"][rid], state["messages"].get(rid), state.get("guides", {}).get(rid, {}),
                                  state.get("shelters", {}).get(rid, {}))
               for rid in state["regions"]]
+        # 광역시 구 이름으로 물었으면 '구가 아니라 시 전체 기준'임을 밝힌다 (특보는 광역시 단위, ADR-017)
+        districts = (state.get("location") or {}).get("districts") or {}
+        for j in js:
+            if j["region_id"] in districts:
+                j["scope_note"] = msg("region.district_scope", district=districts[j["region_id"]], region=j["region"])
         writer({"event": "judgement", "judgements": js})
         return {"judgements": js}
 
@@ -392,7 +406,7 @@ def build_graph(deps: Deps):
         must = []
         for j in js:
             # 템플릿(compose)과 같은 표준 문구를 요구한다 — 문구 정의는 prompts/messages.yaml 한 곳
-            sentences = []
+            sentences = [j["scope_note"]] if j.get("scope_note") else []
             if j["level"] == "none":
                 sentences.append(msg("answer.none", as_of=j["as_of"], zones=compose.zone_text(j)))
             if j["level"] == "unknown":

@@ -123,7 +123,5981 @@
           "경기도 광주시"
         ]
       }
+    },
+    {
+      "id": "kr_L1010200",
+      "name": "경기도 광명시",
+      "display": "경기도 광명시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1010200"
+      ],
+      "kma_zone_names": {
+        "L1010200": "광명시"
+      },
+      "dssp_prefixes": [
+        "경기도 광명시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 광명시",
+        "경기도 광명",
+        "경기 광명시",
+        "경기 광명",
+        "광명시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경기도 광명시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1010300",
+      "name": "경기도 과천시",
+      "display": "경기도 과천시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1010300"
+      ],
+      "kma_zone_names": {
+        "L1010300": "과천시"
+      },
+      "dssp_prefixes": [
+        "경기도 과천시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 과천시",
+        "경기도 과천",
+        "경기 과천시",
+        "경기 과천",
+        "과천시"
+      ],
+      "aliases_weak": [
+        "과천"
+      ],
+      "kakao_prefixes": [
+        "경기도 과천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1010400",
+      "name": "경기도 안산시",
+      "display": "경기도 안산시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1010400"
+      ],
+      "kma_zone_names": {
+        "L1010400": "안산시"
+      },
+      "dssp_prefixes": [
+        "경기도 안산시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 안산시",
+        "경기도 안산",
+        "경기 안산시",
+        "경기 안산",
+        "안산시"
+      ],
+      "aliases_weak": [
+        "안산"
+      ],
+      "kakao_prefixes": [
+        "경기도 안산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1010500",
+      "name": "경기도 시흥시",
+      "display": "경기도 시흥시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1010500"
+      ],
+      "kma_zone_names": {
+        "L1010500": "시흥시"
+      },
+      "dssp_prefixes": [
+        "경기도 시흥시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 시흥시",
+        "경기도 시흥",
+        "경기 시흥시",
+        "경기 시흥",
+        "시흥시"
+      ],
+      "aliases_weak": [
+        "시흥"
+      ],
+      "kakao_prefixes": [
+        "경기도 시흥시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1010600",
+      "name": "경기도 부천시",
+      "display": "경기도 부천시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1010600"
+      ],
+      "kma_zone_names": {
+        "L1010600": "부천시"
+      },
+      "dssp_prefixes": [
+        "경기도 부천시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 부천시",
+        "경기도 부천",
+        "경기 부천시",
+        "경기 부천",
+        "부천시"
+      ],
+      "aliases_weak": [
+        "부천"
+      ],
+      "kakao_prefixes": [
+        "경기도 부천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1010700",
+      "name": "경기도 김포시",
+      "display": "경기도 김포시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1010700"
+      ],
+      "kma_zone_names": {
+        "L1010700": "김포시"
+      },
+      "dssp_prefixes": [
+        "경기도 김포시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 김포시",
+        "경기도 김포",
+        "경기 김포시",
+        "경기 김포",
+        "김포시"
+      ],
+      "aliases_weak": [
+        "김포"
+      ],
+      "kakao_prefixes": [
+        "경기도 김포시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011100",
+      "name": "경기도 동두천시",
+      "display": "경기도 동두천시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011100"
+      ],
+      "kma_zone_names": {
+        "L1011100": "동두천시"
+      },
+      "dssp_prefixes": [
+        "경기도 동두천시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 동두천시",
+        "경기도 동두천",
+        "경기 동두천시",
+        "경기 동두천",
+        "동두천시"
+      ],
+      "aliases_weak": [
+        "동두천"
+      ],
+      "kakao_prefixes": [
+        "경기도 동두천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011200",
+      "name": "경기도 연천군",
+      "display": "경기도 연천군",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011200"
+      ],
+      "kma_zone_names": {
+        "L1011200": "연천군"
+      },
+      "dssp_prefixes": [
+        "경기도 연천군"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 연천군",
+        "경기도 연천",
+        "경기 연천군",
+        "경기 연천",
+        "연천군"
+      ],
+      "aliases_weak": [
+        "연천"
+      ],
+      "kakao_prefixes": [
+        "경기도 연천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011300",
+      "name": "경기도 포천시",
+      "display": "경기도 포천시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011300"
+      ],
+      "kma_zone_names": {
+        "L1011300": "포천시"
+      },
+      "dssp_prefixes": [
+        "경기도 포천시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 포천시",
+        "경기도 포천",
+        "경기 포천시",
+        "경기 포천",
+        "포천시"
+      ],
+      "aliases_weak": [
+        "포천"
+      ],
+      "kakao_prefixes": [
+        "경기도 포천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011400",
+      "name": "경기도 가평군",
+      "display": "경기도 가평군",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011400"
+      ],
+      "kma_zone_names": {
+        "L1011400": "가평군"
+      },
+      "dssp_prefixes": [
+        "경기도 가평군"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 가평군",
+        "경기도 가평",
+        "경기 가평군",
+        "경기 가평",
+        "가평군"
+      ],
+      "aliases_weak": [
+        "가평"
+      ],
+      "kakao_prefixes": [
+        "경기도 가평군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011500",
+      "name": "경기도 고양시",
+      "display": "경기도 고양시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011500"
+      ],
+      "kma_zone_names": {
+        "L1011500": "고양시"
+      },
+      "dssp_prefixes": [
+        "경기도 고양시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 고양시",
+        "경기도 고양",
+        "경기 고양시",
+        "경기 고양",
+        "고양시"
+      ],
+      "aliases_weak": [
+        "고양"
+      ],
+      "kakao_prefixes": [
+        "경기도 고양시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011600",
+      "name": "경기도 양주시",
+      "display": "경기도 양주시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011600"
+      ],
+      "kma_zone_names": {
+        "L1011600": "양주시"
+      },
+      "dssp_prefixes": [
+        "경기도 양주시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 양주시",
+        "경기도 양주",
+        "경기 양주시",
+        "경기 양주",
+        "양주시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경기도 양주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011700",
+      "name": "경기도 의정부시",
+      "display": "경기도 의정부시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011700"
+      ],
+      "kma_zone_names": {
+        "L1011700": "의정부시"
+      },
+      "dssp_prefixes": [
+        "경기도 의정부시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 의정부시",
+        "경기도 의정부",
+        "경기 의정부시",
+        "경기 의정부",
+        "의정부시"
+      ],
+      "aliases_weak": [
+        "의정부"
+      ],
+      "kakao_prefixes": [
+        "경기도 의정부시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1011900",
+      "name": "경기도 수원시",
+      "display": "경기도 수원시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1011900"
+      ],
+      "kma_zone_names": {
+        "L1011900": "수원시"
+      },
+      "dssp_prefixes": [
+        "경기도 수원시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 수원시",
+        "경기도 수원",
+        "경기 수원시",
+        "경기 수원",
+        "수원시"
+      ],
+      "aliases_weak": [
+        "수원"
+      ],
+      "kakao_prefixes": [
+        "경기도 수원시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012000",
+      "name": "경기도 성남시",
+      "display": "경기도 성남시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012000"
+      ],
+      "kma_zone_names": {
+        "L1012000": "성남시"
+      },
+      "dssp_prefixes": [
+        "경기도 성남시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 성남시",
+        "경기도 성남",
+        "경기 성남시",
+        "경기 성남",
+        "성남시"
+      ],
+      "aliases_weak": [
+        "성남"
+      ],
+      "kakao_prefixes": [
+        "경기도 성남시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012100",
+      "name": "경기도 안양시",
+      "display": "경기도 안양시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012100"
+      ],
+      "kma_zone_names": {
+        "L1012100": "안양시"
+      },
+      "dssp_prefixes": [
+        "경기도 안양시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 안양시",
+        "경기도 안양",
+        "경기 안양시",
+        "경기 안양",
+        "안양시"
+      ],
+      "aliases_weak": [
+        "안양"
+      ],
+      "kakao_prefixes": [
+        "경기도 안양시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012200",
+      "name": "경기도 구리시",
+      "display": "경기도 구리시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012200"
+      ],
+      "kma_zone_names": {
+        "L1012200": "구리시"
+      },
+      "dssp_prefixes": [
+        "경기도 구리시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 구리시",
+        "경기도 구리",
+        "경기 구리시",
+        "경기 구리",
+        "구리시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경기도 구리시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012300",
+      "name": "경기도 남양주시",
+      "display": "경기도 남양주시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012300"
+      ],
+      "kma_zone_names": {
+        "L1012300": "남양주시"
+      },
+      "dssp_prefixes": [
+        "경기도 남양주시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 남양주시",
+        "경기도 남양주",
+        "경기 남양주시",
+        "경기 남양주",
+        "남양주시"
+      ],
+      "aliases_weak": [
+        "남양주"
+      ],
+      "kakao_prefixes": [
+        "경기도 남양주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012400",
+      "name": "경기도 오산시",
+      "display": "경기도 오산시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012400"
+      ],
+      "kma_zone_names": {
+        "L1012400": "오산시"
+      },
+      "dssp_prefixes": [
+        "경기도 오산시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 오산시",
+        "경기도 오산",
+        "경기 오산시",
+        "경기 오산",
+        "오산시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경기도 오산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012500",
+      "name": "경기도 평택시",
+      "display": "경기도 평택시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012500"
+      ],
+      "kma_zone_names": {
+        "L1012500": "평택시"
+      },
+      "dssp_prefixes": [
+        "경기도 평택시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 평택시",
+        "경기도 평택",
+        "경기 평택시",
+        "경기 평택",
+        "평택시"
+      ],
+      "aliases_weak": [
+        "평택"
+      ],
+      "kakao_prefixes": [
+        "경기도 평택시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012600",
+      "name": "경기도 군포시",
+      "display": "경기도 군포시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012600"
+      ],
+      "kma_zone_names": {
+        "L1012600": "군포시"
+      },
+      "dssp_prefixes": [
+        "경기도 군포시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 군포시",
+        "경기도 군포",
+        "경기 군포시",
+        "경기 군포",
+        "군포시"
+      ],
+      "aliases_weak": [
+        "군포"
+      ],
+      "kakao_prefixes": [
+        "경기도 군포시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012700",
+      "name": "경기도 의왕시",
+      "display": "경기도 의왕시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012700"
+      ],
+      "kma_zone_names": {
+        "L1012700": "의왕시"
+      },
+      "dssp_prefixes": [
+        "경기도 의왕시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 의왕시",
+        "경기도 의왕",
+        "경기 의왕시",
+        "경기 의왕",
+        "의왕시"
+      ],
+      "aliases_weak": [
+        "의왕"
+      ],
+      "kakao_prefixes": [
+        "경기도 의왕시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1012800",
+      "name": "경기도 하남시",
+      "display": "경기도 하남시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1012800"
+      ],
+      "kma_zone_names": {
+        "L1012800": "하남시"
+      },
+      "dssp_prefixes": [
+        "경기도 하남시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 하남시",
+        "경기도 하남",
+        "경기 하남시",
+        "경기 하남",
+        "하남시"
+      ],
+      "aliases_weak": [
+        "하남"
+      ],
+      "kakao_prefixes": [
+        "경기도 하남시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1013000",
+      "name": "경기도 이천시",
+      "display": "경기도 이천시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1013000"
+      ],
+      "kma_zone_names": {
+        "L1013000": "이천시"
+      },
+      "dssp_prefixes": [
+        "경기도 이천시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 이천시",
+        "경기도 이천",
+        "경기 이천시",
+        "경기 이천",
+        "이천시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경기도 이천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1013100",
+      "name": "경기도 안성시",
+      "display": "경기도 안성시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1013100"
+      ],
+      "kma_zone_names": {
+        "L1013100": "안성시"
+      },
+      "dssp_prefixes": [
+        "경기도 안성시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 안성시",
+        "경기도 안성",
+        "경기 안성시",
+        "경기 안성",
+        "안성시"
+      ],
+      "aliases_weak": [
+        "안성"
+      ],
+      "kakao_prefixes": [
+        "경기도 안성시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1013200",
+      "name": "경기도 화성시",
+      "display": "경기도 화성시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1013200"
+      ],
+      "kma_zone_names": {
+        "L1013200": "화성시"
+      },
+      "dssp_prefixes": [
+        "경기도 화성시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 화성시",
+        "경기도 화성",
+        "경기 화성시",
+        "경기 화성",
+        "화성시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경기도 화성시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1013700",
+      "name": "경기도 파주시",
+      "display": "경기도 파주시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1013700",
+        "L1013710",
+        "L1013720",
+        "L1013730"
+      ],
+      "kma_zone_names": {
+        "L1013700": "파주시",
+        "L1013710": "파주시동북부",
+        "L1013720": "파주시서북부",
+        "L1013730": "파주시남부"
+      },
+      "dssp_prefixes": [
+        "경기도 파주시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 파주시",
+        "경기도 파주",
+        "경기 파주시",
+        "경기 파주",
+        "파주시"
+      ],
+      "aliases_weak": [
+        "파주"
+      ],
+      "kakao_prefixes": [
+        "경기도 파주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1013800",
+      "name": "경기도 용인시",
+      "display": "경기도 용인시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1013800",
+        "L1013810",
+        "L1013820",
+        "L1013830"
+      ],
+      "kma_zone_names": {
+        "L1013800": "용인시",
+        "L1013810": "용인시동북부",
+        "L1013820": "용인시서북부",
+        "L1013830": "용인시남부"
+      },
+      "dssp_prefixes": [
+        "경기도 용인시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 용인시",
+        "경기도 용인",
+        "경기 용인시",
+        "경기 용인",
+        "용인시"
+      ],
+      "aliases_weak": [
+        "용인"
+      ],
+      "kakao_prefixes": [
+        "경기도 용인시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1013900",
+      "name": "경기도 여주시",
+      "display": "경기도 여주시",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1013900",
+        "L1013910",
+        "L1013920"
+      ],
+      "kma_zone_names": {
+        "L1013900": "여주시",
+        "L1013910": "여주시동남부",
+        "L1013920": "여주시서부"
+      },
+      "dssp_prefixes": [
+        "경기도 여주시"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 여주시",
+        "경기도 여주",
+        "경기 여주시",
+        "경기 여주",
+        "여주시"
+      ],
+      "aliases_weak": [
+        "여주"
+      ],
+      "kakao_prefixes": [
+        "경기도 여주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1014400",
+      "name": "경기도 양평군",
+      "display": "경기도 양평군",
+      "level": "sigun",
+      "sido": "경기도",
+      "kma_zones": [
+        "L1014400",
+        "L1014410",
+        "L1014420"
+      ],
+      "kma_zone_names": {
+        "L1014400": "양평군",
+        "L1014410": "양평군동부",
+        "L1014420": "양평군서부"
+      },
+      "dssp_prefixes": [
+        "경기도 양평군"
+      ],
+      "dssp_sido_wide": [
+        "경기도"
+      ],
+      "aliases_strong": [
+        "경기도 양평군",
+        "경기도 양평",
+        "경기 양평군",
+        "경기 양평",
+        "양평군"
+      ],
+      "aliases_weak": [
+        "양평"
+      ],
+      "kakao_prefixes": [
+        "경기도 양평군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1020300",
+      "name": "강원특별자치도 태백시",
+      "display": "강원특별자치도 태백시",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1020300"
+      ],
+      "kma_zone_names": {
+        "L1020300": "태백시"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 태백시",
+        "강원도 태백시"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 태백시",
+        "강원특별자치도 태백",
+        "강원도 태백시",
+        "강원도 태백",
+        "강원 태백시",
+        "강원 태백",
+        "태백시"
+      ],
+      "aliases_weak": [
+        "태백"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 태백시",
+        "강원도 태백시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1020800",
+      "name": "강원특별자치도 영월군",
+      "display": "강원특별자치도 영월군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1020800"
+      ],
+      "kma_zone_names": {
+        "L1020800": "영월군"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 영월군",
+        "강원도 영월군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 영월군",
+        "강원특별자치도 영월",
+        "강원도 영월군",
+        "강원도 영월",
+        "강원 영월군",
+        "강원 영월",
+        "영월군"
+      ],
+      "aliases_weak": [
+        "영월"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 영월군",
+        "강원도 영월군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1021100",
+      "name": "강원특별자치도 횡성군",
+      "display": "강원특별자치도 횡성군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1021100"
+      ],
+      "kma_zone_names": {
+        "L1021100": "횡성군"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 횡성군",
+        "강원도 횡성군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 횡성군",
+        "강원특별자치도 횡성",
+        "강원도 횡성군",
+        "강원도 횡성",
+        "강원 횡성군",
+        "강원 횡성",
+        "횡성군"
+      ],
+      "aliases_weak": [
+        "횡성"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 횡성군",
+        "강원도 횡성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1021200",
+      "name": "강원특별자치도 원주시",
+      "display": "강원특별자치도 원주시",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1021200"
+      ],
+      "kma_zone_names": {
+        "L1021200": "원주시"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 원주시",
+        "강원도 원주시"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 원주시",
+        "강원특별자치도 원주",
+        "강원도 원주시",
+        "강원도 원주",
+        "강원 원주시",
+        "강원 원주",
+        "원주시"
+      ],
+      "aliases_weak": [
+        "원주"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 원주시",
+        "강원도 원주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1021300",
+      "name": "강원특별자치도 철원군",
+      "display": "강원특별자치도 철원군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1021300"
+      ],
+      "kma_zone_names": {
+        "L1021300": "철원군"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 철원군",
+        "강원도 철원군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 철원군",
+        "강원특별자치도 철원",
+        "강원도 철원군",
+        "강원도 철원",
+        "강원 철원군",
+        "강원 철원",
+        "철원군"
+      ],
+      "aliases_weak": [
+        "철원"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 철원군",
+        "강원도 철원군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1021400",
+      "name": "강원특별자치도 화천군",
+      "display": "강원특별자치도 화천군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1021400"
+      ],
+      "kma_zone_names": {
+        "L1021400": "화천군"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 화천군",
+        "강원도 화천군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 화천군",
+        "강원특별자치도 화천",
+        "강원도 화천군",
+        "강원도 화천",
+        "강원 화천군",
+        "강원 화천",
+        "화천군"
+      ],
+      "aliases_weak": [
+        "화천"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 화천군",
+        "강원도 화천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1021600",
+      "name": "강원특별자치도 춘천시",
+      "display": "강원특별자치도 춘천시",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1021600"
+      ],
+      "kma_zone_names": {
+        "L1021600": "춘천시"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 춘천시",
+        "강원도 춘천시"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 춘천시",
+        "강원특별자치도 춘천",
+        "강원도 춘천시",
+        "강원도 춘천",
+        "강원 춘천시",
+        "강원 춘천",
+        "춘천시"
+      ],
+      "aliases_weak": [
+        "춘천"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 춘천시",
+        "강원도 춘천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1021900",
+      "name": "강원특별자치도 동해시",
+      "display": "강원특별자치도 동해시",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1021900",
+        "L1021910",
+        "L1021920"
+      ],
+      "kma_zone_names": {
+        "L1021900": "동해시",
+        "L1021910": "동해시평지",
+        "L1021920": "동해시산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 동해시",
+        "강원도 동해시"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 동해시",
+        "강원특별자치도 동해",
+        "강원도 동해시",
+        "강원도 동해",
+        "강원 동해시",
+        "강원 동해",
+        "동해시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "강원특별자치도 동해시",
+        "강원도 동해시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022000",
+      "name": "강원특별자치도 삼척시",
+      "display": "강원특별자치도 삼척시",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022000",
+        "L1022010",
+        "L1022020"
+      ],
+      "kma_zone_names": {
+        "L1022000": "삼척시",
+        "L1022010": "삼척시평지",
+        "L1022020": "삼척시산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 삼척시",
+        "강원도 삼척시"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 삼척시",
+        "강원특별자치도 삼척",
+        "강원도 삼척시",
+        "강원도 삼척",
+        "강원 삼척시",
+        "강원 삼척",
+        "삼척시"
+      ],
+      "aliases_weak": [
+        "삼척"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 삼척시",
+        "강원도 삼척시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022100",
+      "name": "강원특별자치도 속초시",
+      "display": "강원특별자치도 속초시",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022100",
+        "L1022110",
+        "L1022120"
+      ],
+      "kma_zone_names": {
+        "L1022100": "속초시",
+        "L1022110": "속초시평지",
+        "L1022120": "속초시산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 속초시",
+        "강원도 속초시"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 속초시",
+        "강원특별자치도 속초",
+        "강원도 속초시",
+        "강원도 속초",
+        "강원 속초시",
+        "강원 속초",
+        "속초시"
+      ],
+      "aliases_weak": [
+        "속초"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 속초시",
+        "강원도 속초시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022200",
+      "name": "강원특별자치도 고성군",
+      "display": "강원특별자치도 고성군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022200",
+        "L1022210",
+        "L1022220"
+      ],
+      "kma_zone_names": {
+        "L1022200": "고성군",
+        "L1022210": "고성군평지",
+        "L1022220": "고성군산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 고성군",
+        "강원도 고성군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 고성군",
+        "강원특별자치도 고성",
+        "강원도 고성군",
+        "강원도 고성",
+        "강원 고성군",
+        "강원 고성"
+      ],
+      "aliases_weak": [
+        "고성군",
+        "고성"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 고성군",
+        "강원도 고성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022300",
+      "name": "강원특별자치도 양양군",
+      "display": "강원특별자치도 양양군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022300",
+        "L1022310",
+        "L1022320"
+      ],
+      "kma_zone_names": {
+        "L1022300": "양양군",
+        "L1022310": "양양군평지",
+        "L1022320": "양양군산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 양양군",
+        "강원도 양양군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 양양군",
+        "강원특별자치도 양양",
+        "강원도 양양군",
+        "강원도 양양",
+        "강원 양양군",
+        "강원 양양",
+        "양양군"
+      ],
+      "aliases_weak": [
+        "양양"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 양양군",
+        "강원도 양양군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022400",
+      "name": "강원특별자치도 평창군",
+      "display": "강원특별자치도 평창군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022400",
+        "L1022410",
+        "L1022420"
+      ],
+      "kma_zone_names": {
+        "L1022400": "평창군",
+        "L1022410": "평창군평지",
+        "L1022420": "평창군산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 평창군",
+        "강원도 평창군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 평창군",
+        "강원특별자치도 평창",
+        "강원도 평창군",
+        "강원도 평창",
+        "강원 평창군",
+        "강원 평창",
+        "평창군"
+      ],
+      "aliases_weak": [
+        "평창"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 평창군",
+        "강원도 평창군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022500",
+      "name": "강원특별자치도 강릉시",
+      "display": "강원특별자치도 강릉시",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022500",
+        "L1022510",
+        "L1022520"
+      ],
+      "kma_zone_names": {
+        "L1022500": "강릉시",
+        "L1022510": "강릉시평지",
+        "L1022520": "강릉시산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 강릉시",
+        "강원도 강릉시"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 강릉시",
+        "강원특별자치도 강릉",
+        "강원도 강릉시",
+        "강원도 강릉",
+        "강원 강릉시",
+        "강원 강릉",
+        "강릉시"
+      ],
+      "aliases_weak": [
+        "강릉"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 강릉시",
+        "강원도 강릉시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022600",
+      "name": "강원특별자치도 정선군",
+      "display": "강원특별자치도 정선군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022600",
+        "L1022610",
+        "L1022620"
+      ],
+      "kma_zone_names": {
+        "L1022600": "정선군",
+        "L1022610": "정선군평지",
+        "L1022620": "정선군산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 정선군",
+        "강원도 정선군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 정선군",
+        "강원특별자치도 정선",
+        "강원도 정선군",
+        "강원도 정선",
+        "강원 정선군",
+        "강원 정선",
+        "정선군"
+      ],
+      "aliases_weak": [
+        "정선"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 정선군",
+        "강원도 정선군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022700",
+      "name": "강원특별자치도 홍천군",
+      "display": "강원특별자치도 홍천군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022700",
+        "L1022710",
+        "L1022720"
+      ],
+      "kma_zone_names": {
+        "L1022700": "홍천군",
+        "L1022710": "홍천군평지",
+        "L1022720": "홍천군산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 홍천군",
+        "강원도 홍천군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 홍천군",
+        "강원특별자치도 홍천",
+        "강원도 홍천군",
+        "강원도 홍천",
+        "강원 홍천군",
+        "강원 홍천",
+        "홍천군"
+      ],
+      "aliases_weak": [
+        "홍천"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 홍천군",
+        "강원도 홍천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022800",
+      "name": "강원특별자치도 양구군",
+      "display": "강원특별자치도 양구군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022800",
+        "L1022810",
+        "L1022820"
+      ],
+      "kma_zone_names": {
+        "L1022800": "양구군",
+        "L1022810": "양구군평지",
+        "L1022820": "양구군산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 양구군",
+        "강원도 양구군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 양구군",
+        "강원특별자치도 양구",
+        "강원도 양구군",
+        "강원도 양구",
+        "강원 양구군",
+        "강원 양구",
+        "양구군"
+      ],
+      "aliases_weak": [
+        "양구"
+      ],
+      "kakao_prefixes": [
+        "강원특별자치도 양구군",
+        "강원도 양구군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1022900",
+      "name": "강원특별자치도 인제군",
+      "display": "강원특별자치도 인제군",
+      "level": "sigun",
+      "sido": "강원특별자치도",
+      "kma_zones": [
+        "L1022900",
+        "L1022910",
+        "L1022920"
+      ],
+      "kma_zone_names": {
+        "L1022900": "인제군",
+        "L1022910": "인제군평지",
+        "L1022920": "인제군산지"
+      },
+      "dssp_prefixes": [
+        "강원특별자치도 인제군",
+        "강원도 인제군"
+      ],
+      "dssp_sido_wide": [
+        "강원특별자치도",
+        "강원도"
+      ],
+      "aliases_strong": [
+        "강원특별자치도 인제군",
+        "강원특별자치도 인제",
+        "강원도 인제군",
+        "강원도 인제",
+        "강원 인제군",
+        "강원 인제",
+        "인제군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "강원특별자치도 인제군",
+        "강원도 인제군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1030200",
+      "name": "충청남도 천안시",
+      "display": "충청남도 천안시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1030200"
+      ],
+      "kma_zone_names": {
+        "L1030200": "천안시"
+      },
+      "dssp_prefixes": [
+        "충청남도 천안시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 천안시",
+        "충청남도 천안",
+        "충남 천안시",
+        "충남 천안",
+        "천안시"
+      ],
+      "aliases_weak": [
+        "천안"
+      ],
+      "kakao_prefixes": [
+        "충청남도 천안시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1030300",
+      "name": "충청남도 공주시",
+      "display": "충청남도 공주시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1030300"
+      ],
+      "kma_zone_names": {
+        "L1030300": "공주시"
+      },
+      "dssp_prefixes": [
+        "충청남도 공주시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 공주시",
+        "충청남도 공주",
+        "충남 공주시",
+        "충남 공주",
+        "공주시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "충청남도 공주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1030400",
+      "name": "충청남도 아산시",
+      "display": "충청남도 아산시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1030400"
+      ],
+      "kma_zone_names": {
+        "L1030400": "아산시"
+      },
+      "dssp_prefixes": [
+        "충청남도 아산시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 아산시",
+        "충청남도 아산",
+        "충남 아산시",
+        "충남 아산",
+        "아산시"
+      ],
+      "aliases_weak": [
+        "아산"
+      ],
+      "kakao_prefixes": [
+        "충청남도 아산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1030500",
+      "name": "충청남도 논산시",
+      "display": "충청남도 논산시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1030500"
+      ],
+      "kma_zone_names": {
+        "L1030500": "논산시"
+      },
+      "dssp_prefixes": [
+        "충청남도 논산시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 논산시",
+        "충청남도 논산",
+        "충남 논산시",
+        "충남 논산",
+        "논산시"
+      ],
+      "aliases_weak": [
+        "논산"
+      ],
+      "kakao_prefixes": [
+        "충청남도 논산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1030600",
+      "name": "충청남도 금산군",
+      "display": "충청남도 금산군",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1030600"
+      ],
+      "kma_zone_names": {
+        "L1030600": "금산군"
+      },
+      "dssp_prefixes": [
+        "충청남도 금산군"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 금산군",
+        "충청남도 금산",
+        "충남 금산군",
+        "충남 금산",
+        "금산군"
+      ],
+      "aliases_weak": [
+        "금산"
+      ],
+      "kakao_prefixes": [
+        "충청남도 금산군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1030800",
+      "name": "충청남도 부여군",
+      "display": "충청남도 부여군",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1030800"
+      ],
+      "kma_zone_names": {
+        "L1030800": "부여군"
+      },
+      "dssp_prefixes": [
+        "충청남도 부여군"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 부여군",
+        "충청남도 부여",
+        "충남 부여군",
+        "충남 부여",
+        "부여군"
+      ],
+      "aliases_weak": [
+        "부여"
+      ],
+      "kakao_prefixes": [
+        "충청남도 부여군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1030900",
+      "name": "충청남도 청양군",
+      "display": "충청남도 청양군",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1030900"
+      ],
+      "kma_zone_names": {
+        "L1030900": "청양군"
+      },
+      "dssp_prefixes": [
+        "충청남도 청양군"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 청양군",
+        "충청남도 청양",
+        "충남 청양군",
+        "충남 청양",
+        "청양군"
+      ],
+      "aliases_weak": [
+        "청양"
+      ],
+      "kakao_prefixes": [
+        "충청남도 청양군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1031000",
+      "name": "충청남도 예산군",
+      "display": "충청남도 예산군",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1031000"
+      ],
+      "kma_zone_names": {
+        "L1031000": "예산군"
+      },
+      "dssp_prefixes": [
+        "충청남도 예산군"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 예산군",
+        "충청남도 예산",
+        "충남 예산군",
+        "충남 예산",
+        "예산군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "충청남도 예산군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1031100",
+      "name": "충청남도 태안군",
+      "display": "충청남도 태안군",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1031100"
+      ],
+      "kma_zone_names": {
+        "L1031100": "태안군"
+      },
+      "dssp_prefixes": [
+        "충청남도 태안군"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 태안군",
+        "충청남도 태안",
+        "충남 태안군",
+        "충남 태안",
+        "태안군"
+      ],
+      "aliases_weak": [
+        "태안"
+      ],
+      "kakao_prefixes": [
+        "충청남도 태안군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1031200",
+      "name": "충청남도 당진시",
+      "display": "충청남도 당진시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1031200"
+      ],
+      "kma_zone_names": {
+        "L1031200": "당진시"
+      },
+      "dssp_prefixes": [
+        "충청남도 당진시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 당진시",
+        "충청남도 당진",
+        "충남 당진시",
+        "충남 당진",
+        "당진시"
+      ],
+      "aliases_weak": [
+        "당진"
+      ],
+      "kakao_prefixes": [
+        "충청남도 당진시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1031300",
+      "name": "충청남도 서산시",
+      "display": "충청남도 서산시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1031300"
+      ],
+      "kma_zone_names": {
+        "L1031300": "서산시"
+      },
+      "dssp_prefixes": [
+        "충청남도 서산시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 서산시",
+        "충청남도 서산",
+        "충남 서산시",
+        "충남 서산",
+        "서산시"
+      ],
+      "aliases_weak": [
+        "서산"
+      ],
+      "kakao_prefixes": [
+        "충청남도 서산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1031500",
+      "name": "충청남도 서천군",
+      "display": "충청남도 서천군",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1031500"
+      ],
+      "kma_zone_names": {
+        "L1031500": "서천군"
+      },
+      "dssp_prefixes": [
+        "충청남도 서천군"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 서천군",
+        "충청남도 서천",
+        "충남 서천군",
+        "충남 서천",
+        "서천군"
+      ],
+      "aliases_weak": [
+        "서천"
+      ],
+      "kakao_prefixes": [
+        "충청남도 서천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1031700",
+      "name": "충청남도 계룡시",
+      "display": "충청남도 계룡시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1031700"
+      ],
+      "kma_zone_names": {
+        "L1031700": "계룡시"
+      },
+      "dssp_prefixes": [
+        "충청남도 계룡시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 계룡시",
+        "충청남도 계룡",
+        "충남 계룡시",
+        "충남 계룡",
+        "계룡시"
+      ],
+      "aliases_weak": [
+        "계룡"
+      ],
+      "kakao_prefixes": [
+        "충청남도 계룡시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1031900",
+      "name": "충청남도 보령시",
+      "display": "충청남도 보령시",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1031900",
+        "L1031910",
+        "L1031920"
+      ],
+      "kma_zone_names": {
+        "L1031900": "보령시",
+        "L1031910": "보령(도서제외)",
+        "L1031920": "보령도서"
+      },
+      "dssp_prefixes": [
+        "충청남도 보령시"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 보령시",
+        "충청남도 보령",
+        "충남 보령시",
+        "충남 보령",
+        "보령시"
+      ],
+      "aliases_weak": [
+        "보령"
+      ],
+      "kakao_prefixes": [
+        "충청남도 보령시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1032000",
+      "name": "충청남도 홍성군",
+      "display": "충청남도 홍성군",
+      "level": "sigun",
+      "sido": "충청남도",
+      "kma_zones": [
+        "L1032000",
+        "L1032010",
+        "L1032020"
+      ],
+      "kma_zone_names": {
+        "L1032000": "홍성군",
+        "L1032010": "홍성군동부",
+        "L1032020": "홍성군서부"
+      },
+      "dssp_prefixes": [
+        "충청남도 홍성군"
+      ],
+      "dssp_sido_wide": [
+        "충청남도"
+      ],
+      "aliases_strong": [
+        "충청남도 홍성군",
+        "충청남도 홍성",
+        "충남 홍성군",
+        "충남 홍성",
+        "홍성군"
+      ],
+      "aliases_weak": [
+        "홍성"
+      ],
+      "kakao_prefixes": [
+        "충청남도 홍성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1040300",
+      "name": "충청북도 보은군",
+      "display": "충청북도 보은군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1040300"
+      ],
+      "kma_zone_names": {
+        "L1040300": "보은군"
+      },
+      "dssp_prefixes": [
+        "충청북도 보은군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 보은군",
+        "충청북도 보은",
+        "충북 보은군",
+        "충북 보은",
+        "보은군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "충청북도 보은군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1040400",
+      "name": "충청북도 괴산군",
+      "display": "충청북도 괴산군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1040400"
+      ],
+      "kma_zone_names": {
+        "L1040400": "괴산군"
+      },
+      "dssp_prefixes": [
+        "충청북도 괴산군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 괴산군",
+        "충청북도 괴산",
+        "충북 괴산군",
+        "충북 괴산",
+        "괴산군"
+      ],
+      "aliases_weak": [
+        "괴산"
+      ],
+      "kakao_prefixes": [
+        "충청북도 괴산군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1040600",
+      "name": "충청북도 옥천군",
+      "display": "충청북도 옥천군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1040600"
+      ],
+      "kma_zone_names": {
+        "L1040600": "옥천군"
+      },
+      "dssp_prefixes": [
+        "충청북도 옥천군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 옥천군",
+        "충청북도 옥천",
+        "충북 옥천군",
+        "충북 옥천",
+        "옥천군"
+      ],
+      "aliases_weak": [
+        "옥천"
+      ],
+      "kakao_prefixes": [
+        "충청북도 옥천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1040700",
+      "name": "충청북도 영동군",
+      "display": "충청북도 영동군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1040700"
+      ],
+      "kma_zone_names": {
+        "L1040700": "영동군"
+      },
+      "dssp_prefixes": [
+        "충청북도 영동군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 영동군",
+        "충청북도 영동",
+        "충북 영동군",
+        "충북 영동",
+        "영동군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "충청북도 영동군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1040800",
+      "name": "충청북도 충주시",
+      "display": "충청북도 충주시",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1040800"
+      ],
+      "kma_zone_names": {
+        "L1040800": "충주시"
+      },
+      "dssp_prefixes": [
+        "충청북도 충주시"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 충주시",
+        "충청북도 충주",
+        "충북 충주시",
+        "충북 충주",
+        "충주시"
+      ],
+      "aliases_weak": [
+        "충주"
+      ],
+      "kakao_prefixes": [
+        "충청북도 충주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1040900",
+      "name": "충청북도 제천시",
+      "display": "충청북도 제천시",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1040900"
+      ],
+      "kma_zone_names": {
+        "L1040900": "제천시"
+      },
+      "dssp_prefixes": [
+        "충청북도 제천시"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 제천시",
+        "충청북도 제천",
+        "충북 제천시",
+        "충북 제천",
+        "제천시"
+      ],
+      "aliases_weak": [
+        "제천"
+      ],
+      "kakao_prefixes": [
+        "충청북도 제천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1041000",
+      "name": "충청북도 진천군",
+      "display": "충청북도 진천군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1041000"
+      ],
+      "kma_zone_names": {
+        "L1041000": "진천군"
+      },
+      "dssp_prefixes": [
+        "충청북도 진천군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 진천군",
+        "충청북도 진천",
+        "충북 진천군",
+        "충북 진천",
+        "진천군"
+      ],
+      "aliases_weak": [
+        "진천"
+      ],
+      "kakao_prefixes": [
+        "충청북도 진천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1041100",
+      "name": "충청북도 음성군",
+      "display": "충청북도 음성군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1041100"
+      ],
+      "kma_zone_names": {
+        "L1041100": "음성군"
+      },
+      "dssp_prefixes": [
+        "충청북도 음성군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 음성군",
+        "충청북도 음성",
+        "충북 음성군",
+        "충북 음성",
+        "음성군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "충청북도 음성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1041200",
+      "name": "충청북도 단양군",
+      "display": "충청북도 단양군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1041200"
+      ],
+      "kma_zone_names": {
+        "L1041200": "단양군"
+      },
+      "dssp_prefixes": [
+        "충청북도 단양군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 단양군",
+        "충청북도 단양",
+        "충북 단양군",
+        "충북 단양",
+        "단양군"
+      ],
+      "aliases_weak": [
+        "단양"
+      ],
+      "kakao_prefixes": [
+        "충청북도 단양군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1041300",
+      "name": "충청북도 증평군",
+      "display": "충청북도 증평군",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1041300"
+      ],
+      "kma_zone_names": {
+        "L1041300": "증평군"
+      },
+      "dssp_prefixes": [
+        "충청북도 증평군"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 증평군",
+        "충청북도 증평",
+        "충북 증평군",
+        "충북 증평",
+        "증평군"
+      ],
+      "aliases_weak": [
+        "증평"
+      ],
+      "kakao_prefixes": [
+        "충청북도 증평군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1041400",
+      "name": "충청북도 청주시",
+      "display": "충청북도 청주시",
+      "level": "sigun",
+      "sido": "충청북도",
+      "kma_zones": [
+        "L1041400",
+        "L1041410",
+        "L1041420"
+      ],
+      "kma_zone_names": {
+        "L1041400": "청주시",
+        "L1041410": "청주시동부",
+        "L1041420": "청주시서부"
+      },
+      "dssp_prefixes": [
+        "충청북도 청주시"
+      ],
+      "dssp_sido_wide": [
+        "충청북도"
+      ],
+      "aliases_strong": [
+        "충청북도 청주시",
+        "충청북도 청주",
+        "충북 청주시",
+        "충북 청주",
+        "청주시"
+      ],
+      "aliases_weak": [
+        "청주"
+      ],
+      "kakao_prefixes": [
+        "충청북도 청주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1050300",
+      "name": "전라남도 담양군",
+      "display": "전라남도 담양군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1050300"
+      ],
+      "kma_zone_names": {
+        "L1050300": "담양군"
+      },
+      "dssp_prefixes": [
+        "전라남도 담양군",
+        "전남광주통합특별시 담양군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 담양군",
+        "전라남도 담양",
+        "전남광주통합특별시 담양군",
+        "전남광주통합특별시 담양",
+        "전남 담양군",
+        "전남 담양",
+        "담양군"
+      ],
+      "aliases_weak": [
+        "담양"
+      ],
+      "kakao_prefixes": [
+        "전라남도 담양군",
+        "전남광주통합특별시 담양군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1050600",
+      "name": "전라남도 장성군",
+      "display": "전라남도 장성군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1050600"
+      ],
+      "kma_zone_names": {
+        "L1050600": "장성군"
+      },
+      "dssp_prefixes": [
+        "전라남도 장성군",
+        "전남광주통합특별시 장성군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 장성군",
+        "전라남도 장성",
+        "전남광주통합특별시 장성군",
+        "전남광주통합특별시 장성",
+        "전남 장성군",
+        "전남 장성",
+        "장성군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "전라남도 장성군",
+        "전남광주통합특별시 장성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1050700",
+      "name": "전라남도 화순군",
+      "display": "전라남도 화순군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1050700"
+      ],
+      "kma_zone_names": {
+        "L1050700": "화순군"
+      },
+      "dssp_prefixes": [
+        "전라남도 화순군",
+        "전남광주통합특별시 화순군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 화순군",
+        "전라남도 화순",
+        "전남광주통합특별시 화순군",
+        "전남광주통합특별시 화순",
+        "전남 화순군",
+        "전남 화순",
+        "화순군"
+      ],
+      "aliases_weak": [
+        "화순"
+      ],
+      "kakao_prefixes": [
+        "전라남도 화순군",
+        "전남광주통합특별시 화순군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1050900",
+      "name": "전라남도 보성군",
+      "display": "전라남도 보성군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1050900"
+      ],
+      "kma_zone_names": {
+        "L1050900": "보성군"
+      },
+      "dssp_prefixes": [
+        "전라남도 보성군",
+        "전남광주통합특별시 보성군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 보성군",
+        "전라남도 보성",
+        "전남광주통합특별시 보성군",
+        "전남광주통합특별시 보성",
+        "전남 보성군",
+        "전남 보성",
+        "보성군"
+      ],
+      "aliases_weak": [
+        "보성"
+      ],
+      "kakao_prefixes": [
+        "전라남도 보성군",
+        "전남광주통합특별시 보성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1051000",
+      "name": "전라남도 여수시",
+      "display": "전라남도 여수시",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1051000",
+        "L1052600"
+      ],
+      "kma_zone_names": {
+        "L1051000": "여수시",
+        "L1052600": "거문도.초도"
+      },
+      "dssp_prefixes": [
+        "전라남도 여수시",
+        "전남광주통합특별시 여수시"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 여수시",
+        "전라남도 여수",
+        "전남광주통합특별시 여수시",
+        "전남광주통합특별시 여수",
+        "전남 여수시",
+        "전남 여수",
+        "여수시"
+      ],
+      "aliases_weak": [
+        "여수"
+      ],
+      "kakao_prefixes": [
+        "전라남도 여수시",
+        "전남광주통합특별시 여수시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1051100",
+      "name": "전라남도 광양시",
+      "display": "전라남도 광양시",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1051100"
+      ],
+      "kma_zone_names": {
+        "L1051100": "광양시"
+      },
+      "dssp_prefixes": [
+        "전라남도 광양시",
+        "전남광주통합특별시 광양시"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 광양시",
+        "전라남도 광양",
+        "전남광주통합특별시 광양시",
+        "전남광주통합특별시 광양",
+        "전남 광양시",
+        "전남 광양",
+        "광양시"
+      ],
+      "aliases_weak": [
+        "광양"
+      ],
+      "kakao_prefixes": [
+        "전라남도 광양시",
+        "전남광주통합특별시 광양시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1051200",
+      "name": "전라남도 순천시",
+      "display": "전라남도 순천시",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1051200"
+      ],
+      "kma_zone_names": {
+        "L1051200": "순천시"
+      },
+      "dssp_prefixes": [
+        "전라남도 순천시",
+        "전남광주통합특별시 순천시"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 순천시",
+        "전라남도 순천",
+        "전남광주통합특별시 순천시",
+        "전남광주통합특별시 순천",
+        "전남 순천시",
+        "전남 순천",
+        "순천시"
+      ],
+      "aliases_weak": [
+        "순천"
+      ],
+      "kakao_prefixes": [
+        "전라남도 순천시",
+        "전남광주통합특별시 순천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1051300",
+      "name": "전라남도 장흥군",
+      "display": "전라남도 장흥군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1051300"
+      ],
+      "kma_zone_names": {
+        "L1051300": "장흥군"
+      },
+      "dssp_prefixes": [
+        "전라남도 장흥군",
+        "전남광주통합특별시 장흥군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 장흥군",
+        "전라남도 장흥",
+        "전남광주통합특별시 장흥군",
+        "전남광주통합특별시 장흥",
+        "전남 장흥군",
+        "전남 장흥",
+        "장흥군"
+      ],
+      "aliases_weak": [
+        "장흥"
+      ],
+      "kakao_prefixes": [
+        "전라남도 장흥군",
+        "전남광주통합특별시 장흥군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1051400",
+      "name": "전라남도 강진군",
+      "display": "전라남도 강진군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1051400"
+      ],
+      "kma_zone_names": {
+        "L1051400": "강진군"
+      },
+      "dssp_prefixes": [
+        "전라남도 강진군",
+        "전남광주통합특별시 강진군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 강진군",
+        "전라남도 강진",
+        "전남광주통합특별시 강진군",
+        "전남광주통합특별시 강진",
+        "전남 강진군",
+        "전남 강진",
+        "강진군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "전라남도 강진군",
+        "전남광주통합특별시 강진군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1051700",
+      "name": "전라남도 영암군",
+      "display": "전라남도 영암군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1051700"
+      ],
+      "kma_zone_names": {
+        "L1051700": "영암군"
+      },
+      "dssp_prefixes": [
+        "전라남도 영암군",
+        "전남광주통합특별시 영암군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 영암군",
+        "전라남도 영암",
+        "전남광주통합특별시 영암군",
+        "전남광주통합특별시 영암",
+        "전남 영암군",
+        "전남 영암",
+        "영암군"
+      ],
+      "aliases_weak": [
+        "영암"
+      ],
+      "kakao_prefixes": [
+        "전라남도 영암군",
+        "전남광주통합특별시 영암군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1051900",
+      "name": "전라남도 함평군",
+      "display": "전라남도 함평군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1051900"
+      ],
+      "kma_zone_names": {
+        "L1051900": "함평군"
+      },
+      "dssp_prefixes": [
+        "전라남도 함평군",
+        "전남광주통합특별시 함평군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 함평군",
+        "전라남도 함평",
+        "전남광주통합특별시 함평군",
+        "전남광주통합특별시 함평",
+        "전남 함평군",
+        "전남 함평",
+        "함평군"
+      ],
+      "aliases_weak": [
+        "함평"
+      ],
+      "kakao_prefixes": [
+        "전라남도 함평군",
+        "전남광주통합특별시 함평군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1052100",
+      "name": "전라남도 목포시",
+      "display": "전라남도 목포시",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1052100"
+      ],
+      "kma_zone_names": {
+        "L1052100": "목포시"
+      },
+      "dssp_prefixes": [
+        "전라남도 목포시",
+        "전남광주통합특별시 목포시"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 목포시",
+        "전라남도 목포",
+        "전남광주통합특별시 목포시",
+        "전남광주통합특별시 목포",
+        "전남 목포시",
+        "전남 목포",
+        "목포시"
+      ],
+      "aliases_weak": [
+        "목포"
+      ],
+      "kakao_prefixes": [
+        "전라남도 목포시",
+        "전남광주통합특별시 목포시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1052200",
+      "name": "전라남도 신안군",
+      "display": "전라남도 신안군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1052200",
+        "L1052500"
+      ],
+      "kma_zone_names": {
+        "L1052200": "신안군(흑산면제외)",
+        "L1052500": "흑산도.홍도"
+      },
+      "dssp_prefixes": [
+        "전라남도 신안군",
+        "전남광주통합특별시 신안군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 신안군",
+        "전라남도 신안",
+        "전남광주통합특별시 신안군",
+        "전남광주통합특별시 신안",
+        "전남 신안군",
+        "전남 신안",
+        "신안군",
+        "흑산도",
+        "홍도"
+      ],
+      "aliases_weak": [
+        "신안"
+      ],
+      "kakao_prefixes": [
+        "전라남도 신안군",
+        "전남광주통합특별시 신안군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1052300",
+      "name": "전라남도 진도군",
+      "display": "전라남도 진도군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1052300"
+      ],
+      "kma_zone_names": {
+        "L1052300": "진도군"
+      },
+      "dssp_prefixes": [
+        "전라남도 진도군",
+        "전남광주통합특별시 진도군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 진도군",
+        "전라남도 진도",
+        "전남광주통합특별시 진도군",
+        "전남광주통합특별시 진도",
+        "전남 진도군",
+        "전남 진도",
+        "진도군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "전라남도 진도군",
+        "전남광주통합특별시 진도군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1052700",
+      "name": "전라남도 영광군",
+      "display": "전라남도 영광군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1052700",
+        "L1052710",
+        "L1052720"
+      ],
+      "kma_zone_names": {
+        "L1052700": "영광군",
+        "L1052710": "영광군(낙월면 제외)",
+        "L1052720": "영광낙월면"
+      },
+      "dssp_prefixes": [
+        "전라남도 영광군",
+        "전남광주통합특별시 영광군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 영광군",
+        "전라남도 영광",
+        "전남광주통합특별시 영광군",
+        "전남광주통합특별시 영광",
+        "전남 영광군",
+        "전남 영광",
+        "영광군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "전라남도 영광군",
+        "전남광주통합특별시 영광군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1052800",
+      "name": "전라남도 나주시",
+      "display": "전라남도 나주시",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1052800",
+        "L1052810",
+        "L1052820"
+      ],
+      "kma_zone_names": {
+        "L1052800": "나주시",
+        "L1052810": "나주시동남부",
+        "L1052820": "나주시서북부"
+      },
+      "dssp_prefixes": [
+        "전라남도 나주시",
+        "전남광주통합특별시 나주시"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 나주시",
+        "전라남도 나주",
+        "전남광주통합특별시 나주시",
+        "전남광주통합특별시 나주",
+        "전남 나주시",
+        "전남 나주",
+        "나주시"
+      ],
+      "aliases_weak": [
+        "나주"
+      ],
+      "kakao_prefixes": [
+        "전라남도 나주시",
+        "전남광주통합특별시 나주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1052900",
+      "name": "전라남도 곡성군",
+      "display": "전라남도 곡성군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1052900",
+        "L1052910",
+        "L1052920"
+      ],
+      "kma_zone_names": {
+        "L1052900": "곡성군",
+        "L1052910": "곡성군북부",
+        "L1052920": "곡성군남부"
+      },
+      "dssp_prefixes": [
+        "전라남도 곡성군",
+        "전남광주통합특별시 곡성군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 곡성군",
+        "전라남도 곡성",
+        "전남광주통합특별시 곡성군",
+        "전남광주통합특별시 곡성",
+        "전남 곡성군",
+        "전남 곡성",
+        "곡성군"
+      ],
+      "aliases_weak": [
+        "곡성"
+      ],
+      "kakao_prefixes": [
+        "전라남도 곡성군",
+        "전남광주통합특별시 곡성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1053000",
+      "name": "전라남도 구례군",
+      "display": "전라남도 구례군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1053000",
+        "L1053010",
+        "L1053020"
+      ],
+      "kma_zone_names": {
+        "L1053000": "구례군",
+        "L1053010": "구례군평지",
+        "L1053020": "구례군산간"
+      },
+      "dssp_prefixes": [
+        "전라남도 구례군",
+        "전남광주통합특별시 구례군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 구례군",
+        "전라남도 구례",
+        "전남광주통합특별시 구례군",
+        "전남광주통합특별시 구례",
+        "전남 구례군",
+        "전남 구례",
+        "구례군"
+      ],
+      "aliases_weak": [
+        "구례"
+      ],
+      "kakao_prefixes": [
+        "전라남도 구례군",
+        "전남광주통합특별시 구례군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1053100",
+      "name": "전라남도 고흥군",
+      "display": "전라남도 고흥군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1053100",
+        "L1053110",
+        "L1053120"
+      ],
+      "kma_zone_names": {
+        "L1053100": "고흥군",
+        "L1053110": "고흥군북부",
+        "L1053120": "고흥군남부"
+      },
+      "dssp_prefixes": [
+        "전라남도 고흥군",
+        "전남광주통합특별시 고흥군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 고흥군",
+        "전라남도 고흥",
+        "전남광주통합특별시 고흥군",
+        "전남광주통합특별시 고흥",
+        "전남 고흥군",
+        "전남 고흥",
+        "고흥군"
+      ],
+      "aliases_weak": [
+        "고흥"
+      ],
+      "kakao_prefixes": [
+        "전라남도 고흥군",
+        "전남광주통합특별시 고흥군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1053200",
+      "name": "전라남도 해남군",
+      "display": "전라남도 해남군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1053200",
+        "L1053210",
+        "L1053220"
+      ],
+      "kma_zone_names": {
+        "L1053200": "해남군",
+        "L1053210": "해남군북부",
+        "L1053220": "해남군남부"
+      },
+      "dssp_prefixes": [
+        "전라남도 해남군",
+        "전남광주통합특별시 해남군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 해남군",
+        "전라남도 해남",
+        "전남광주통합특별시 해남군",
+        "전남광주통합특별시 해남",
+        "전남 해남군",
+        "전남 해남",
+        "해남군"
+      ],
+      "aliases_weak": [
+        "해남"
+      ],
+      "kakao_prefixes": [
+        "전라남도 해남군",
+        "전남광주통합특별시 해남군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1053300",
+      "name": "전라남도 완도군",
+      "display": "전라남도 완도군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1053300",
+        "L1053310",
+        "L1053320"
+      ],
+      "kma_zone_names": {
+        "L1053300": "완도군",
+        "L1053310": "완도군(여서도 제외)",
+        "L1053320": "완도군여서도"
+      },
+      "dssp_prefixes": [
+        "전라남도 완도군",
+        "전남광주통합특별시 완도군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 완도군",
+        "전라남도 완도",
+        "전남광주통합특별시 완도군",
+        "전남광주통합특별시 완도",
+        "전남 완도군",
+        "전남 완도",
+        "완도군"
+      ],
+      "aliases_weak": [
+        "완도"
+      ],
+      "kakao_prefixes": [
+        "전라남도 완도군",
+        "전남광주통합특별시 완도군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1053400",
+      "name": "전라남도 무안군",
+      "display": "전라남도 무안군",
+      "level": "sigun",
+      "sido": "전라남도",
+      "kma_zones": [
+        "L1053400",
+        "L1053410",
+        "L1053420"
+      ],
+      "kma_zone_names": {
+        "L1053400": "무안군",
+        "L1053410": "무안군북부",
+        "L1053420": "무안군남부"
+      },
+      "dssp_prefixes": [
+        "전라남도 무안군",
+        "전남광주통합특별시 무안군"
+      ],
+      "dssp_sido_wide": [
+        "전라남도",
+        "전남광주통합특별시"
+      ],
+      "aliases_strong": [
+        "전라남도 무안군",
+        "전라남도 무안",
+        "전남광주통합특별시 무안군",
+        "전남광주통합특별시 무안",
+        "전남 무안군",
+        "전남 무안",
+        "무안군"
+      ],
+      "aliases_weak": [
+        "무안"
+      ],
+      "kakao_prefixes": [
+        "전라남도 무안군",
+        "전남광주통합특별시 무안군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1060100",
+      "name": "전북특별자치도 고창군",
+      "display": "전북특별자치도 고창군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1060100"
+      ],
+      "kma_zone_names": {
+        "L1060100": "고창군"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 고창군",
+        "전라북도 고창군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 고창군",
+        "전북특별자치도 고창",
+        "전라북도 고창군",
+        "전라북도 고창",
+        "전북 고창군",
+        "전북 고창",
+        "고창군"
+      ],
+      "aliases_weak": [
+        "고창"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 고창군",
+        "전라북도 고창군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1060400",
+      "name": "전북특별자치도 김제시",
+      "display": "전북특별자치도 김제시",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1060400"
+      ],
+      "kma_zone_names": {
+        "L1060400": "김제시"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 김제시",
+        "전라북도 김제시"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 김제시",
+        "전북특별자치도 김제",
+        "전라북도 김제시",
+        "전라북도 김제",
+        "전북 김제시",
+        "전북 김제",
+        "김제시"
+      ],
+      "aliases_weak": [
+        "김제"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 김제시",
+        "전라북도 김제시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1060500",
+      "name": "전북특별자치도 완주군",
+      "display": "전북특별자치도 완주군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1060500"
+      ],
+      "kma_zone_names": {
+        "L1060500": "완주군"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 완주군",
+        "전라북도 완주군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 완주군",
+        "전북특별자치도 완주",
+        "전라북도 완주군",
+        "전라북도 완주",
+        "전북 완주군",
+        "전북 완주",
+        "완주군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "전북특별자치도 완주군",
+        "전라북도 완주군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1060600",
+      "name": "전북특별자치도 진안군",
+      "display": "전북특별자치도 진안군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1060600"
+      ],
+      "kma_zone_names": {
+        "L1060600": "진안군"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 진안군",
+        "전라북도 진안군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 진안군",
+        "전북특별자치도 진안",
+        "전라북도 진안군",
+        "전라북도 진안",
+        "전북 진안군",
+        "전북 진안",
+        "진안군"
+      ],
+      "aliases_weak": [
+        "진안"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 진안군",
+        "전라북도 진안군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1060700",
+      "name": "전북특별자치도 무주군",
+      "display": "전북특별자치도 무주군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1060700"
+      ],
+      "kma_zone_names": {
+        "L1060700": "무주군"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 무주군",
+        "전라북도 무주군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 무주군",
+        "전북특별자치도 무주",
+        "전라북도 무주군",
+        "전라북도 무주",
+        "전북 무주군",
+        "전북 무주",
+        "무주군"
+      ],
+      "aliases_weak": [
+        "무주"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 무주군",
+        "전라북도 무주군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1060800",
+      "name": "전북특별자치도 장수군",
+      "display": "전북특별자치도 장수군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1060800"
+      ],
+      "kma_zone_names": {
+        "L1060800": "장수군"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 장수군",
+        "전라북도 장수군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 장수군",
+        "전북특별자치도 장수",
+        "전라북도 장수군",
+        "전라북도 장수",
+        "전북 장수군",
+        "전북 장수",
+        "장수군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "전북특별자치도 장수군",
+        "전라북도 장수군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1060900",
+      "name": "전북특별자치도 임실군",
+      "display": "전북특별자치도 임실군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1060900"
+      ],
+      "kma_zone_names": {
+        "L1060900": "임실군"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 임실군",
+        "전라북도 임실군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 임실군",
+        "전북특별자치도 임실",
+        "전라북도 임실군",
+        "전라북도 임실",
+        "전북 임실군",
+        "전북 임실",
+        "임실군"
+      ],
+      "aliases_weak": [
+        "임실"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 임실군",
+        "전라북도 임실군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1061000",
+      "name": "전북특별자치도 순창군",
+      "display": "전북특별자치도 순창군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1061000"
+      ],
+      "kma_zone_names": {
+        "L1061000": "순창군"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 순창군",
+        "전라북도 순창군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 순창군",
+        "전북특별자치도 순창",
+        "전라북도 순창군",
+        "전라북도 순창",
+        "전북 순창군",
+        "전북 순창",
+        "순창군"
+      ],
+      "aliases_weak": [
+        "순창"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 순창군",
+        "전라북도 순창군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1061100",
+      "name": "전북특별자치도 익산시",
+      "display": "전북특별자치도 익산시",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1061100"
+      ],
+      "kma_zone_names": {
+        "L1061100": "익산시"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 익산시",
+        "전라북도 익산시"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 익산시",
+        "전북특별자치도 익산",
+        "전라북도 익산시",
+        "전라북도 익산",
+        "전북 익산시",
+        "전북 익산",
+        "익산시"
+      ],
+      "aliases_weak": [
+        "익산"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 익산시",
+        "전라북도 익산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1061200",
+      "name": "전북특별자치도 정읍시",
+      "display": "전북특별자치도 정읍시",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1061200"
+      ],
+      "kma_zone_names": {
+        "L1061200": "정읍시"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 정읍시",
+        "전라북도 정읍시"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 정읍시",
+        "전북특별자치도 정읍",
+        "전라북도 정읍시",
+        "전라북도 정읍",
+        "전북 정읍시",
+        "전북 정읍",
+        "정읍시"
+      ],
+      "aliases_weak": [
+        "정읍"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 정읍시",
+        "전라북도 정읍시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1061300",
+      "name": "전북특별자치도 전주시",
+      "display": "전북특별자치도 전주시",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1061300"
+      ],
+      "kma_zone_names": {
+        "L1061300": "전주시"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 전주시",
+        "전라북도 전주시"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 전주시",
+        "전북특별자치도 전주",
+        "전라북도 전주시",
+        "전라북도 전주",
+        "전북 전주시",
+        "전북 전주",
+        "전주시"
+      ],
+      "aliases_weak": [
+        "전주"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 전주시",
+        "전라북도 전주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1061400",
+      "name": "전북특별자치도 남원시",
+      "display": "전북특별자치도 남원시",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1061400"
+      ],
+      "kma_zone_names": {
+        "L1061400": "남원시"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 남원시",
+        "전라북도 남원시"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 남원시",
+        "전북특별자치도 남원",
+        "전라북도 남원시",
+        "전라북도 남원",
+        "전북 남원시",
+        "전북 남원",
+        "남원시"
+      ],
+      "aliases_weak": [
+        "남원"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 남원시",
+        "전라북도 남원시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1061500",
+      "name": "전북특별자치도 부안군",
+      "display": "전북특별자치도 부안군",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1061500",
+        "L1061510",
+        "L1061520"
+      ],
+      "kma_zone_names": {
+        "L1061500": "부안군",
+        "L1061510": "부안군(위도면 제외)",
+        "L1061520": "부안위도면"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 부안군",
+        "전라북도 부안군"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 부안군",
+        "전북특별자치도 부안",
+        "전라북도 부안군",
+        "전라북도 부안",
+        "전북 부안군",
+        "전북 부안",
+        "부안군"
+      ],
+      "aliases_weak": [
+        "부안"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 부안군",
+        "전라북도 부안군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1061600",
+      "name": "전북특별자치도 군산시",
+      "display": "전북특별자치도 군산시",
+      "level": "sigun",
+      "sido": "전북특별자치도",
+      "kma_zones": [
+        "L1061600",
+        "L1061610",
+        "L1061620",
+        "L1061630"
+      ],
+      "kma_zone_names": {
+        "L1061600": "군산시",
+        "L1061610": "군산시(옥도면 제외)",
+        "L1061620": "군산옥도면(어청도 제외)",
+        "L1061630": "군산어청도"
+      },
+      "dssp_prefixes": [
+        "전북특별자치도 군산시",
+        "전라북도 군산시"
+      ],
+      "dssp_sido_wide": [
+        "전북특별자치도",
+        "전라북도"
+      ],
+      "aliases_strong": [
+        "전북특별자치도 군산시",
+        "전북특별자치도 군산",
+        "전라북도 군산시",
+        "전라북도 군산",
+        "전북 군산시",
+        "전북 군산",
+        "군산시"
+      ],
+      "aliases_weak": [
+        "군산"
+      ],
+      "kakao_prefixes": [
+        "전북특별자치도 군산시",
+        "전라북도 군산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1070300",
+      "name": "경상북도 구미시",
+      "display": "경상북도 구미시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1070300"
+      ],
+      "kma_zone_names": {
+        "L1070300": "구미시"
+      },
+      "dssp_prefixes": [
+        "경상북도 구미시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 구미시",
+        "경상북도 구미",
+        "경북 구미시",
+        "경북 구미",
+        "구미시"
+      ],
+      "aliases_weak": [
+        "구미"
+      ],
+      "kakao_prefixes": [
+        "경상북도 구미시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1070400",
+      "name": "경상북도 영천시",
+      "display": "경상북도 영천시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1070400"
+      ],
+      "kma_zone_names": {
+        "L1070400": "영천시"
+      },
+      "dssp_prefixes": [
+        "경상북도 영천시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 영천시",
+        "경상북도 영천",
+        "경북 영천시",
+        "경북 영천",
+        "영천시"
+      ],
+      "aliases_weak": [
+        "영천"
+      ],
+      "kakao_prefixes": [
+        "경상북도 영천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1070500",
+      "name": "경상북도 경산시",
+      "display": "경상북도 경산시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1070500"
+      ],
+      "kma_zone_names": {
+        "L1070500": "경산시"
+      },
+      "dssp_prefixes": [
+        "경상북도 경산시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 경산시",
+        "경상북도 경산",
+        "경북 경산시",
+        "경북 경산",
+        "경산시"
+      ],
+      "aliases_weak": [
+        "경산"
+      ],
+      "kakao_prefixes": [
+        "경상북도 경산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1070700",
+      "name": "경상북도 청도군",
+      "display": "경상북도 청도군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1070700"
+      ],
+      "kma_zone_names": {
+        "L1070700": "청도군"
+      },
+      "dssp_prefixes": [
+        "경상북도 청도군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 청도군",
+        "경상북도 청도",
+        "경북 청도군",
+        "경북 청도",
+        "청도군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상북도 청도군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1070800",
+      "name": "경상북도 고령군",
+      "display": "경상북도 고령군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1070800"
+      ],
+      "kma_zone_names": {
+        "L1070800": "고령군"
+      },
+      "dssp_prefixes": [
+        "경상북도 고령군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 고령군",
+        "경상북도 고령",
+        "경북 고령군",
+        "경북 고령",
+        "고령군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상북도 고령군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1070900",
+      "name": "경상북도 성주군",
+      "display": "경상북도 성주군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1070900"
+      ],
+      "kma_zone_names": {
+        "L1070900": "성주군"
+      },
+      "dssp_prefixes": [
+        "경상북도 성주군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 성주군",
+        "경상북도 성주",
+        "경북 성주군",
+        "경북 성주",
+        "성주군"
+      ],
+      "aliases_weak": [
+        "성주"
+      ],
+      "kakao_prefixes": [
+        "경상북도 성주군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1071000",
+      "name": "경상북도 칠곡군",
+      "display": "경상북도 칠곡군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1071000"
+      ],
+      "kma_zone_names": {
+        "L1071000": "칠곡군"
+      },
+      "dssp_prefixes": [
+        "경상북도 칠곡군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 칠곡군",
+        "경상북도 칠곡",
+        "경북 칠곡군",
+        "경북 칠곡",
+        "칠곡군"
+      ],
+      "aliases_weak": [
+        "칠곡"
+      ],
+      "kakao_prefixes": [
+        "경상북도 칠곡군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1071200",
+      "name": "경상북도 상주시",
+      "display": "경상북도 상주시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1071200"
+      ],
+      "kma_zone_names": {
+        "L1071200": "상주시"
+      },
+      "dssp_prefixes": [
+        "경상북도 상주시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 상주시",
+        "경상북도 상주",
+        "경북 상주시",
+        "경북 상주",
+        "상주시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상북도 상주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1071300",
+      "name": "경상북도 문경시",
+      "display": "경상북도 문경시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1071300"
+      ],
+      "kma_zone_names": {
+        "L1071300": "문경시"
+      },
+      "dssp_prefixes": [
+        "경상북도 문경시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 문경시",
+        "경상북도 문경",
+        "경북 문경시",
+        "경북 문경",
+        "문경시"
+      ],
+      "aliases_weak": [
+        "문경"
+      ],
+      "kakao_prefixes": [
+        "경상북도 문경시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1071400",
+      "name": "경상북도 예천군",
+      "display": "경상북도 예천군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1071400"
+      ],
+      "kma_zone_names": {
+        "L1071400": "예천군"
+      },
+      "dssp_prefixes": [
+        "경상북도 예천군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 예천군",
+        "경상북도 예천",
+        "경북 예천군",
+        "경북 예천",
+        "예천군"
+      ],
+      "aliases_weak": [
+        "예천"
+      ],
+      "kakao_prefixes": [
+        "경상북도 예천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1071600",
+      "name": "경상북도 영주시",
+      "display": "경상북도 영주시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1071600"
+      ],
+      "kma_zone_names": {
+        "L1071600": "영주시"
+      },
+      "dssp_prefixes": [
+        "경상북도 영주시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 영주시",
+        "경상북도 영주",
+        "경북 영주시",
+        "경북 영주",
+        "영주시"
+      ],
+      "aliases_weak": [
+        "영주"
+      ],
+      "kakao_prefixes": [
+        "경상북도 영주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1071700",
+      "name": "경상북도 의성군",
+      "display": "경상북도 의성군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1071700"
+      ],
+      "kma_zone_names": {
+        "L1071700": "의성군"
+      },
+      "dssp_prefixes": [
+        "경상북도 의성군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 의성군",
+        "경상북도 의성",
+        "경북 의성군",
+        "경북 의성",
+        "의성군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상북도 의성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1071800",
+      "name": "경상북도 청송군",
+      "display": "경상북도 청송군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1071800"
+      ],
+      "kma_zone_names": {
+        "L1071800": "청송군"
+      },
+      "dssp_prefixes": [
+        "경상북도 청송군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 청송군",
+        "경상북도 청송",
+        "경북 청송군",
+        "경북 청송",
+        "청송군"
+      ],
+      "aliases_weak": [
+        "청송"
+      ],
+      "kakao_prefixes": [
+        "경상북도 청송군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1072200",
+      "name": "경상북도 영덕군",
+      "display": "경상북도 영덕군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1072200"
+      ],
+      "kma_zone_names": {
+        "L1072200": "영덕군"
+      },
+      "dssp_prefixes": [
+        "경상북도 영덕군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 영덕군",
+        "경상북도 영덕",
+        "경북 영덕군",
+        "경북 영덕",
+        "영덕군"
+      ],
+      "aliases_weak": [
+        "영덕"
+      ],
+      "kakao_prefixes": [
+        "경상북도 영덕군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1072400",
+      "name": "경상북도 포항시",
+      "display": "경상북도 포항시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1072400"
+      ],
+      "kma_zone_names": {
+        "L1072400": "포항시"
+      },
+      "dssp_prefixes": [
+        "경상북도 포항시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 포항시",
+        "경상북도 포항",
+        "경북 포항시",
+        "경북 포항",
+        "포항시"
+      ],
+      "aliases_weak": [
+        "포항"
+      ],
+      "kakao_prefixes": [
+        "경상북도 포항시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1072600",
+      "name": "경상북도 김천시",
+      "display": "경상북도 김천시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1072600",
+        "L1072610",
+        "L1072620"
+      ],
+      "kma_zone_names": {
+        "L1072600": "김천시",
+        "L1072610": "김천시북부",
+        "L1072620": "김천시남부"
+      },
+      "dssp_prefixes": [
+        "경상북도 김천시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 김천시",
+        "경상북도 김천",
+        "경북 김천시",
+        "경북 김천",
+        "김천시"
+      ],
+      "aliases_weak": [
+        "김천"
+      ],
+      "kakao_prefixes": [
+        "경상북도 김천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1072700",
+      "name": "경상북도 안동시",
+      "display": "경상북도 안동시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1072700",
+        "L1072710",
+        "L1072720",
+        "L1072730"
+      ],
+      "kma_zone_names": {
+        "L1072700": "안동시",
+        "L1072710": "안동시북부",
+        "L1072720": "안동시동남부",
+        "L1072730": "안동시서부"
+      },
+      "dssp_prefixes": [
+        "경상북도 안동시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 안동시",
+        "경상북도 안동",
+        "경북 안동시",
+        "경북 안동",
+        "안동시"
+      ],
+      "aliases_weak": [
+        "안동"
+      ],
+      "kakao_prefixes": [
+        "경상북도 안동시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1072800",
+      "name": "경상북도 영양군",
+      "display": "경상북도 영양군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1072800",
+        "L1072810",
+        "L1072820"
+      ],
+      "kma_zone_names": {
+        "L1072800": "영양군",
+        "L1072810": "영양군평지",
+        "L1072820": "영양군산지"
+      },
+      "dssp_prefixes": [
+        "경상북도 영양군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 영양군",
+        "경상북도 영양",
+        "경북 영양군",
+        "경북 영양",
+        "영양군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상북도 영양군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1072900",
+      "name": "경상북도 봉화군",
+      "display": "경상북도 봉화군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1072900",
+        "L1072910",
+        "L1072920"
+      ],
+      "kma_zone_names": {
+        "L1072900": "봉화군",
+        "L1072910": "봉화군평지",
+        "L1072920": "봉화군산지"
+      },
+      "dssp_prefixes": [
+        "경상북도 봉화군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 봉화군",
+        "경상북도 봉화",
+        "경북 봉화군",
+        "경북 봉화",
+        "봉화군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상북도 봉화군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1073000",
+      "name": "경상북도 울진군",
+      "display": "경상북도 울진군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1073000",
+        "L1073010",
+        "L1073020"
+      ],
+      "kma_zone_names": {
+        "L1073000": "울진군",
+        "L1073010": "울진군평지",
+        "L1073020": "울진군산지"
+      },
+      "dssp_prefixes": [
+        "경상북도 울진군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 울진군",
+        "경상북도 울진",
+        "경북 울진군",
+        "경북 울진",
+        "울진군"
+      ],
+      "aliases_weak": [
+        "울진"
+      ],
+      "kakao_prefixes": [
+        "경상북도 울진군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1073100",
+      "name": "경상북도 경주시",
+      "display": "경상북도 경주시",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1073100",
+        "L1073110",
+        "L1073120",
+        "L1073130",
+        "L1073140"
+      ],
+      "kma_zone_names": {
+        "L1073100": "경주시",
+        "L1073110": "경주시중북부",
+        "L1073120": "경주시동부",
+        "L1073130": "경주시남부",
+        "L1073140": "경주시서부"
+      },
+      "dssp_prefixes": [
+        "경상북도 경주시"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 경주시",
+        "경상북도 경주",
+        "경북 경주시",
+        "경북 경주",
+        "경주시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상북도 경주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1080500",
+      "name": "경상남도 양산시",
+      "display": "경상남도 양산시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1080500"
+      ],
+      "kma_zone_names": {
+        "L1080500": "양산시"
+      },
+      "dssp_prefixes": [
+        "경상남도 양산시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 양산시",
+        "경상남도 양산",
+        "경남 양산시",
+        "경남 양산",
+        "양산시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상남도 양산시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1080600",
+      "name": "경상남도 창원시",
+      "display": "경상남도 창원시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1080600"
+      ],
+      "kma_zone_names": {
+        "L1080600": "창원시"
+      },
+      "dssp_prefixes": [
+        "경상남도 창원시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 창원시",
+        "경상남도 창원",
+        "경남 창원시",
+        "경남 창원",
+        "창원시"
+      ],
+      "aliases_weak": [
+        "창원"
+      ],
+      "kakao_prefixes": [
+        "경상남도 창원시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1080900",
+      "name": "경상남도 김해시",
+      "display": "경상남도 김해시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1080900"
+      ],
+      "kma_zone_names": {
+        "L1080900": "김해시"
+      },
+      "dssp_prefixes": [
+        "경상남도 김해시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 김해시",
+        "경상남도 김해",
+        "경남 김해시",
+        "경남 김해",
+        "김해시"
+      ],
+      "aliases_weak": [
+        "김해"
+      ],
+      "kakao_prefixes": [
+        "경상남도 김해시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1081000",
+      "name": "경상남도 밀양시",
+      "display": "경상남도 밀양시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1081000"
+      ],
+      "kma_zone_names": {
+        "L1081000": "밀양시"
+      },
+      "dssp_prefixes": [
+        "경상남도 밀양시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 밀양시",
+        "경상남도 밀양",
+        "경남 밀양시",
+        "경남 밀양",
+        "밀양시"
+      ],
+      "aliases_weak": [
+        "밀양"
+      ],
+      "kakao_prefixes": [
+        "경상남도 밀양시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1081100",
+      "name": "경상남도 의령군",
+      "display": "경상남도 의령군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1081100"
+      ],
+      "kma_zone_names": {
+        "L1081100": "의령군"
+      },
+      "dssp_prefixes": [
+        "경상남도 의령군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 의령군",
+        "경상남도 의령",
+        "경남 의령군",
+        "경남 의령",
+        "의령군"
+      ],
+      "aliases_weak": [
+        "의령"
+      ],
+      "kakao_prefixes": [
+        "경상남도 의령군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1081200",
+      "name": "경상남도 함안군",
+      "display": "경상남도 함안군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1081200"
+      ],
+      "kma_zone_names": {
+        "L1081200": "함안군"
+      },
+      "dssp_prefixes": [
+        "경상남도 함안군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 함안군",
+        "경상남도 함안",
+        "경남 함안군",
+        "경남 함안",
+        "함안군"
+      ],
+      "aliases_weak": [
+        "함안"
+      ],
+      "kakao_prefixes": [
+        "경상남도 함안군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1081300",
+      "name": "경상남도 창녕군",
+      "display": "경상남도 창녕군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1081300"
+      ],
+      "kma_zone_names": {
+        "L1081300": "창녕군"
+      },
+      "dssp_prefixes": [
+        "경상남도 창녕군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 창녕군",
+        "경상남도 창녕",
+        "경남 창녕군",
+        "경남 창녕",
+        "창녕군"
+      ],
+      "aliases_weak": [
+        "창녕"
+      ],
+      "kakao_prefixes": [
+        "경상남도 창녕군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1081400",
+      "name": "경상남도 진주시",
+      "display": "경상남도 진주시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1081400"
+      ],
+      "kma_zone_names": {
+        "L1081400": "진주시"
+      },
+      "dssp_prefixes": [
+        "경상남도 진주시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 진주시",
+        "경상남도 진주",
+        "경남 진주시",
+        "경남 진주",
+        "진주시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상남도 진주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1082000",
+      "name": "경상남도 통영시",
+      "display": "경상남도 통영시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1082000"
+      ],
+      "kma_zone_names": {
+        "L1082000": "통영시"
+      },
+      "dssp_prefixes": [
+        "경상남도 통영시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 통영시",
+        "경상남도 통영",
+        "경남 통영시",
+        "경남 통영",
+        "통영시"
+      ],
+      "aliases_weak": [
+        "통영"
+      ],
+      "kakao_prefixes": [
+        "경상남도 통영시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1082100",
+      "name": "경상남도 사천시",
+      "display": "경상남도 사천시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1082100"
+      ],
+      "kma_zone_names": {
+        "L1082100": "사천시"
+      },
+      "dssp_prefixes": [
+        "경상남도 사천시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 사천시",
+        "경상남도 사천",
+        "경남 사천시",
+        "경남 사천",
+        "사천시"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상남도 사천시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1082200",
+      "name": "경상남도 거제시",
+      "display": "경상남도 거제시",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1082200"
+      ],
+      "kma_zone_names": {
+        "L1082200": "거제시"
+      },
+      "dssp_prefixes": [
+        "경상남도 거제시"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 거제시",
+        "경상남도 거제",
+        "경남 거제시",
+        "경남 거제",
+        "거제시"
+      ],
+      "aliases_weak": [
+        "거제"
+      ],
+      "kakao_prefixes": [
+        "경상남도 거제시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1082300",
+      "name": "경상남도 고성군",
+      "display": "경상남도 고성군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1082300"
+      ],
+      "kma_zone_names": {
+        "L1082300": "고성군"
+      },
+      "dssp_prefixes": [
+        "경상남도 고성군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 고성군",
+        "경상남도 고성",
+        "경남 고성군",
+        "경남 고성"
+      ],
+      "aliases_weak": [
+        "고성군",
+        "고성"
+      ],
+      "kakao_prefixes": [
+        "경상남도 고성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1082400",
+      "name": "경상남도 남해군",
+      "display": "경상남도 남해군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1082400"
+      ],
+      "kma_zone_names": {
+        "L1082400": "남해군"
+      },
+      "dssp_prefixes": [
+        "경상남도 남해군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 남해군",
+        "경상남도 남해",
+        "경남 남해군",
+        "경남 남해",
+        "남해군"
+      ],
+      "aliases_weak": [],
+      "kakao_prefixes": [
+        "경상남도 남해군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1083000",
+      "name": "경상남도 하동군",
+      "display": "경상남도 하동군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1083000",
+        "L1083010",
+        "L1083020"
+      ],
+      "kma_zone_names": {
+        "L1083000": "하동군",
+        "L1083010": "하동군북부",
+        "L1083020": "하동군남부"
+      },
+      "dssp_prefixes": [
+        "경상남도 하동군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 하동군",
+        "경상남도 하동",
+        "경남 하동군",
+        "경남 하동",
+        "하동군"
+      ],
+      "aliases_weak": [
+        "하동"
+      ],
+      "kakao_prefixes": [
+        "경상남도 하동군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1083100",
+      "name": "경상남도 산청군",
+      "display": "경상남도 산청군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1083100",
+        "L1083110",
+        "L1083120",
+        "L1083130"
+      ],
+      "kma_zone_names": {
+        "L1083100": "산청군",
+        "L1083110": "산청군북부",
+        "L1083120": "산청군서남부",
+        "L1083130": "산청군동남부"
+      },
+      "dssp_prefixes": [
+        "경상남도 산청군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 산청군",
+        "경상남도 산청",
+        "경남 산청군",
+        "경남 산청",
+        "산청군"
+      ],
+      "aliases_weak": [
+        "산청"
+      ],
+      "kakao_prefixes": [
+        "경상남도 산청군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1083200",
+      "name": "경상남도 함양군",
+      "display": "경상남도 함양군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1083200",
+        "L1083210",
+        "L1083220"
+      ],
+      "kma_zone_names": {
+        "L1083200": "함양군",
+        "L1083210": "함양중부",
+        "L1083220": "함양서북부"
+      },
+      "dssp_prefixes": [
+        "경상남도 함양군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 함양군",
+        "경상남도 함양",
+        "경남 함양군",
+        "경남 함양",
+        "함양군"
+      ],
+      "aliases_weak": [
+        "함양"
+      ],
+      "kakao_prefixes": [
+        "경상남도 함양군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1083300",
+      "name": "경상남도 거창군",
+      "display": "경상남도 거창군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1083300",
+        "L1083310",
+        "L1083320"
+      ],
+      "kma_zone_names": {
+        "L1083300": "거창군",
+        "L1083310": "거창군북부",
+        "L1083320": "거창군남부"
+      },
+      "dssp_prefixes": [
+        "경상남도 거창군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 거창군",
+        "경상남도 거창",
+        "경남 거창군",
+        "경남 거창",
+        "거창군"
+      ],
+      "aliases_weak": [
+        "거창"
+      ],
+      "kakao_prefixes": [
+        "경상남도 거창군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1083400",
+      "name": "경상남도 합천군",
+      "display": "경상남도 합천군",
+      "level": "sigun",
+      "sido": "경상남도",
+      "kma_zones": [
+        "L1083400",
+        "L1083410",
+        "L1083420",
+        "L1083430"
+      ],
+      "kma_zone_names": {
+        "L1083400": "합천군",
+        "L1083410": "합천군서북부",
+        "L1083420": "합천군중부",
+        "L1083430": "합천군남부"
+      },
+      "dssp_prefixes": [
+        "경상남도 합천군"
+      ],
+      "dssp_sido_wide": [
+        "경상남도"
+      ],
+      "aliases_strong": [
+        "경상남도 합천군",
+        "경상남도 합천",
+        "경남 합천군",
+        "경남 합천",
+        "합천군"
+      ],
+      "aliases_weak": [
+        "합천"
+      ],
+      "kakao_prefixes": [
+        "경상남도 합천군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1091300",
+      "name": "제주특별자치도 제주시",
+      "display": "제주특별자치도 제주시",
+      "level": "sigun",
+      "sido": "제주특별자치도",
+      "kma_zones": [
+        "L1090500",
+        "L1091000",
+        "L1091300",
+        "L1091310",
+        "L1091320",
+        "L1091330",
+        "L1091340"
+      ],
+      "kma_zone_names": {
+        "L1090500": "제주도산지",
+        "L1091000": "추자도",
+        "L1091300": "제주시(산지 제외)",
+        "L1091310": "제주시서부",
+        "L1091320": "제주시북부",
+        "L1091330": "제주시동부",
+        "L1091340": "제주시중산간"
+      },
+      "dssp_prefixes": [
+        "제주특별자치도 제주시"
+      ],
+      "dssp_sido_wide": [
+        "제주특별자치도"
+      ],
+      "aliases_strong": [
+        "제주특별자치도 제주시",
+        "제주특별자치도 제주",
+        "제주 제주시",
+        "제주 제주",
+        "제주시"
+      ],
+      "aliases_weak": [
+        "제주"
+      ],
+      "kakao_prefixes": [
+        "제주특별자치도 제주시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1091400",
+      "name": "제주특별자치도 서귀포시",
+      "display": "제주특별자치도 서귀포시",
+      "level": "sigun",
+      "sido": "제주특별자치도",
+      "kma_zones": [
+        "L1090500",
+        "L1091400",
+        "L1091410",
+        "L1091420",
+        "L1091430",
+        "L1091440"
+      ],
+      "kma_zone_names": {
+        "L1090500": "제주도산지",
+        "L1091400": "서귀포시(산지 제외)",
+        "L1091410": "서귀포시서부",
+        "L1091420": "서귀포시남부",
+        "L1091430": "서귀포시동부",
+        "L1091440": "서귀포시중산간"
+      },
+      "dssp_prefixes": [
+        "제주특별자치도 서귀포시"
+      ],
+      "dssp_sido_wide": [
+        "제주특별자치도"
+      ],
+      "aliases_strong": [
+        "제주특별자치도 서귀포시",
+        "제주특별자치도 서귀포",
+        "제주 서귀포시",
+        "제주 서귀포",
+        "서귀포시"
+      ],
+      "aliases_weak": [
+        "서귀포"
+      ],
+      "kakao_prefixes": [
+        "제주특별자치도 서귀포시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1100000",
+      "name": "서울특별시",
+      "display": "서울특별시",
+      "level": "metro",
+      "sido": "서울특별시",
+      "kma_zones": [
+        "L1100000",
+        "L1100100",
+        "L1100200",
+        "L1100300",
+        "L1100400"
+      ],
+      "kma_zone_names": {
+        "L1100000": "서울특별시",
+        "L1100100": "서울동남권",
+        "L1100200": "서울동북권",
+        "L1100300": "서울서남권",
+        "L1100400": "서울서북권"
+      },
+      "dssp_prefixes": [
+        "서울특별시"
+      ],
+      "dssp_sido_wide": [],
+      "aliases_strong": [
+        "서울특별시",
+        "서울"
+      ],
+      "aliases_weak": [],
+      "districts": [
+        "종로구",
+        "중구",
+        "용산구",
+        "성동구",
+        "광진구",
+        "동대문구",
+        "중랑구",
+        "성북구",
+        "강북구",
+        "도봉구",
+        "노원구",
+        "은평구",
+        "서대문구",
+        "마포구",
+        "양천구",
+        "강서구",
+        "구로구",
+        "금천구",
+        "영등포구",
+        "동작구",
+        "관악구",
+        "서초구",
+        "강남구",
+        "송파구",
+        "강동구"
+      ],
+      "kakao_prefixes": [
+        "서울특별시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1110000",
+      "name": "인천광역시",
+      "display": "인천광역시",
+      "level": "metro",
+      "sido": "인천광역시",
+      "kma_zones": [
+        "L1010900",
+        "L1013600",
+        "L1110000",
+        "L1110100",
+        "L1110110",
+        "L1110120",
+        "L1110130"
+      ],
+      "kma_zone_names": {
+        "L1010900": "강화군",
+        "L1013600": "옹진군",
+        "L1110000": "인천광역시",
+        "L1110100": "인천광역시",
+        "L1110110": "인천영종",
+        "L1110120": "인천남부",
+        "L1110130": "인천북부"
+      },
+      "dssp_prefixes": [
+        "인천광역시"
+      ],
+      "dssp_sido_wide": [],
+      "aliases_strong": [
+        "인천광역시",
+        "인천"
+      ],
+      "aliases_weak": [],
+      "districts": [
+        "중구",
+        "동구",
+        "서구",
+        "제물포구",
+        "영종구",
+        "서해구",
+        "검단구",
+        "미추홀구",
+        "연수구",
+        "남동구",
+        "부평구",
+        "계양구"
+      ],
+      "kakao_prefixes": [
+        "인천광역시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1010900",
+      "name": "인천광역시 강화군",
+      "display": "인천광역시 강화군",
+      "level": "sigun",
+      "sido": "인천광역시",
+      "kma_zones": [
+        "L1010900"
+      ],
+      "kma_zone_names": {
+        "L1010900": "강화군"
+      },
+      "dssp_prefixes": [
+        "인천광역시 강화군"
+      ],
+      "dssp_sido_wide": [
+        "인천광역시"
+      ],
+      "aliases_strong": [
+        "인천광역시 강화군",
+        "인천광역시 강화",
+        "인천 강화군",
+        "인천 강화",
+        "강화군"
+      ],
+      "aliases_weak": [
+        "강화"
+      ],
+      "kakao_prefixes": [
+        "인천광역시 강화군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1013600",
+      "name": "인천광역시 옹진군",
+      "display": "인천광역시 옹진군",
+      "level": "sigun",
+      "sido": "인천광역시",
+      "kma_zones": [
+        "L1013600",
+        "L1014000",
+        "L1014200",
+        "L1014300"
+      ],
+      "kma_zone_names": {
+        "L1013600": "옹진군",
+        "L1014000": "서해5도",
+        "L1014200": "백령도.대청도",
+        "L1014300": "연평도.우도"
+      },
+      "dssp_prefixes": [
+        "인천광역시 옹진군"
+      ],
+      "dssp_sido_wide": [
+        "인천광역시"
+      ],
+      "aliases_strong": [
+        "인천광역시 옹진군",
+        "인천광역시 옹진",
+        "인천 옹진군",
+        "인천 옹진",
+        "옹진군",
+        "서해5도",
+        "백령도",
+        "연평도",
+        "대청도"
+      ],
+      "aliases_weak": [
+        "옹진"
+      ],
+      "kakao_prefixes": [
+        "인천광역시 옹진군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1120000",
+      "name": "대전광역시",
+      "display": "대전광역시",
+      "level": "metro",
+      "sido": "대전광역시",
+      "kma_zones": [
+        "L1030100",
+        "L1120000"
+      ],
+      "kma_zone_names": {
+        "L1030100": "대전광역시",
+        "L1120000": "대전광역시"
+      },
+      "dssp_prefixes": [
+        "대전광역시"
+      ],
+      "dssp_sido_wide": [],
+      "aliases_strong": [
+        "대전광역시",
+        "대전"
+      ],
+      "aliases_weak": [],
+      "districts": [
+        "동구",
+        "중구",
+        "서구",
+        "유성구",
+        "대덕구"
+      ],
+      "kakao_prefixes": [
+        "대전광역시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1140000",
+      "name": "대구광역시",
+      "display": "대구광역시",
+      "level": "metro",
+      "sido": "대구광역시",
+      "kma_zones": [
+        "L1070200",
+        "L1140000",
+        "L1140100",
+        "L1140200",
+        "L1140210",
+        "L1140220"
+      ],
+      "kma_zone_names": {
+        "L1070200": "군위군",
+        "L1140000": "대구광역시",
+        "L1140100": "대구중부",
+        "L1140200": "달성군",
+        "L1140210": "달성군북부",
+        "L1140220": "달성군남부"
+      },
+      "dssp_prefixes": [
+        "대구광역시"
+      ],
+      "dssp_sido_wide": [],
+      "aliases_strong": [
+        "대구광역시",
+        "대구"
+      ],
+      "aliases_weak": [],
+      "districts": [
+        "중구",
+        "동구",
+        "서구",
+        "남구",
+        "북구",
+        "수성구",
+        "달서구",
+        "달성군"
+      ],
+      "kakao_prefixes": [
+        "대구광역시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1070200",
+      "name": "대구광역시 군위군",
+      "display": "대구광역시 군위군",
+      "level": "sigun",
+      "sido": "대구광역시",
+      "kma_zones": [
+        "L1070200"
+      ],
+      "kma_zone_names": {
+        "L1070200": "군위군"
+      },
+      "dssp_prefixes": [
+        "대구광역시 군위군"
+      ],
+      "dssp_sido_wide": [
+        "대구광역시"
+      ],
+      "aliases_strong": [
+        "대구광역시 군위군",
+        "대구광역시 군위",
+        "대구 군위군",
+        "대구 군위",
+        "군위군"
+      ],
+      "aliases_weak": [
+        "군위"
+      ],
+      "kakao_prefixes": [
+        "대구광역시 군위군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1140200",
+      "name": "대구광역시 달성군",
+      "display": "대구광역시 달성군",
+      "level": "sigun",
+      "sido": "대구광역시",
+      "kma_zones": [
+        "L1140200",
+        "L1140210",
+        "L1140220"
+      ],
+      "kma_zone_names": {
+        "L1140200": "달성군",
+        "L1140210": "달성군북부",
+        "L1140220": "달성군남부"
+      },
+      "dssp_prefixes": [
+        "대구광역시 달성군"
+      ],
+      "dssp_sido_wide": [
+        "대구광역시"
+      ],
+      "aliases_strong": [
+        "대구광역시 달성군",
+        "대구광역시 달성",
+        "대구 달성군",
+        "대구 달성",
+        "달성군"
+      ],
+      "aliases_weak": [
+        "달성"
+      ],
+      "kakao_prefixes": [
+        "대구광역시 달성군"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1150000",
+      "name": "부산광역시",
+      "display": "부산광역시",
+      "level": "metro",
+      "sido": "부산광역시",
+      "kma_zones": [
+        "L1082500",
+        "L1082600",
+        "L1082700",
+        "L1150000"
+      ],
+      "kma_zone_names": {
+        "L1082500": "부산동부",
+        "L1082600": "부산중부",
+        "L1082700": "부산서부",
+        "L1150000": "부산광역시"
+      },
+      "dssp_prefixes": [
+        "부산광역시"
+      ],
+      "dssp_sido_wide": [],
+      "aliases_strong": [
+        "부산광역시",
+        "부산"
+      ],
+      "aliases_weak": [],
+      "districts": [
+        "중구",
+        "서구",
+        "동구",
+        "영도구",
+        "부산진구",
+        "동래구",
+        "남구",
+        "북구",
+        "해운대구",
+        "사하구",
+        "금정구",
+        "강서구",
+        "연제구",
+        "수영구",
+        "사상구",
+        "기장군"
+      ],
+      "kakao_prefixes": [
+        "부산광역시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1160000",
+      "name": "울산광역시",
+      "display": "울산광역시",
+      "level": "metro",
+      "sido": "울산광역시",
+      "kma_zones": [
+        "L1082800",
+        "L1082900",
+        "L1160000"
+      ],
+      "kma_zone_names": {
+        "L1082800": "울산동부",
+        "L1082900": "울산서부",
+        "L1160000": "울산광역시"
+      },
+      "dssp_prefixes": [
+        "울산광역시"
+      ],
+      "dssp_sido_wide": [],
+      "aliases_strong": [
+        "울산광역시",
+        "울산"
+      ],
+      "aliases_weak": [],
+      "districts": [
+        "중구",
+        "남구",
+        "동구",
+        "북구",
+        "울주군"
+      ],
+      "kakao_prefixes": [
+        "울산광역시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1170000",
+      "name": "세종특별자치시",
+      "display": "세종특별자치시",
+      "level": "metro",
+      "sido": "세종특별자치시",
+      "kma_zones": [
+        "L1170000",
+        "L1170100",
+        "L1170110",
+        "L1170120"
+      ],
+      "kma_zone_names": {
+        "L1170000": "세종특별자치시",
+        "L1170100": "세종특별자치시",
+        "L1170110": "세종북부",
+        "L1170120": "세종남부"
+      },
+      "dssp_prefixes": [
+        "세종특별자치시"
+      ],
+      "dssp_sido_wide": [],
+      "aliases_strong": [
+        "세종특별자치시"
+      ],
+      "aliases_weak": [
+        "세종"
+      ],
+      "kakao_prefixes": [
+        "세종특별자치시"
+      ],
+      "generated": true
+    },
+    {
+      "id": "kr_L1600000",
+      "name": "경상북도 울릉군",
+      "display": "경상북도 울릉군",
+      "level": "sigun",
+      "sido": "경상북도",
+      "kma_zones": [
+        "L1072100",
+        "L1600000"
+      ],
+      "kma_zone_names": {
+        "L1072100": "울릉도.독도",
+        "L1600000": "울릉도.독도"
+      },
+      "dssp_prefixes": [
+        "경상북도 울릉군"
+      ],
+      "dssp_sido_wide": [
+        "경상북도"
+      ],
+      "aliases_strong": [
+        "경상북도 울릉군",
+        "경상북도 울릉",
+        "경북 울릉군",
+        "경북 울릉",
+        "울릉군",
+        "울릉도",
+        "독도",
+        "울릉"
+      ],
+      "aliases_weak": [
+        "울릉"
+      ],
+      "kakao_prefixes": [
+        "경상북도 울릉군"
+      ],
+      "generated": true
     }
+  ],
+  "provinces": [
+    {
+      "name": "경기도",
+      "sido": "경기도",
+      "aliases": [
+        "경기도",
+        "경기"
+      ]
+    },
+    {
+      "name": "강원특별자치도",
+      "sido": "강원도",
+      "aliases": [
+        "강원특별자치도",
+        "강원도",
+        "강원"
+      ]
+    },
+    {
+      "name": "충청남도",
+      "sido": "충청남도",
+      "aliases": [
+        "충청남도",
+        "충남"
+      ]
+    },
+    {
+      "name": "충청북도",
+      "sido": "충청북도",
+      "aliases": [
+        "충청북도",
+        "충북"
+      ]
+    },
+    {
+      "name": "전라남도",
+      "sido": "전라남도",
+      "aliases": [
+        "전라남도",
+        "전남광주통합특별시",
+        "전남"
+      ]
+    },
+    {
+      "name": "전북특별자치도",
+      "sido": "전북자치도",
+      "aliases": [
+        "전북특별자치도",
+        "전라북도",
+        "전북"
+      ]
+    },
+    {
+      "name": "경상북도",
+      "sido": "경상북도",
+      "aliases": [
+        "경상북도",
+        "경북"
+      ]
+    },
+    {
+      "name": "경상남도",
+      "sido": "경상남도",
+      "aliases": [
+        "경상남도",
+        "경남"
+      ]
+    },
+    {
+      "name": "제주특별자치도",
+      "sido": "제주도",
+      "aliases": [
+        "제주특별자치도",
+        "제주"
+      ]
+    }
+  ],
+  "show_both_groups": [
+    [
+      "gwangju_metro",
+      "gyeonggi_gwangju"
+    ]
   ],
   "assumptions": [
     "광주광역시의 특보는 광주서부(L1130110)·광주동부(L1130120) 두 구역의 합집합으로 본다. 상위 코드(L1130000, L1130100)는 이벤트가 없다(NO_DATA).",

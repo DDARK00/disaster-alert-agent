@@ -29,6 +29,13 @@
 - `schemas.py`: 외부 응답 pydantic 모델(봉투·행동요령·대피소·재난문자·기상특보). live 응답 검증 실패 → `response_invalid`.
 - fixture: `data/fixtures/{doing,guide_social,guide_life,guide_civil_defense}/cate_<코드>_p<n>__<시각>.json` (2026-10-20 수집, 커밋). 예전 단일 파일(`doing/cate_<코드>__…`)은 지우지 않았고 쪽 단위 파일이 있으면 그것을 쓴다(T-031).
 
+## 지역 해석 (`regions.py`, ADR-017)
+- 데이터: `data/regions.json` = 손으로 쓴 광주 두 곳 + 특보구역표에서 생성한 전국 지역(광역시 7·시군 156). 생성: `.venv/bin/python mcp_server/tools/gen_regions.py` (입력 `data/kma_zones.json`, `data/region_build.yaml`; 구역표 xlsx에서 중간 JSON을 다시 뽑을 때는 `mcp_server/tools/extract_kma_zones.py <xlsx>`).
+- 별칭은 긴 것부터, 겹치는 짧은 별칭은 무시. 정식 이름·`시도 + 이름`은 강한 별칭(확정), 줄임말은 약한 별칭(가정), 일상어와 겹치는 줄임말은 제외.
+- `status`: resolved / assumed / ambiguous / none. `ambiguous`에 `ask=True`면 되묻기(동명 고성군, 여러 광역시의 같은 구 이름). '광주' 묶음(`show_both_groups`)만 둘 다 조회. `none`에 `province`가 있으면 도 이름만 온 것 → 시·군 되묻기(도 전체는 조회하지 않음).
+- `districts`: 광역시 구 이름으로 정해진 지역 → 답변에 "시 전체 기준" 표준 문구.
+- 재난문자 매칭은 시도 허용 목록(신구 명칭) × 시군 이름(`dssp_prefixes`), `○○ 전체`·시도 이름만 온 문자는 `sido_wide`. 카카오 행정구역 → 지역은 같은 목록(`kakao_prefixes`)에서 가장 긴 접두어.
+
 ## 쉼터·대피장소 (`shelters.py`)
 - 재난 유형 → 구분은 `hazard_map.json`의 `shelter`(heat·cold·quake, 코드가 정함). 구분 → 요청 코드·이름 필터·상한·정렬·캐시 시간은 `config/rules.yaml` `shelters`(데이터).
 - 구분 코드와 이름이 1:1이 아니다(코드 1에도 "한파쉼터,무더위쉼터"가 섞임) → 폭염은 이름에 "무더위", 한파는 "한파"가 있어야 채택. 지진은 구분 3·4.
