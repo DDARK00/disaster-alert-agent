@@ -27,3 +27,6 @@ data/fixtures/*/*_live__*.json
 
 # 공식 API 가이드·원문 복사본은 저장소에 넣지 않는다 (루트 api_spec/ 에 별도 보관)
 doc/api_spec/
+
+# 신규 API 응답 원본 (이용허락 확인 전 저장소 제외)
+data/fixtures/probe/
