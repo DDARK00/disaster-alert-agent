@@ -130,7 +130,7 @@ async function loadScenarios(){
     const box = $("scenarios");
     list.forEach(s=>{
       const b = el("button","scn",s.title); b.type="button"; b.setAttribute("aria-pressed","false");
-      b.onclick = ()=>{ document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true");
+      b.onclick = ()=>{ lastRegion=""; document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true");
         $("q").value=s.message; $("mode").value=s.mode; $("asof").value=s.as_of||""; $("scnNote").textContent=s.note||""; run(); };
       box.appendChild(b);
     });
