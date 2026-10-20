@@ -81,3 +81,52 @@ sh/setup_venv.sh && sh/test.sh        # 단위 테스트
 
 ## 라이선스
 미정입니다(저장소 공개 전에 정합니다).
+
+## 부록. 포팅 방법
+
+### 1. 필요한 키 — 데이터가 얼마나 흩어져 있는가
+시민이 문자를 받고 행동을 알아내는 데 필요한 공식 정보는 **발급처 3곳, API 8개, 키 8개**로 나뉘어 있습니다. 이 프로젝트가 한 번의 질문으로 합치는 대상입니다.
+
+| 환경변수 | 발급처 | 용도 |
+|---|---|---|
+| `WEATHER_ALERTS_SERVICE_KEY` | 공공데이터포털 | 기상특보 |
+| `DSSP_MESSAGE_SERVICE_KEY` | 재난안전데이터공유플랫폼 | 긴급재난문자 |
+| `DSSP_GUIDE_NATURAL_SERVICE_KEY` | 재난안전데이터공유플랫폼 | 행동요령 · 자연재난 |
+| `DSSP_GUIDE_SOCIAL_SERVICE_KEY` | 재난안전데이터공유플랫폼 | 행동요령 · 사회재난 |
+| `DSSP_GUIDE_LIFE_SERVICE_KEY` | 재난안전데이터공유플랫폼 | 행동요령 · 생활안전 |
+| `DSSP_GUIDE_CIVIL_DEFENSE_SERVICE_KEY` | 재난안전데이터공유플랫폼 | 행동요령 · 민방위 |
+| `DSSP_SHELTER_SERVICE_KEY` | 재난안전데이터공유플랫폼 | 통합대피소 |
+| `KAKAO_REST_API_KEY` | 카카오 디벨로퍼스 | 장소 검색 |
+
+같은 값이 여러 API에 통하면 같은 키를 여러 줄에 넣어도 됩니다. 선택 항목: `LANGSMITH_*`(관측성), `LLM_*`(모델).
+
+### 2. Docker로 실행
+```bash
+git clone https://github.com/DDARK00/disaster-alert-agent.git && cd disaster-alert-agent
+cp .env.example .env         # 위 키를 채운다
+docker compose up --build    # http://localhost:8080
+```
+- 컨테이너 3개: `mcp`(:8200), `backend`(:8100), `frontend`(:8080). 키는 `mcp`에만 전달됩니다.
+- 상태 확인: `http://localhost:8080/api/health`
+- `./data`가 `mcp`에 마운트되어, 수집한 fixture가 호스트에 남습니다.
+
+### 3. LLM 연결
+| 방식 | 설정 |
+|---|---|
+| 호스트 Ollama (예: `qwen3:8b`) | `LLM_BACKEND=openai_compat`, `LLM_MODEL=qwen3:8b`, `ollama pull qwen3:8b` |
+| 호스팅 OpenAI 호환 API | `LLM_BASE_URL_DOCKER`, `LLM_MODEL`, `LLM_API_KEY` |
+| 키 없이 확인 | `LLM_BACKEND` 기본값(fake)과 저장된 fixture(replay) |
+
+컨테이너 안에서 호스트 Ollama는 `host.docker.internal:11434`로 접근합니다. 자세한 내용은 [`doc/도커.md`](doc/도커.md).
+
+### 4. Docker 없이 실행 (개발용)
+```bash
+sh/setup_venv.sh && sh/test.sh   # 가상환경 + 테스트
+sh/run_local.sh                  # 백엔드만 실행 (http://localhost:8100, 저장된 fixture로 재현)
+```
+
+### 5. 이식할 때 알아둘 것
+- **호출 한도**: 재난안전데이터공유플랫폼 API는 API당 하루 1,000건입니다. 행동요령은 하루 1회 캐시합니다.
+- **지원 지역**: `data/regions.json`, `data/hazard_map.json`을 늘려 지역과 재난 유형을 확장합니다.
+- **LLM 교체**: `.env`의 `LLM_*` 값만 바꿉니다. 판정·검증은 코드라 모델을 바꿔도 안전 규칙은 그대로입니다.
+- 키는 `.env`에만 두고 커밋하지 않습니다(`.gitignore` 제외).
