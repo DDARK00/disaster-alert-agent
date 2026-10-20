@@ -110,3 +110,11 @@ evidence:
   max_messages: 3
   max_guide_per_hazard: 4
 niche_words: [가축, 어류, 양식, 축사, 농작물, 비닐하우스, 작업장, 건설 현장, 건설현장, 어선, 선박]
+
+# 외부 API 오류 분류용 코드·키워드 (mcp_server/failures.py 가 판정, ADR-014).
+# data.go.kr 공통 오류코드: 20 접근 거부, 21 키 일시 정지, 30 키 미등록, 31 기간 만료, 32 IP 미등록, 33 서명 안 됨 / 22 호출 한도 초과
+api_errors:
+  auth_codes: ["20", "21", "30", "31", "32", "33"]
+  auth_words: [SERVICE_KEY_IS_NOT_REGISTERED, SERVICE_ACCESS_DENIED, DEADLINE_HAS_EXPIRED, UNREGISTERED_IP, TEMPORARILY_DISABLE_THE_SERVICEKEY]
+  limit_codes: ["22"]
+  limit_words: [LIMITED_NUMBER_OF_SERVICE_REQUESTS]

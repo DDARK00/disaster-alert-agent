@@ -2,6 +2,7 @@
 
 route ─┬─ emergency / out_of_scope ──────────────→ fixed_response ─→ END   (LLM 미사용)
        └─ disaster → parse_intent(LLM+규칙) → gate(코드) ─┬─ ask_region ─→ END
+                                                          ├─ unavailable (MCP 불가, 원인 문구) ─→ END
                                                           └─ plan(LLM+제약) → research(병렬+재시도)
                                                              → judge(코드) → write(LLM) → validate(코드)
                                                                  ├ ok → finalize
@@ -15,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import time
 import uuid
 from typing import Any, TypedDict
@@ -22,11 +24,12 @@ from typing import Any, TypedDict
 from langgraph.graph import END, START, StateGraph
 from langchain_core.runnables import RunnableConfig
 
-from config.catalog import msg, prompt
+from config.catalog import msg, prompt, reason
 
 from . import compose, judge, rules
 from .deps import Deps
 from .llm import LLMError, extract_json
+from .mcp_client import mcp_cause
 from .retry import with_retry
 from .validator import validate, validate_links
 
@@ -61,18 +64,39 @@ class State(TypedDict, total=False):
     rewrites: int
     timings: dict
     llm_errors: list
+    failures: list
+    service_down: str
     final: dict
 
 
-def _failed_alert(rid: str, name: str, mode: str, why: str) -> dict:
+log = logging.getLogger("backend.agent")
+
+
+def _failed_alert(rid: str, name: str, mode: str, cause: str, why: str) -> dict:
     return {"region_id": rid, "region": name, "mode": mode, "as_of": "-", "zones": [],
-            "source": {"name": "기상특보", "status": "failed", "detail": why, "window": None},
+            "source": {"name": "기상특보", "status": "failed", "cause": cause, "detail": why, "window": None},
             "alerts": [], "pending": [], "recently_released": [],
-            "statement": msg("mcp.alert_unreachable")}
+            "statement": msg("mcp.alert_unreachable", reason=reason("failed", cause))}
 
 
-def _failed_messages(rid: str, why: str) -> dict:
-    return {"region_id": rid, "source": {"name": "재난문자", "status": "failed", "detail": why}, "messages": []}
+def _failed_messages(rid: str, cause: str, why: str) -> dict:
+    return {"region_id": rid, "source": {"name": "재난문자", "status": "failed", "cause": cause, "detail": why},
+            "messages": []}
+
+
+def annotate_span(**meta) -> None:
+    """현재 LangSmith span 에 메타데이터를 단다 (트레이싱이 꺼져 있으면 아무것도 하지 않음)."""
+    try:
+        from langsmith.run_helpers import get_current_run_tree
+        rt = get_current_run_tree()
+        if rt is not None:
+            rt.add_metadata(meta)
+    except Exception:  # noqa: BLE001 — 관측 실패가 답변을 막지 않는다
+        pass
+
+
+def _llm_failure(e: BaseException) -> dict | None:
+    return {"stage": "llm", "cause": "llm_unavailable", "detail": str(e)[:120]} if isinstance(e, LLMError) else None
 
 
 def emitter(config: RunnableConfig):
@@ -86,7 +110,10 @@ def build_graph(deps: Deps):
 
     async def allowed_hazards() -> list[str]:
         if not hazard_names:
-            r = await deps.mcp.tool("list_hazards", {})
+            try:
+                r = await deps.mcp.tool("list_hazards", {})
+            except Exception:  # noqa: BLE001 — MCP 불가여도 규칙 사전의 유형 이름으로 계속 (gate 에서 원인과 함께 멈춘다)
+                return list(rules.HAZARD_SYNONYMS)
             hazard_names.extend(h["name"] for h in r["hazards"])
         return hazard_names
 
@@ -133,14 +160,29 @@ def build_graph(deps: Deps):
             source = "llm+rules"
         except (LLMError, ValueError, TypeError) as e:
             errors.append(f"parse_intent: {type(e).__name__}: {e}")
+            fail = _llm_failure(e)
+        else:
+            fail = None
         writer({"event": "intent", "intent": intent, "hazards": hazards, "hazard_source": source})
-        return {"intent": intent, "hazards": hazards, "hazard_source": source, "place": place, "llm_errors": errors}
+        return {"intent": intent, "hazards": hazards, "hazard_source": source, "place": place, "llm_errors": errors,
+                "failures": list(state.get("failures", [])) + ([fail] if fail else [])}
 
     # ── gate (코드) ──
     async def gate(state: State, writer):
-        loc = await with_retry(lambda: deps.mcp.tool("resolve_location", {
-            "text": state["query"], "history_region_id": state.get("history_region_id") or None,
-            "browser_region_id": state.get("browser_region_id") or None}))
+        try:
+            loc = await with_retry(lambda: deps.mcp.tool("resolve_location", {
+                "text": state["query"], "history_region_id": state.get("history_region_id") or None,
+                "browser_region_id": state.get("browser_region_id") or None}))
+        except Exception as e:  # noqa: BLE001 — 데이터 서비스(MCP) 자체가 안 되면 원인과 함께 '정보 없음'으로 멈춘다
+            cause = mcp_cause(e)
+            log.warning("mcp failure at gate: %s %s", cause, type(e).__name__)
+            annotate_span(source_failures=[f"MCP:{cause}"])
+            writer({"event": "source", "name": "데이터 서비스", "status": "failed", "cause": cause, "count": 0})
+            return {"location": {"status": "none", "chosen": None, "candidates": []}, "regions": [],
+                    "region_names": {}, "service_down": cause,
+                    "failures": list(state.get("failures", [])) + [
+                        {"stage": "mcp", "source": "데이터 서비스", "cause": cause, "status": "failed",
+                         "detail": f"{type(e).__name__}: {e}"[:200]}]}
         names = {c["id"]: c["name"] for c in loc["candidates"]}
         pid, links = None, None
         if state.get("place"):
@@ -178,6 +220,10 @@ def build_graph(deps: Deps):
     async def ask_region(state: State, writer):
         return {"answer": rules.ASK_REGION_TEXT, "answer_source": "fixed", "judgements": []}
 
+    async def unavailable(state: State, writer):
+        return {"route": "unavailable", "answer": msg("fixed.service_unavailable", reason=reason("failed", state["service_down"])),
+                "answer_source": "fixed", "judgements": []}
+
     # ── plan (LLM 제안 + 코드 제약) ──
     async def plan_node(state: State, writer):
         intent = state["intent"]
@@ -195,11 +241,14 @@ def build_graph(deps: Deps):
         except (LLMError, ValueError, TypeError) as e:
             errors.append(f"plan: {type(e).__name__}: {e}")
             steps = [s for s in ALLOWED_STEPS if s in mandatory or s == "guide"]
+            fail = _llm_failure(e)
+        else:
+            fail = None
         if "guide" not in steps and intent == "guide":
             steps.append("guide")
         plan = {"steps": steps, "source": source}
         writer({"event": "plan", **plan})
-        return {"plan": plan, "llm_errors": errors}
+        return {"plan": plan, "llm_errors": errors, "failures": list(state.get("failures", [])) + ([fail] if fail else [])}
 
     # ── research (병렬 + 재시도 + 실패 격리) ──
     async def research(state: State, writer):
@@ -214,10 +263,12 @@ def build_graph(deps: Deps):
             try:
                 resp = await with_retry(lambda: deps.mcp.tool(tool, {"region_id": rid, **base}))
             except Exception as e:  # noqa: BLE001 — 실패는 '정보 없음'으로 격리
-                why = f"{type(e).__name__}: {e}"[:200]
-                resp = _failed_alert(rid, names.get(rid, rid), mode, why) if kind == "alerts" else _failed_messages(rid, why)
-            writer({"event": "source", "region_id": rid, "name": resp["source"]["name"],
-                    "status": resp["source"]["status"], "count": len(resp.get("alerts", resp.get("messages", [])))})
+                cause, why = mcp_cause(e), f"{type(e).__name__}: {e}"[:200]
+                resp = (_failed_alert(rid, names.get(rid, rid), mode, cause, why) if kind == "alerts"
+                        else _failed_messages(rid, cause, why))
+            src = resp["source"]
+            writer({"event": "source", "region_id": rid, "name": src["name"], "status": src["status"],
+                    "cause": src.get("cause"), "count": len(resp.get("alerts", resp.get("messages", [])))})
             return kind, rid, resp
 
         jobs = [fetch("alerts", r) for r in regions]
@@ -242,14 +293,26 @@ def build_graph(deps: Deps):
             async def guide(hz: str, ph: str):
                 try:
                     r = await with_retry(lambda: deps.mcp.tool("search_action_guide", {"hazard": hz, "phase": ph}))
-                except Exception as e:  # noqa: BLE001
-                    r = {"hazard": hz, "available": False, "reason": f"조회 실패: {type(e).__name__}", "rows": []}
+                except Exception as e:  # noqa: BLE001 — '없음'(unavailable)이 아니라 '조회 실패'(failed)로 둔다
+                    r = {"hazard": hz, "available": False, "cause": mcp_cause(e),
+                         "reason": f"조회 실패: {type(e).__name__}", "rows": []}
                 return (hz, ph), r
             got = dict(await asyncio.gather(*[guide(h, p) for h, p in calls]))
             for rid, items in wanted.items():
                 guides[rid] = {hz: got[(hz, ph)] for hz, ph in sorted(items)}
-            writer({"event": "source", "name": "행동요령", "status": "ok", "count": len(calls)})
-        return {"alerts": alerts, "messages": messages, "guides": guides}
+            bad = [r for r in got.values() if r.get("cause")]
+            writer({"event": "source", "name": "행동요령", "status": "failed" if bad else "ok",
+                    "cause": bad[0]["cause"] if bad else None, "count": len(calls)})
+        fails = [{"stage": "source", "source": r["source"]["name"], "region_id": rid, "cause": r["source"].get("cause"),
+                  "status": r["source"]["status"]}
+                 for d in (alerts, messages) for rid, r in d.items() if r["source"]["status"] == "failed"]
+        fails += [{"stage": "source", "source": f"행동요령({r['hazard']})", "cause": r["cause"], "status": "failed"}
+                  for r in (got.values() if "guide" in steps else []) if r.get("cause")]
+        if fails:
+            log.warning("source failures: %s", [(f["source"], f.get("region_id"), f["cause"]) for f in fails])
+            annotate_span(source_failures=[f"{f['source']}:{f['cause']}" for f in fails])
+        return {"alerts": alerts, "messages": messages, "guides": guides,
+                "failures": list(state.get("failures", [])) + fails}
 
     # ── judge (코드) ──
     async def judge_node(state: State, writer):
@@ -288,8 +351,7 @@ def build_graph(deps: Deps):
                 sentences.append(msg("answer.none", as_of=j["as_of"], zones=", ".join(j["zones"])))
             if j["level"] == "unknown":
                 sentences.append(msg("answer.unknown"))
-            sentences += [msg("answer.gap", source=g["source"], status=g["status"])
-                          for g in j["gaps"] if g["status"] in ("failed", "no_coverage")]
+            sentences += [compose.gap_line(g) for g in j["gaps"] if g["status"] in ("failed", "no_coverage")]
             must += [prompt("write", "must", region=j["region"], sentence=s) for s in sentences]
         if must:
             user += "\n" + prompt("write", "must_header") + "\n" + "\n".join(f"* {m}" for m in must)
@@ -301,6 +363,10 @@ def build_graph(deps: Deps):
         except Exception as e:  # noqa: BLE001
             errors.append(f"write: {type(e).__name__}: {e}")
             text, source = compose.render_answer(js, intent), "template_llm_error"
+            fail = _llm_failure(e)
+            if fail:
+                return {"answer": text, "answer_source": source, "llm_errors": errors,
+                        "failures": list(state.get("failures", [])) + [fail]}
         return {"answer": text, "answer_source": source, "llm_errors": errors}
 
     # ── validate (코드) ──
@@ -337,13 +403,14 @@ def build_graph(deps: Deps):
             "meta": {"run_id": state.get("run_id") or uuid.uuid4().hex[:12], "mode": mode,
                      "as_of": js[0]["as_of"] if js else state.get("as_of"), "llm": deps.llm.name,
                      "timings_ms": state.get("timings", {}), "llm_errors": state.get("llm_errors", []),
+                     "failures": state.get("failures", []),
                      "disclaimer": compose.DISCLAIMER},
         }
         return {"final": final}
 
     g = StateGraph(State)
     for name, fn in [("route", route_node), ("fixed_response", fixed_response), ("parse_intent", parse_intent),
-                     ("gate", gate), ("ask_region", ask_region), ("plan", plan_node), ("research", research),
+                     ("gate", gate), ("ask_region", ask_region), ("unavailable", unavailable), ("plan", plan_node), ("research", research),
                      ("judge", judge_node), ("write", write_node), ("validate", validate_node),
                      ("fallback", fallback), ("finalize", finalize)]:
         g.add_node(name, timed(name, fn))
@@ -352,8 +419,10 @@ def build_graph(deps: Deps):
                             ["parse_intent", "fixed_response"])
     g.add_edge("fixed_response", "finalize")
     g.add_edge("parse_intent", "gate")
-    g.add_conditional_edges("gate", lambda s: "plan" if s["regions"] else "ask_region", ["plan", "ask_region"])
+    g.add_conditional_edges("gate", lambda s: "unavailable" if s.get("service_down") else "plan" if s["regions"] else "ask_region",
+                            ["plan", "ask_region", "unavailable"])
     g.add_edge("ask_region", "finalize")
+    g.add_edge("unavailable", "finalize")
     g.add_edge("plan", "research")
     g.add_edge("research", "judge")
     g.add_edge("judge", "write")

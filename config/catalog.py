@@ -24,23 +24,27 @@ REQUIRED_PROMPTS = {
     "briefing": ["system"],
 }
 REQUIRED_MESSAGES = [
-    "supported_regions", "disclaimer", "fixed.emergency", "fixed.out_of_scope", "fixed.ask_region",
+    "supported_regions", "disclaimer", "fixed.emergency", "fixed.out_of_scope", "fixed.ask_region", "fixed.service_unavailable",
     "answer.unknown", "answer.none", "answer.level", "answer.uncertain_suffix", "answer.message_scope",
-    "answer.guide_header", "answer.gap", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",
+    "answer.guide_header", "answer.gap", "answer.gap_unavailable", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",
     "mcp.alert_failed", "mcp.alert_active", "mcp.alert_none", "mcp.alert_none_pending", "mcp.alert_none_no_pending",
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
     "kakao.route_notice", "kakao.map_label", "kakao.route_label",
 ]
+# 조회 실패 원인 코드 (ADR-014). MCP(외부 API)·백엔드(MCP 연결) 공용. 문구는 messages.yaml causes.<코드>
+CAUSE_CODES = ("api_auth_error", "rate_limited", "api_http_error", "api_result_error", "api_timeout", "network_error",
+               "response_invalid", "mcp_unreachable", "mcp_tool_error")
+REQUIRED_MESSAGES += [f"causes.{c}" for c in CAUSE_CODES] + ["causes.no_coverage", "causes.unknown", "causes.not_in_data"]
 # 표준 문구가 검증기 기준 조각을 포함해야 템플릿 fallback 이 항상 검증을 통과한다
 MARKER_CHECKS = {
-    "no_info": ["answer.unknown", "answer.gap", "mcp.alert_failed", "mcp.alert_unreachable", "mcp.messages_failed"],
+    "no_info": ["fixed.service_unavailable", "answer.unknown", "answer.gap", "answer.gap_unavailable", "mcp.alert_failed", "mcp.alert_unreachable", "mcp.messages_failed"],
     "no_risk": ["answer.none", "mcp.alert_none"],
     "no_guarantee": ["answer.none"],
-    "official": ["disclaimer", "fixed.emergency"],
-    "emergency_call": ["disclaimer", "fixed.emergency"],
+    "official": ["disclaimer", "fixed.emergency", "fixed.service_unavailable"],
+    "emergency_call": ["disclaimer", "fixed.emergency", "fixed.service_unavailable"],
 }
 REQUIRED_RULES = ["emergency_words", "intent_words", "hazard_synonyms", "generic_disaster_words", "region_words",
-                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes"]
+                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "api_errors"]
 SECTION = re.compile(r"^=== (\w+) ===\n", re.M)
 
 
@@ -126,6 +130,13 @@ def msg(key: str, **kw):
     if not isinstance(v, str):
         return v
     return render(v, supported_regions=MESSAGES["supported_regions"], **kw)
+
+
+def reason(status: str, cause: str | None = None) -> str:
+    """소스 상태·원인 코드 → 사용자 문구 (gap·statement 의 $reason)."""
+    if status == "no_coverage":
+        return msg("causes.no_coverage")
+    return msg(f"causes.{cause}") if cause in CAUSE_CODES else msg("causes.unknown")
 
 
 def prompt(name: str, section: str = "system", **kw) -> str:

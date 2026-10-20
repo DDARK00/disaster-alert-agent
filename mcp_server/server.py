@@ -22,7 +22,8 @@ import sources  # noqa: E402
 from alert_state import fold_alerts  # noqa: E402
 import kakao  # noqa: E402
 from regions import load_regions, region_for_admin, resolve_location as _resolve  # noqa: E402
-from config.catalog import msg, prompt  # noqa: E402
+import failures  # noqa: E402
+from config.catalog import msg, prompt, reason  # noqa: E402
 from config.settings import Settings  # noqa: E402
 
 mcp = FastMCP(name="disaster-advisor")
@@ -80,10 +81,11 @@ def get_alert_status(region_id: str, as_of: str | None = None, mode: str | None 
     src = sources.get_weather_events(zones, t, mode)
     out = {"region_id": region_id, "region": region["display"], "mode": mode, "as_of": _fmt(t),
            "zones": zones, "source": {"name": "기상청 기상특보 조회서비스 (WthrWrnInfoService)",
-                                      "status": src["status"], "detail": src["detail"], "window": src["window"]},
+                                      "status": src["status"], "cause": src.get("cause"), "detail": src["detail"],
+                                      "window": src["window"]},
            "alerts": [], "pending": [], "recently_released": [], "disclaimer": DISCLAIMER}
     if src["status"] != "ok":
-        out["statement"] = msg("mcp.alert_failed", status=src["status"])
+        out["statement"] = msg("mcp.alert_failed", reason=reason(src["status"], src.get("cause")))
         return out
     for s in fold_alerts(src["events"], t, set(zones)):
         row = {"zone": s["area_code"], "zone_name": s["area_name"], "hazard": s["hazard"], "warn_var": s["warn_var"],
@@ -114,10 +116,11 @@ def get_disaster_messages(region_id: str, as_of: str | None = None, lookback_hou
     t, mode = _resolve_time_mode(as_of, mode)
     src = sources.get_messages(region_id, t, lookback_hours, mode)
     out = {"region_id": region_id, "mode": mode, "as_of": _fmt(t), "lookback_hours": lookback_hours,
-           "source": {"name": "행정안전부 긴급재난문자 (DSSP-IF-00247)", "status": src["status"], "detail": src["detail"]},
+           "source": {"name": "행정안전부 긴급재난문자 (DSSP-IF-00247)", "status": src["status"],
+                      "cause": src.get("cause"), "detail": src["detail"]},
            "messages": [], "total_matched": 0, "label_note": "재해구분 라벨은 본문과 다를 수 있음"}
     if src["status"] != "ok":
-        out["statement"] = msg("mcp.messages_failed", status=src["status"])
+        out["statement"] = msg("mcp.messages_failed", reason=reason(src["status"], src.get("cause")))
         return out
     msgs = src["messages"]
     if hazards:
@@ -146,6 +149,12 @@ def list_hazards() -> dict:
     """지원 재난 유형과 행동요령 유무."""
     return {"hazards": [{"name": n, "warn_var": v["warnVar"], "has_action_guide": bool(v["action_cate2"])}
                         for n, v in sources._hazard_map().items()]}
+
+
+@mcp.tool()
+def source_health() -> dict:
+    """소스별 최근 live 호출 성공·실패 시각과 원인 코드 (키·URL 없음). 이 프로세스가 기동한 뒤의 기록만."""
+    return {"mode": sources.default_mode(), "sources": failures.snapshot()}
 
 
 @mcp.resource("guide://action/{hazard}")

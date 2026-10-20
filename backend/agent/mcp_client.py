@@ -10,10 +10,12 @@ from __future__ import annotations
 import json
 import os
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from fastmcp import Client
 from fastmcp.client.transports import StdioTransport
+from fastmcp.exceptions import ToolError
 from langsmith import traceable, tracing_context
 
 from config.settings import Settings
@@ -30,10 +32,27 @@ def make_target(env: dict | None = None):
                           env={"DATA_MODE": s.data_mode, "PATH": os.environ.get("PATH", "")})
 
 
+KST = timezone(timedelta(hours=9))
+
+
+def mcp_cause(e: BaseException) -> str:
+    """MCP 호출 예외 → 원인 코드 (ADR-014). 도구 안에서 난 예외는 ToolError, 그 밖(연결 끊김·기동 실패)은 연결 불가."""
+    return "mcp_tool_error" if isinstance(e, ToolError) else "mcp_unreachable"
+
+
 class MCPGateway:
     def __init__(self, target):
         self._target = target
         self._client: Client | None = None
+        # 백엔드 → MCP 연결의 최근 성공·실패 (/health 용, 프로세스 메모리, 사용자 상태 아님)
+        self.health = {"last_ok_at": None, "last_fail_at": None, "last_cause": None}
+
+    def _note(self, cause: str | None) -> None:
+        now = datetime.now(KST).isoformat(timespec="seconds")
+        if cause is None:
+            self.health["last_ok_at"] = now
+        else:
+            self.health.update(last_fail_at=now, last_cause=cause)
 
     async def start(self) -> None:
         self._client = Client(self._target)
@@ -47,7 +66,12 @@ class MCPGateway:
     @traceable(run_type="tool", name="mcp_tool", process_inputs=lambda i: {"name": i.get("name"), "args": i.get("args")})
     async def tool(self, name: str, args: dict) -> dict:
         assert self._client is not None, "MCPGateway.start() 먼저"
-        r = await self._client.call_tool(name, args)
+        try:
+            r = await self._client.call_tool(name, args)
+        except Exception as e:
+            self._note(mcp_cause(e))
+            raise
+        self._note(None)
         if r.data is not None:
             return r.data
         return json.loads(r.content[0].text)

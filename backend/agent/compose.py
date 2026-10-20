@@ -1,13 +1,18 @@
 """근거 기반 답변 템플릿 (결정론). FakeLLM 의 출력이자, LLM 답변이 검증을 통과하지 못할 때의 안전한 대체."""
 from __future__ import annotations
 
-from config.catalog import msg
+from config.catalog import msg, reason
 
 DISCLAIMER = msg("disclaimer")
 
 
 def _cite(e: dict) -> str:
     return f"[{e['id']}]"
+
+
+def gap_line(g: dict) -> str:
+    """조회 실패·범위 밖 표준 문구 — 원인별 사유를 붙인다 (ADR-014). 템플릿과 write 지시문이 같은 문구를 쓴다."""
+    return msg("answer.gap", source=g["source"], reason=reason(g["status"], g.get("cause")))
 
 
 def render_answer(judgements: list[dict], intent: str = "status") -> str:
@@ -39,7 +44,7 @@ def render_answer(judgements: list[dict], intent: str = "status") -> str:
         for g in j["gaps"]:
             if g["status"] == "not_queried":
                 continue
-            out.append(msg("answer.gap", source=g["source"], status=g["status"]))
+            out.append(gap_line(g) if g["status"] != "unavailable" else msg("answer.gap_unavailable", source=g["source"], reason=msg("causes.not_in_data")))
         if intent == "go_out":
             out.append(msg("answer.go_out"))
         out.append("")

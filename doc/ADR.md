@@ -71,3 +71,15 @@
 - 규칙: `evaluating` 소스는 서비스 응답에 쓰지 않는다. 이용허락범위가 불명확하면(예: 공공누리 3유형의 변경금지) 확인 전까지 `evaluating`.
 - 스크래핑 금지: 명시된 이용허락이 없는 웹페이지(예: 국민재난안전포털 국민행동요령 화면, 하단 "All rights reserved", 공공누리 표시 없음)는 수집하지 않는다. 같은 내용이 API로 제공되는지 확인하고, 없으면 담당부서 문의 결과를 `sources.yaml`에 남긴다.
 - 대안: 소스별 개별 모듈 — 안전 문구·출처 표시가 소스마다 달라질 위험.
+
+## ADR-014 조회 실패는 원인 코드로 분류하고 원인별 문구로 말한다
+- 배경: 모든 실패가 "조회하지 못했습니다" 하나로 나가 API 오류·키 문제·한도·네트워크·MCP 불가를 사용자도 개발자도 구분할 수 없었다.
+- 결정:
+  1. `status=failed`에 `cause`를 붙인다. 외부 API 쪽(`mcp_server/failures.py`가 capture 레코드로 판정): `api_auth_error`(키 미설정·미등록, HTTP 401/403, resultCode 20·21·30~33) · `rate_limited`(resultCode 22, 자체 일일 카운터) · `api_http_error` · `api_result_error`(resultCode≠00) · `api_timeout` · `network_error` · `response_invalid`(JSON 아님·잘림·헤더 없음·스키마 불일치). 백엔드 쪽(`mcp_client.mcp_cause`): `mcp_unreachable`(연결 실패) · `mcp_tool_error`(도구 안 예외). LLM 쪽: `llm_unavailable`(답변은 템플릿으로 나가므로 사용자 문구 없음, meta에만).
+  2. `no_coverage`(replay 범위 밖)는 실패가 아니므로 `cause`가 없고 별도 문구를 쓴다.
+  3. 코드 표·키워드는 `config/rules.yaml`의 `api_errors`(데이터), 문구는 `prompts/messages.yaml`의 `causes.*`. 모든 원인 문구는 "정보 없음" 표준 문장(`answer.gap`, `mcp.*_failed`) 안의 `$reason` 자리에 들어가므로 검증 조각(`no_info`)은 그대로다.
+  4. 원인은 판정 `gaps[].cause/reason`, SSE `source` 이벤트, `final.meta.failures`, LangSmith span 메타데이터(`source_failures`), 로그(`mcp.sources`·`backend.agent` 경고 한 줄)에 싣는다. 키·키가 든 URL은 싣지 않는다(capture 마스킹 유지, detail에는 URL을 넣지 않음).
+  5. MCP 자체에 연결하지 못하면 지역 해석 전 단계에서 멈추고 고정 응답(`fixed.service_unavailable`, route `unavailable`)을 낸다. 예전에는 요청 전체가 예외로 끝났다.
+  6. `/health`에 소스별 최근 live 호출 성공·실패 시각과 원인(`source_health` 도구, 프로세스 메모리), 백엔드→MCP 연결 상태(`mcp_link`)를 노출한다. 사용자 상태가 아니므로 stateless 원칙과 충돌하지 않는다.
+- 확인: 잘못된 키로 실제 호출한 응답 모양(T-028)으로 분류 규칙을 정했다. 장애 주입(`eval/faults.py`) 5종이 서로 다른 원인 코드·문구로 나타나는 것을 테스트와 평가 항목으로 고정했다.
+- 대안: HTTP 상태만으로 분류 — safetydata는 키 오류도 HTTP 200 + resultCode 30으로 와서 구분이 안 된다.

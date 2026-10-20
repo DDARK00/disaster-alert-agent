@@ -6,7 +6,7 @@
 """
 from __future__ import annotations
 
-from config.catalog import RULES, msg
+from config.catalog import RULES, msg, reason
 
 LEVEL_LABEL: dict[str, str] = RULES["levels"]["labels"]
 STRESS_TO_LEVEL: dict[str, str] = RULES["levels"]["stress_to_level"]
@@ -26,7 +26,9 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
         if resp is None:
             gaps.append({"source": name, "status": "not_queried", "detail": "조회하지 않음"})
         elif resp["source"]["status"] != "ok":
-            gaps.append({"source": name, "status": resp["source"]["status"], "detail": resp["source"]["detail"]})
+            st, cause = resp["source"]["status"], resp["source"].get("cause")
+            gaps.append({"source": name, "status": st, "cause": cause, "reason": reason(st, cause),
+                         "detail": resp["source"]["detail"]})
 
     weather_ok = alerts["source"]["status"] == "ok"
     gap("기상특보", alerts)
@@ -78,7 +80,10 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict]) -
             # 일반 시민 대상: 축산·농업·작업장 대상 문구는 뒤로 미룬다 (안정 정렬, 삭제하지 않음)
             g = {**g, "rows": sorted(g["rows"], key=lambda r: any(k in r["text"] for k in NICHE_WORDS))}
         if not g.get("available"):
-            gaps.append({"source": f"행동요령({hz})", "status": "unavailable",
+            # cause 가 있으면 조회 실패(정보 없음), 없으면 공식 데이터에 해당 항목이 없음
+            st = "failed" if g.get("cause") else "unavailable"
+            gaps.append({"source": f"행동요령({hz})", "status": st, "cause": g.get("cause"),
+                         "reason": reason(st, g["cause"]) if g.get("cause") else msg("causes.not_in_data"),
                          "detail": g.get("reason", "행동요령 없음")})
             continue
         # 공식 원문이라도 금지 표현("…지붕이 안전하니…")이 든 행은 근거로 쓰지 않는다 — 고쳐 쓰지 않고 뺀다 (T-024)

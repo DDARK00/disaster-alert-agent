@@ -48,6 +48,10 @@ class Api(unittest.TestCase):
         r = self.client.get("/health")
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.json()["mcp"], True)
+        h = r.json()
+        self.assertIn("sources", h)  # 소스별 최근 성공·실패·원인 (ADR-014)
+        self.assertIn("last_cause", h["mcp_link"])
+        self.assertNotIn("serviceKey", r.text)
         self.assertEqual(self.client.get("/version").json()["version"], backend_server.VERSION)
 
     def test_scenarios_are_valid(self):

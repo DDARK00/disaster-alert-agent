@@ -3,7 +3,7 @@
 안전 원칙
 - replay 는 fixture 가 덮는 시간 범위(coverage) 안에서만 '데이터 있음/없음'을 말한다.
   범위 밖이면 status="no_coverage" 이며, 이를 '위험 없음'으로 해석해서는 안 된다.
-- live 호출 실패는 status="failed" (안전이 아님).
+- live 호출 실패는 status="failed" (안전이 아님) + cause(원인 코드, failures.py).
 - 시각은 모두 KST naive datetime.
 """
 from __future__ import annotations
@@ -16,6 +16,7 @@ import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import failures
 from alert_state import normalize_items
 from regions import load_regions, message_applies
 
@@ -89,6 +90,19 @@ def _covered(windows, t: datetime):
     return next(((s, e) for s, e in windows if s <= t <= e), None)
 
 
+def _fetch(source: str, operation: str, params: dict, tag: str, ok_codes=("0", "00")) -> tuple[dict, str | None]:
+    """live 호출 1회 + 원인 분류 + 소스별 최근 상태 기록."""
+    from capture import call
+    rec = call(source, operation, params, tag)
+    cause = failures.classify(rec, ok_codes)
+    failures.note(source, cause, failures.detail(rec, cause) if cause else "")
+    return rec, cause
+
+
+def _failed(cause: str, info: str, **extra) -> dict:
+    return {"status": "failed", "cause": cause, "detail": info, **extra}
+
+
 # ───────────────────────── 기상특보 ─────────────────────────
 
 def _replay_files(pattern: str) -> list[str]:
@@ -148,22 +162,26 @@ def get_weather_events(zones: list[str], as_of: datetime, mode: str) -> dict:
                 "detail": "replay"}
 
     # live: 구역마다 60일 창(API 최대)으로 호출 → 오래 지속되는 특보(폭염 등)를 놓치지 않는다.
-    from capture import call
-    events, notes = [], []
+    events = []
     frm = (as_of - timedelta(days=59)).strftime("%Y%m%d")
     for z in zones:
-        rec = call("weather", "getPwnCd",
-                   {"numOfRows": 300, "pageNo": 1, "dataType": "JSON", "fromTmFc": frm,
-                    "toTmFc": as_of.strftime("%Y%m%d"), "areaCode": z}, f"getPwnCd_{z}_live")
-        resp = (rec["json"] or {}).get("response") or {}
-        code = str((resp.get("header") or {}).get("resultCode"))
-        if code == "03":  # NO_DATA = 이벤트 없음 (정상)
+        rec, cause = _fetch("weather", "getPwnCd",
+                            {"numOfRows": 300, "pageNo": 1, "dataType": "JSON", "fromTmFc": frm,
+                             "toTmFc": as_of.strftime("%Y%m%d"), "areaCode": z}, f"getPwnCd_{z}_live",
+                            ok_codes=("0", "00", "03"))  # 03 NO_DATA = 이벤트 없음 (정상)
+        if cause:
+            return _failed(cause, f"{z}: {failures.detail(rec, cause)}", events=[], window=None)
+        resp = rec["json"].get("response") or rec["json"]
+        if str(resp["header"]["resultCode"]) == "03":
             continue
-        if code not in ("0", "00"):
-            return {"status": "failed", "events": [], "window": None,
-                    "detail": f"{z}: HTTP {rec['meta']['http_status']} resultCode={code} {rec['meta'].get('error') or ''}".strip()}
-        items = ((resp.get("body") or {}).get("items") or {}).get("item") or []
-        events.extend([items] if isinstance(items, dict) else items)
+        try:
+            items = ((resp.get("body") or {}).get("items") or {}).get("item") or []
+            items = [items] if isinstance(items, dict) else items
+            normalize_items(items)  # 형식 검사 (필드 누락·타입 오류 → response_invalid)
+        except (AttributeError, KeyError, TypeError, ValueError) as e:
+            failures.note("weather", "response_invalid", f"{z}: {type(e).__name__}")
+            return _failed("response_invalid", f"{z}: response_invalid {type(e).__name__}", events=[], window=None)
+        events.extend(items)
     return {"status": "ok", "events": events, "window": [f"{frm}", as_of.strftime("%Y%m%d")], "detail": "live"}
 
 
@@ -203,26 +221,30 @@ def get_messages(region_id: str, as_of: datetime, lookback_hours: int, mode: str
             return {"status": "no_coverage", "messages": [],
                     "detail": f"replay fixture 범위 밖 (범위: {[(f'{s:%Y-%m-%d %H:%M}', f'{e:%Y-%m-%d %H:%M}') for s, e in cover]})"}
     else:
-        from capture import call
         allm = []
         for page in (1, 2, 3):
-            rec = call("dssp", "", {"numOfRows": 1000, "pageNo": page, "returnType": "json",
-                                    "crtDt": since.strftime("%Y%m%d")}, "msgs_live")
+            rec, cause = _fetch("dssp", "", {"numOfRows": 1000, "pageNo": page, "returnType": "json",
+                                             "crtDt": since.strftime("%Y%m%d")}, "msgs_live")
+            if cause:
+                return _failed(cause, failures.detail(rec, cause), messages=[])
             j = rec["json"]
-            if not j or str(j["header"]["resultCode"]) not in ("0", "00"):
-                return {"status": "failed", "messages": [],
-                        "detail": f"HTTP {rec['meta']['http_status']} {rec['meta'].get('error') or (j or {}).get('header')}"}
             allm.extend(j.get("body") or [])
-            if len(allm) >= j.get("totalCount", 0):
+            if len(allm) >= int(j.get("totalCount") or 0):
                 break
     out = []
-    for m in allm:
-        t = datetime.strptime(m["CRT_DT"], "%Y/%m/%d %H:%M:%S")
-        if not (since <= t <= as_of):
-            continue
-        scope = message_applies(region_id, m["RCPTN_RGN_NM"])
-        if scope:
-            out.append(_msg_row(m, scope))
+    try:
+        for m in allm:
+            t = datetime.strptime(m["CRT_DT"], "%Y/%m/%d %H:%M:%S")
+            if not (since <= t <= as_of):
+                continue
+            scope = message_applies(region_id, m["RCPTN_RGN_NM"])
+            if scope:
+                out.append(_msg_row(m, scope))
+    except (AttributeError, KeyError, TypeError, ValueError) as e:
+        if mode == "replay":
+            raise
+        failures.note("dssp", "response_invalid", type(e).__name__)
+        return _failed("response_invalid", f"response_invalid {type(e).__name__}", messages=[])
     out.sort(key=lambda r: r["created_at"], reverse=True)
     return {"status": "ok", "messages": out, "detail": mode}
 

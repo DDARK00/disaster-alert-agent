@@ -189,7 +189,9 @@ function showJudgements(list){
     });
     j.gaps.filter(g=>g.status!=="not_queried").forEach(g=>{
       const li=el("li"); li.appendChild(el("span","tag gap","정보 없음"));
-      li.appendChild(el("span","gap",g.source+" — "+(g.status==="unavailable"?"해당 행동요령이 API에 없음":"조회 불가("+g.status+"), 안전하다는 뜻이 아님")));
+      // 사용자 문구는 백엔드가 준 원인별 문구(reason), 원인 코드·상세는 툴팁(개발자용)에만
+      const sp=el("span","gap",g.source+" — "+(g.reason||"불러오지 못했습니다")+(g.status==="unavailable"?"":" (안전하다는 뜻이 아님)"));
+      sp.title=[g.cause||g.status,g.detail||""].join(" · "); li.appendChild(sp);
       ul.appendChild(li);
     });
     c.appendChild(ul); box.appendChild(c);
@@ -239,7 +241,7 @@ function run(){
   on("location",showLocation);
   on("links",showLinks);
   on("plan",d=>badge("조회 "+d.steps.join("+")+" ("+d.source+")"));
-  on("source",d=>{ if(d.status!=="ok") badge("⚠ "+d.name+" "+d.status); });
+  on("source",d=>{ if(d.status!=="ok") badge("⚠ "+d.name+" 정보 없음"+(d.cause?" ("+d.cause+")":"")); });
   on("judgement",d=>showJudgements(d.judgements));
   on("validation",d=>{ if(!d.ok) badge("검증 위반 → "+(d.attempt==="template"?"템플릿":"재작성")); });
   on("token",d=>{ if(!started){ started=true; $("ansPanel").style.display=""; ans.className="caret"; ans.textContent=""; } ans.textContent+=d.text; });

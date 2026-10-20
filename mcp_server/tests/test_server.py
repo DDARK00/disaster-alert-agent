@@ -34,7 +34,7 @@ class Tools(unittest.TestCase):
             return tools, prompts, templates
         tools, prompts, templates = run(go())
         self.assertEqual(tools, {"resolve_location", "resolve_place", "get_alert_status", "get_disaster_messages",
-                                 "search_action_guide", "list_hazards"})
+                                 "search_action_guide", "list_hazards", "source_health"})
         self.assertIn("disaster_briefing_prompt", prompts)
         self.assertEqual(len(templates), 1)
 

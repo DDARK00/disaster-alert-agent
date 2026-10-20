@@ -69,15 +69,18 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
 
     @app.get("/health")
     async def health():
+        """MCP 연결 + 소스별 최근 live 호출 성공·실패와 원인 코드 (키·URL 없음, ADR-014)."""
         d = app.state.deps
+        sources = None
         try:
             with tracing_context(enabled=False):  # 헬스체크(10초 주기)가 트레이스 한도를 쓰지 않도록 (T-022)
-                await d.mcp.tool("list_hazards", {})
+                sources = (await d.mcp.tool("source_health", {}))["sources"]
             mcp_ok = True
         except Exception:  # noqa: BLE001
             mcp_ok = False
         return JSONResponse({"status": "ok" if mcp_ok else "degraded", "mcp": mcp_ok, "llm": d.llm.name,
-                             "data_mode": d.settings.data_mode}, status_code=200 if mcp_ok else 503)
+                             "data_mode": d.settings.data_mode, "sources": sources, "mcp_link": d.mcp.health},
+                            status_code=200 if mcp_ok else 503)
 
     @app.get("/version")
     async def version():

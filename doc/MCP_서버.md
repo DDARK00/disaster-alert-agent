@@ -11,11 +11,13 @@
 | `get_disaster_messages` | Tool | `region_id`, `as_of?`, `lookback_hours`, `hazards?` | 지역 적용 문자. scope direct/sido_wide |
 | `search_action_guide` | Tool | `hazard`, `phase?` | 행동요령 행(ID 포함). 없는 유형은 available=False |
 | `list_hazards` | Tool | – | 유형과 행동요령 유무 |
+| `source_health` | Tool | – | 소스별 최근 live 호출 성공·실패 시각, 원인 코드, 실패 횟수 (키·URL 없음, 프로세스 메모리) |
 | `guide://action/{hazard}` | Resource | – | 행동요령 전문 + 출처 |
 | `disaster_briefing_prompt` | Prompt | `region`, `hazards`, `question` | 답변 작성 규칙(안전 문구 규칙) |
 
 ## 안전 규칙이 코드에 들어간 곳
 - 특보 조회 실패·replay 범위 밖 → `source.status != ok`, 문구는 "정보 없음 … 안전하다는 뜻이 아닙니다". (`test_out_of_coverage_is_not_reported_as_no_risk`)
+- live 실패는 `source.cause`(원인 코드)와 원인별 문구(`causes.*`)를 싣는다. 분류는 `failures.py`(코드 표·키워드는 rules.yaml `api_errors`), ADR-014. 키 미설정이면 호출하지 않고 `api_auth_error`.
 - 위험이 없을 때 문구는 "확인된 위험 정보 없음 (기준 시각, 조회 구역) … 안전을 보장하지 않습니다". "안전합니다"는 쓰지 않는다.
 - 행동요령이 없는 유형(건조·열대야)은 다른 재난으로 대체하지 않는다.
 - 모든 특보 응답에 `disclaimer`(공식 경보 아님) 포함.

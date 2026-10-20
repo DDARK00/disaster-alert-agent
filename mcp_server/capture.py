@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import json
+import socket
 import sys
 import time
 import urllib.error
@@ -86,13 +87,19 @@ def call(source: str, operation: str, params: dict, tag: str, key_param: str = "
          timeout: int = 20) -> dict:
     """한 번 호출하고 fixture로 저장한다. 저장된 dict를 돌려준다."""
     cfg = SOURCES[source]
-    key = load_env()[cfg["env"]]
+    key = load_env().get(cfg["env"], "")
+    if not key:  # 키 미설정: 호출하지 않는다 (원인 api_auth_error, 저장·카운트 없음)
+        return {"meta": {"api_result_code": None, "api_result_msg": None, "api_ok": False, "source": source,
+                         "operation": operation, "mode": "live", "http_status": None, "elapsed_ms": 0,
+                         "call_no_today": None, "url": None, "saved_to": None,
+                         "error": f"서비스키 미설정 ({cfg['env']})", "error_kind": "key_missing"},
+                "json": None, "text": None}
     # 이미 인코딩된 키(%포함)가 이중 인코딩되지 않도록 한 번 디코딩 후 인코딩한다.
     query = urllib.parse.urlencode({key_param: urllib.parse.unquote(key), **params})
     url = cfg["base"] + (f"/{operation}" if operation else "") + "?" + query
     n = _count(source)
 
-    status, body, err = None, None, None
+    status, body, err, kind = None, None, None, None
     t0 = time.time()
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "mini-project-capture/0.1"})
@@ -102,6 +109,8 @@ def call(source: str, operation: str, params: dict, tag: str, key_param: str = "
         status, raw = e.code, e.read()
     except Exception as e:  # noqa: BLE001
         raw, err = b"", scrub(f"{type(e).__name__}: {e}", key)
+        reason = getattr(e, "reason", e)  # URLError 는 원래 예외를 reason 에 담는다
+        kind = "timeout" if isinstance(reason, (TimeoutError, socket.timeout)) else "network"
     elapsed = int((time.time() - t0) * 1000)
 
     text = scrub(raw.decode("utf-8", errors="replace"), key)
@@ -131,6 +140,7 @@ def call(source: str, operation: str, params: dict, tag: str, key_param: str = "
             "call_no_today": n,
             "url": scrub(url, key),
             "error": err,
+            "error_kind": kind,
         },
         "json": body,
         "text": None if body is not None else text[:20000],

@@ -25,3 +25,8 @@
 {"id": "emg_fire", "message": "경기도 광주인데 불이 났어요", "as_of": "", "expect": {"route": "emergency"}, "basis": "위급(지역이 있어도 고정 응답 우선)"}
 {"id": "ask_region", "message": "폭염 특보 있어?", "as_of": "", "expect": {"route": "ask_region"}, "basis": "지역 없음 → 되묻기"}
 {"id": "out_of_scope", "message": "오늘 점심 뭐 먹지", "as_of": "", "expect": {"route": "out_of_scope"}, "basis": "범위 밖 고정 안내"}
+{"id": "fault_result_99", "message": "경기도 광주 강풍 상황 알려줘", "as_of": "", "fault": "result_99", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "unknown"}, "cause": "api_result_error"}, "basis": "장애 주입: 기상특보·재난문자 HTTP 200 + resultCode 99 → 정보 없음 + 제공기관 응답 오류 문구 (ADR-014)"}
+{"id": "fault_wrong_key", "message": "경기도 광주 강풍 상황 알려줘", "as_of": "", "fault": "wrong_key", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "unknown"}, "cause": "api_auth_error"}, "basis": "장애 주입: 기상청 HTTP 403 SERVICE_KEY_IS_NOT_REGISTERED_ERROR, safetydata resultCode 30 (2026-10-20 실제 응답 모양, T-028)"}
+{"id": "fault_truncated_json", "message": "경기도 광주 강풍 상황 알려줘", "as_of": "", "fault": "truncated_json", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "unknown"}, "cause": "response_invalid"}, "basis": "장애 주입: HTTP 200 + 잘린 JSON → 응답 형식 이상"}
+{"id": "fault_timeout", "message": "경기도 광주 강풍 상황 알려줘", "as_of": "", "fault": "timeout", "expect": {"route": "disaster", "levels": {"gyeonggi_gwangju": "unknown"}, "cause": "api_timeout"}, "basis": "장애 주입: 소켓 시간 초과"}
+{"id": "fault_mcp_down", "message": "경기도 광주 강풍 상황 알려줘", "as_of": "", "fault": "mcp_down", "expect": {"route": "unavailable", "levels": {}, "cause": "mcp_unreachable"}, "basis": "장애 주입: MCP 서버 연결 불가 → 지역 해석 전 고정 '정보 없음' + 내부 서비스 연결 불가 문구"}

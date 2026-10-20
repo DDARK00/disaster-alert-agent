@@ -4,7 +4,7 @@
 
 | 경로 | 설명 |
 |---|---|
-| `GET /health` | `{status, mcp, llm, data_mode}` — MCP 연결 실패 시 503 |
+| `GET /health` | `{status, mcp, llm, data_mode, sources, mcp_link}` — MCP 연결 실패 시 503. `sources`: 소스별 최근 live 호출 `{last_ok_at, last_fail_at, last_cause, fail_count}`(키·URL 없음, MCP 프로세스 기동 이후), `mcp_link`: 백엔드→MCP 최근 성공·실패와 원인 (ADR-014) |
 | `GET /scenarios` | 시연 시나리오 목록 (`backend/scenarios.json`) |
 | `GET /chat` | 최종 결과 JSON |
 | `GET /chat/stream` | SSE. 쿼리: `message`, `mode?`, `as_of?`, `history_region_id?`, `browser_region_id?` |
@@ -15,17 +15,24 @@
 `start` → (`step` start/done 쌍들, `route`, `intent`, `location`, `plan`, `source`×N, `judgement`, `validation`) → `token`×N → `final` (실패 시 `error`)
 
 - `links`: 카카오맵 링크 칩 `{region, notice, chips:[{kind: map|route, label, url}]}` — 장소가 질문에 있고 조회 지역과 일치할 때만. 답변 본문이 아니라 별도 칩이며 `final.links`에도 실린다. 경로는 판단하지 않는다(고정 문구 "경로상의 도로 통제·침수 여부는 반영되지 않았습니다.").
-- `judgement`: 판정 카드(지역·등급·근거·정보 없음 목록). 문장보다 먼저 도착한다.
+- `judgement`: 판정 카드(지역·등급·근거·정보 없음 목록). 문장보다 먼저 도착한다. `gaps[]`: `{source, status, cause, reason, detail}` — `reason`은 사용자 문구, `cause`·`detail`은 개발자용.
+- `source`: `{name, status, cause, count, region_id?}` — 실패면 `cause`(원인 코드, ADR-014).
 - `validation`: `{ok, violations, attempt}` — 위반이면 재작성 또는 템플릿 대체.
 - `token`: **검증을 통과한 답변만** 24자씩 (ADR-008).
 - `final`: `{route, answer, answer_source, intent, hazards, location, plan, judgements, validation, meta}`
 
 `location.place`: `{status, region_id, result_count}` (Kakao 요약). 장소 → 지역 규칙: 명시 지역 표현 우선 · 이력/브라우저 추정과 다르면 두 지역 모두 · 지명이 없을 때만 `assumed` · '광주'처럼 지역명뿐이면 Kakao 미호출 (T-025).
 
-`answer_source`: `fixed`(위급·범위 밖·지역 되묻기) / `llm` / `fake` / `template_fallback`(검증 반복 실패) / `template_llm_error`(LLM 오류).
+`final.meta.failures`: `[{stage: source|mcp|llm, source?, region_id?, cause, status}]` — 이번 요청에서 난 실패 전부(LLM 실패 `llm_unavailable` 포함).
+
+`route`: `disaster` / `emergency` / `out_of_scope` / `ask_region` / `unavailable`(MCP에 연결하지 못함 — 고정 "정보 없음" 응답에 원인 문구).
+
+조회 실패 원인 코드: `api_auth_error` `rate_limited` `api_http_error` `api_result_error` `api_timeout` `network_error` `response_invalid` `mcp_unreachable` `mcp_tool_error` (+ meta 전용 `llm_unavailable`). 문구는 `prompts/messages.yaml` `causes.*`.
+
+`answer_source`: `fixed`(위급·범위 밖·지역 되묻기·MCP 불가) / `llm` / `fake` / `template_fallback`(검증 반복 실패) / `template_llm_error`(LLM 오류).
 
 ## 그래프
-`route → parse_intent → gate → plan → research → judge → write → validate → finalize` (+ fixed_response, ask_region, fallback). 설명은 `agent/graph.py` 상단 주석.
+`route → parse_intent → gate → plan → research → judge → write → validate → finalize` (+ fixed_response, ask_region, unavailable, fallback). 설명은 `agent/graph.py` 상단 주석.
 
 ## 환경변수
 `config/settings.py`의 `Settings.from_env()` 한 곳에서 읽는다: `MCP_URL`(없으면 stdio 서브프로세스), `DATA_MODE`, `LLM_BACKEND`(fake|openai_compat), `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`, `LLM_TIMEOUT`, `LLM_NO_THINK`(1이면 `/no_think` + `reasoning_effort=none`, T-020), `MAX_REWRITES`, `CORS_ORIGINS`. `LANGSMITH_*`는 langsmith가 직접 읽는다.
@@ -49,7 +56,8 @@
 
 ## 평가 (`eval/`)
 - `eval/dataset.jsonl` 27건: 경기 광주 9 · 광주광역시 8 · 모호 '광주' 3 · 이력 1 · 행동요령 1 · 위급 3 · 되묻기 1 · 범위 밖 1. 기대값은 커밋된 fixture의 **원본 특보 이벤트**를 사람이 읽고 정했다(`basis`). 시스템 판정 코드로 만들지 않는다.
-- 지표: `route` `regions` `level` `no_missed_risk`(특보가 있는데 none/unknown) `no_forbidden` `grounded`(백엔드 검증기 그대로) `emergency_fixed`.
+- 지표: `route` `regions` `level` `no_missed_risk`(특보가 있는데 none/unknown) `no_forbidden` `grounded`(백엔드 검증기 그대로) `emergency_fixed` `cause`(장애 주입 항목의 원인 코드·문구).
+- 장애 주입 항목(`fault` 필드, `eval/faults.py`)은 HTTP가 아니라 프로세스 내 같은 그래프·MCP로 돈다(네트워크 경계만 가짜). LLM은 환경변수로 만든다 — qwen 평가는 `LLM_BACKEND=openai_compat LLM_NO_THINK=1`을 함께 준다.
 - 실행: `.venv/bin/python eval/run_eval.py` (로컬 채점) / `--langsmith --prefix <이름>` (데이터셋 `disaster-advisor-eval-<sha8>`, 내용이 바뀌면 새 데이터셋).
 - 결과(2026-10-20): fake 27/27, qwen3:8b 27/27 (실험 `qwen3-8b-d5faa9d6`, llm 21·fixed 5·fallback 1). 첫 실행에서 위험 놓침 1건을 찾아 고침(T-026).
 - 검증 강화 후(T-027): qwen3:8b 27/27, llm 22·fixed 5·fallback 0 (실험 `qwen3-8b-strict-ee7fd23b`).
