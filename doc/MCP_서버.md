@@ -6,6 +6,7 @@
 | 이름 | 종류 | 입력 | 요점 |
 |---|---|---|---|
 | `resolve_location` | Tool | `text`, `history_region_id?`, `browser_region_id?` | status resolved/assumed/ambiguous/none, 후보와 근거 |
+| `resolve_place` | Tool | `query` | Kakao Local 라이브 조회(저장 없음, ADR-011). status ok/not_found/failed/unavailable, 지원 지역이면 `region_id`, 법정동 코드, 장소 ID, 링크(`/link/map/{id}`, `/link/to/{id}`), 고정 안내 문구. 장소명·좌표는 반환하지 않음 |
 | `get_alert_status` | Tool | `region_id`, `as_of?`, `mode?` | 발효(alerts)·예고(pending)·최근 해제. 소스 상태와 문구 포함 |
 | `get_disaster_messages` | Tool | `region_id`, `as_of?`, `lookback_hours`, `hazards?` | 지역 적용 문자. scope direct/sido_wide |
 | `search_action_guide` | Tool | `hazard`, `phase?` | 행동요령 행(ID 포함). 없는 유형은 available=False |
@@ -24,6 +25,12 @@
 - 환경변수는 `config/settings.py`(`DATA_MODE`, `MCP_TRANSPORT/HOST/PORT/PATH`). 서비스 키는 Settings 밖 — `capture.py`만 읽는다.
 - 컨테이너는 `config/`, `prompts/`를 함께 복사한다.
 
+## Kakao (ADR-011)
+- 키 `KAKAO_REST_API_KEY`는 mcp에서만 읽는다(`capture.load_env`). 헤더 `Authorization: KakaoAK …`로만 보내고 URL·로그에 남기지 않는다.
+- 키워드 검색 1위 → `coord2regioncode`(법정동). 응답 원문은 메모리에서 요약 후 버린다 — fixture·파일·로그 없음(테스트로 확인).
+- 행정구역 매핑은 `regions.json`의 `kakao_prefixes`(시도+시군구 이름). 광주권은 `전남광주통합특별시 ○구`로 옴(T-025).
+- 테스트는 mock(`tests/test_kakao.py`). 실호출 스모크는 선택: `KAKAO_SMOKE=1 .venv/bin/python -m unittest mcp_server/tests/test_kakao_smoke.py`.
+
 ## replay 범위 (2026-10-20 수집분)
 - 기상특보: 2026-08-21 00:00 ~ 2026-10-20 10:18 (구역별, 이어 붙인 fixture 기준). 이보다 과거는 API 제약(60일)으로 재수집 불가.
 - 재난문자: 2026-10-01 ~ 2026-10-20 10:18.
@@ -31,4 +38,4 @@
 - replay는 커밋된 fixture만 읽는다. live 캡처(`*_live__*`, gitignore)는 섞지 않는다(T-023).
 
 ## 테스트
-`sh/test.sh` (MCP 32건: 상태 접기 11, 지역 7, 서버 통합 10, capture 4). 컨테이너 실행은 `MCP_TRANSPORT=http` (`doc/도커.md`).
+`sh/test.sh` (MCP 41건 중 2건은 선택 스모크로 skip: 상태 접기 11, 지역 7, 서버 통합 10, capture 4, Kakao mock 7). 컨테이너 실행은 `MCP_TRANSPORT=http` (`doc/도커.md`).

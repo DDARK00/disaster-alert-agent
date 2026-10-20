@@ -14,10 +14,13 @@
 ## SSE 이벤트
 `start` → (`step` start/done 쌍들, `route`, `intent`, `location`, `plan`, `source`×N, `judgement`, `validation`) → `token`×N → `final` (실패 시 `error`)
 
+- `links`: 카카오맵 링크 칩 `{region, notice, chips:[{kind: map|route, label, url}]}` — 장소가 질문에 있고 조회 지역과 일치할 때만. 답변 본문이 아니라 별도 칩이며 `final.links`에도 실린다. 경로는 판단하지 않는다(고정 문구 "경로상의 도로 통제·침수 여부는 반영되지 않았습니다.").
 - `judgement`: 판정 카드(지역·등급·근거·정보 없음 목록). 문장보다 먼저 도착한다.
 - `validation`: `{ok, violations, attempt}` — 위반이면 재작성 또는 템플릿 대체.
 - `token`: **검증을 통과한 답변만** 24자씩 (ADR-008).
 - `final`: `{route, answer, answer_source, intent, hazards, location, plan, judgements, validation, meta}`
+
+`location.place`: `{status, region_id, result_count}` (Kakao 요약). 장소 → 지역 규칙: 명시 지역 표현 우선 · 이력/브라우저 추정과 다르면 두 지역 모두 · 지명이 없을 때만 `assumed` · '광주'처럼 지역명뿐이면 Kakao 미호출 (T-025).
 
 `answer_source`: `fixed`(위급·범위 밖·지역 되묻기) / `llm` / `fake` / `template_fallback`(검증 반복 실패) / `template_llm_error`(LLM 오류).
 
@@ -41,4 +44,4 @@
 - LangSmith 루트 트레이스(`disaster_chat`)에 `prompts@<hash>` 태그와 파일별 해시 메타데이터.
 
 ## 테스트
-`sh/test.sh` — MCP 32건 + 백엔드 52건. 외부 API·LLM 없이 fixture, 프로세스 내 MCP, FakeLLM, 가짜 OpenAI 호환 HTTP 서버로 돈다.
+`sh/test.sh` — MCP 41건(선택 스모크 2건 skip) + 백엔드 64건. Kakao는 mock만. 외부 API·LLM 없이 fixture, 프로세스 내 MCP, FakeLLM, 가짜 OpenAI 호환 HTTP 서버로 돈다.
