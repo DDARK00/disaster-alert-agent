@@ -82,6 +82,15 @@ class Tools(unittest.TestCase):
         self.assertFalse(r["available"])
         self.assertEqual(r["rows"], [])  # 다른 재난으로 대체하지 않는다
 
+    def test_replay_ignores_live_captures(self):
+        import sources
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            for n in ("getPwnCd_L1_60d__20261020_012146.json", "getPwnCd_L1_live__20261020_020345.json"):
+                Path(d, n).write_text("{}")
+            got = [Path(f).name for f in sources._replay_files(str(Path(d) / "getPwnCd_*.json"))]
+        self.assertEqual(got, ["getPwnCd_L1_60d__20261020_012146.json"])
+
     def test_resolve_location_ambiguous(self):
         r = run(call("resolve_location", {"text": "광주 도로상황"}))
         self.assertEqual(r["status"], "ambiguous")

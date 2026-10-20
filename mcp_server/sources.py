@@ -91,11 +91,16 @@ def _covered(windows, t: datetime):
 
 # ───────────────────────── 기상특보 ─────────────────────────
 
+def _replay_files(pattern: str) -> list[str]:
+    """replay 원본 = 저장소에 커밋된 fixture. live 캡처(*_live__*, gitignore)는 섞지 않는다 (T-023)."""
+    return [f for f in sorted(glob.glob(pattern)) if "_live__" not in Path(f).name]
+
+
 def _weather_replay(zones: list[str]) -> tuple[list[dict], dict[str, list]]:
     """fixture 에서 zone 별 이벤트와 coverage 를 모은다."""
     events: dict[tuple, dict] = {}
     cover: dict[str, list] = {z: [] for z in zones}
-    for f in sorted(glob.glob(str(FIX / "weather" / "getPwnCd_*.json"))):
+    for f in _replay_files(str(FIX / "weather" / "getPwnCd_*.json")):
         d = _load(f)
         meta = d["meta"]
         if not _api_ok(d) or not d.get("json"):
@@ -173,7 +178,7 @@ def _msg_row(m: dict, scope: str) -> dict:
 def _dssp_replay() -> tuple[list[dict], list]:
     msgs: dict[int, dict] = {}
     cover = []
-    for f in sorted(glob.glob(str(FIX / "dssp" / "*.json"))):
+    for f in _replay_files(str(FIX / "dssp" / "*.json")):
         d = _load(f)
         meta = d["meta"]
         if not _api_ok(d) or not d.get("json"):
