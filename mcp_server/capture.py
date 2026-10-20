@@ -42,7 +42,11 @@ SOURCES = {
 
 
 def load_env(path: Path = ROOT / ".env") -> dict[str, str]:
-    env: dict[str, str] = {}
+    """프로젝트 루트 .env 를 읽는다. 없으면(컨테이너 등) 프로세스 환경변수를 쓴다."""
+    import os
+    env: dict[str, str] = {k: v for k, v in os.environ.items() if k.endswith("_SERVICE_KEY")}
+    if not path.exists():
+        return env
     for line in path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line and not line.startswith("#") and "=" in line:

@@ -1,0 +1,20 @@
+[
+  {"id": "heat_warning", "title": "폭염경보 발효 중", "message": "경기도 광주 폭염특보 났는데 지금 나가도 돼?",
+   "mode": "replay", "as_of": "2026-08-24 12:00", "note": "실제 2026-08-24 사례. 주의보→경보 변경발표 반영"},
+  {"id": "ambiguous_rain", "title": "'광주' 모호 + 호우", "message": "광주 호우 어때?",
+   "mode": "replay", "as_of": "2026-08-27 17:00", "note": "두 지역을 모두 조회해 결과가 서로 다름"},
+  {"id": "tropical_pending", "title": "열대야 예고 · 행동요령 없음", "message": "경기도 광주 열대야 어때?",
+   "mode": "replay", "as_of": "2026-08-24 17:00", "note": "발효 예고(pending), 열대야 행동요령은 API에 없음 → 대체하지 않음"},
+  {"id": "messages_only", "title": "특보 없이 안내 문자만", "message": "경기도 광주 강풍 상황 알려줘",
+   "mode": "replay", "as_of": "2026-10-18 16:30", "note": "문자는 수준 판정에 쓰지 않고 근거로만 표시"},
+  {"id": "calm", "title": "확인된 위험 정보 없음", "message": "광주광역시 날씨 위험해?",
+   "mode": "replay", "as_of": "2026-10-19 12:00", "note": "'안전'이 아니라 '확인된 위험 정보 없음'"},
+  {"id": "no_coverage", "title": "조회 범위 밖 = 정보 없음", "message": "경기도 광주 폭염 어때?",
+   "mode": "replay", "as_of": "2026-06-01 12:00", "note": "데이터가 없다고 안전하다고 말하지 않음"},
+  {"id": "emergency", "title": "위급 표현 → 고정 안내", "message": "지하차도에 물이 차오르고 있어",
+   "mode": "replay", "as_of": "", "note": "LLM·도구를 거치지 않고 즉시 119/112 안내"},
+  {"id": "ask_region", "title": "지역 없음 → 되묻기", "message": "폭염 특보 있어?",
+   "mode": "replay", "as_of": "", "note": "지원 지역을 안내"},
+  {"id": "live_now", "title": "지금 (live)", "message": "경기도 광주 지금 특보 있어?",
+   "mode": "live", "as_of": "", "note": "실제 API 호출 — 키 필요"}
+]
