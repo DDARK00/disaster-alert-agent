@@ -16,6 +16,7 @@ from pathlib import Path
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+from langsmith import tracing_context
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -76,7 +77,8 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
     async def health():
         d = app.state.deps
         try:
-            await d.mcp.tool("list_hazards", {})
+            with tracing_context(enabled=False):  # 헬스체크(10초 주기)가 트레이스 한도를 쓰지 않도록 (T-022)
+                await d.mcp.tool("list_hazards", {})
             mcp_ok = True
         except Exception:  # noqa: BLE001
             mcp_ok = False
