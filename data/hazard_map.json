@@ -1,0 +1,160 @@
+{
+  "_note": "기상특보 warnVar ↔ 재난문자 DST_SE_NM ↔ 행동요령 safety_cate2. 2026-10-20 호출로 확인. null=해당 항목 없음(폴백 금지, 답변에 '행동요령 없음' 명시)",
+  "hazards": {
+    "강풍": {
+      "warnVar": 1,
+      "dst_se_nm": [
+        "강풍"
+      ],
+      "action_cate2": "01004",
+      "action_name": "강풍",
+      "phases": {
+        "01004001": "prepare",
+        "01004002": "during",
+        "01004003": "info"
+      }
+    },
+    "호우": {
+      "warnVar": 2,
+      "dst_se_nm": [
+        "호우"
+      ],
+      "action_cate2": "01003",
+      "action_name": "호우",
+      "phases": {
+        "01003002": "prepare",
+        "01003003": "during"
+      }
+    },
+    "한파": {
+      "warnVar": 3,
+      "dst_se_nm": [
+        "한파"
+      ],
+      "action_cate2": "01006",
+      "action_name": "한파",
+      "phases": {
+        "01006001": "prepare",
+        "01006002": "during"
+      }
+    },
+    "건조": {
+      "warnVar": 4,
+      "dst_se_nm": [
+        "건조"
+      ],
+      "action_cate2": null,
+      "action_name": null,
+      "phases": {}
+    },
+    "폭풍해일": {
+      "warnVar": 5,
+      "dst_se_nm": [],
+      "action_cate2": "01013",
+      "action_name": "해일",
+      "phases": {
+        "01013001": "prepare",
+        "01013002": "during",
+        "01013003": "during",
+        "01013004": "during",
+        "01013005": "info"
+      }
+    },
+    "풍랑": {
+      "warnVar": 6,
+      "dst_se_nm": [
+        "풍랑"
+      ],
+      "action_cate2": "01007",
+      "action_name": "풍랑",
+      "phases": {
+        "01007001": "during"
+      }
+    },
+    "태풍": {
+      "warnVar": 7,
+      "dst_se_nm": [
+        "태풍"
+      ],
+      "action_cate2": "01001",
+      "action_name": "태풍",
+      "phases": {
+        "01001001": "prepare",
+        "01001002": "during",
+        "01001003": "after"
+      },
+      "includes": [
+        "강풍",
+        "호우",
+        "풍랑",
+        "폭풍해일"
+      ]
+    },
+    "대설": {
+      "warnVar": 8,
+      "dst_se_nm": [
+        "대설"
+      ],
+      "action_cate2": "01005",
+      "action_name": "대설",
+      "phases": {
+        "01005001": "prepare",
+        "01005002": "prepare",
+        "01005003": "during",
+        "01005004": "after"
+      }
+    },
+    "황사": {
+      "warnVar": 9,
+      "dst_se_nm": [
+        "황사"
+      ],
+      "action_cate2": "01008",
+      "action_name": "황사",
+      "phases": {}
+    },
+    "폭염": {
+      "warnVar": 12,
+      "dst_se_nm": [
+        "폭염"
+      ],
+      "action_cate2": "01009",
+      "action_name": "폭염",
+      "phases": {
+        "01009001": "prepare",
+        "01009002": "during",
+        "01009003": "info"
+      }
+    },
+    "열대야": {
+      "warnVar": 13,
+      "dst_se_nm": [],
+      "action_cate2": null,
+      "action_name": null,
+      "phases": {}
+    }
+  },
+  "warn_stress": {
+    "0": "주의보",
+    "1": "경보",
+    "2": "중대경보"
+  },
+  "command": {
+    "1": "발표",
+    "2": "해제",
+    "3": "연장",
+    "6": "정정",
+    "7": "변경발표",
+    "8": "변경해제"
+  },
+  "phase_values": [
+    "prepare",
+    "during",
+    "after",
+    "info"
+  ],
+  "unverified": [
+    "황사 phases 미작성(01008 하위 구조 확인 필요)",
+    "DST_SE_NM 라벨은 본문과 어긋나는 경우가 있음(트러블슈팅 T-010)"
+  ]
+}

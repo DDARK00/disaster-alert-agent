@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "source": "doing",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:18:33+00:00",
+    "http_status": 200,
+    "elapsed_ms": 144,
+    "call_no_today": 1,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588?serviceKey=***&numOfRows=5&pageNo=1&returnType=json",
+    "error": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 5,
+    "pageNo": 1,
+    "totalCount": 61,
+    "body": [
+      {
+        "safety_cate_nm2": "태풍",
+        "actRmks": "- TV, 라디오 등을 통해 기상정보를 청취하여 내가 있는 지역의 상황을 지속적으로 파악하고, 주변에 있는 사람들에게 알려 줍니다",
+        "safety_cate_nm3": "태풍 특보 중 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01001002",
+        "safety_cate2": "01001",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "태풍",
+        "actRmks": "- TV, 라디오, 인터넷, 스마트폰 등으로 기상상황을 미리 파악하여 어떻게 할지를 준비합니다.",
+        "safety_cate_nm3": "태풍 예보시 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01001001",
+        "safety_cate2": "01001",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "태풍",
+        "actRmks": "- 가스 누출로 2차 피해가 발생할 수 있으므로 미리 차단하고, 감전 위험이 있는 집 안팎의 전기시설은 만지지 않도록 합니다.",
+        "safety_cate_nm3": "태풍 특보 중 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01001002",
+        "safety_cate2": "01001",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "태풍",
+        "actRmks": "- 가족, 지인, 이웃과 연락하여 안전을 확인하고 위험정보 등을 공유합니다.",
+        "safety_cate_nm3": "태풍 특보 중 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01001002",
+        "safety_cate2": "01001",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "태풍",
+        "actRmks": "- 가족과 지인에게 연락하여 안전 여부를 확인하고, 연락이 되지 않고 실종이 의심될 경우에는 가까운 경찰서에 신고합니다.",
+        "safety_cate_nm3": "태풍 이후 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01001003",
+        "safety_cate2": "01001",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      }
+    ]
+  },
+  "text": null
+}

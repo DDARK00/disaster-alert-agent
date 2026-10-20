@@ -18,3 +18,6 @@ dist/
 
 # raw API captures that still contain keys must never be committed
 data/fixtures/_raw_unsanitized/
+
+# 호출 카운터는 로컬 상태
+data/fixtures/_call_counter.json

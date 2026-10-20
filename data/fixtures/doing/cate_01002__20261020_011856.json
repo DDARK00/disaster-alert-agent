@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "source": "doing",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:18:56+00:00",
+    "http_status": 200,
+    "elapsed_ms": 182,
+    "call_no_today": 4,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588?serviceKey=***&numOfRows=3&pageNo=1&returnType=json&safety_cate=01002",
+    "error": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 3,
+    "pageNo": 1,
+    "totalCount": 34,
+    "body": [
+      {
+        "safety_cate_nm2": "홍수",
+        "actRmks": "우물은 오염될 수 있으니 마실 물은 미리 준비해 둡시다.",
+        "safety_cate_nm3": "홍수 우려 때는",
+        "safety_cate4": null,
+        "safety_cate3": "01002002",
+        "safety_cate2": "01002",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "홍수",
+        "actRmks": "홍수 특보기준- 국토교통부 홍수통제소에서 수계별 주요지점 홍수 예-경보 기준수위에 따라 발령함",
+        "safety_cate_nm3": "홍수 예·경보시 대비요령",
+        "safety_cate4": null,
+        "safety_cate3": "01002001",
+        "safety_cate2": "01002",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "홍수",
+        "actRmks": "가스가 새어 나와 집 안에 차 있을 수 있으므로 성냥불이나 라이터불을 사용하지 말고, 창문을 열어 환기를 합시다.",
+        "safety_cate_nm3": "물이 빠진 후에는",
+        "safety_cate4": null,
+        "safety_cate3": "01002004",
+        "safety_cate2": "01002",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      }
+    ]
+  },
+  "text": null
+}

@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "source": "dssp",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:18:44+00:00",
+    "http_status": 200,
+    "elapsed_ms": 140,
+    "call_no_today": 4,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-00247?serviceKey=***&numOfRows=5&pageNo=1&returnType=json&crtDt=20230101",
+    "error": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 5,
+    "pageNo": 1,
+    "totalCount": 63489,
+    "body": [
+      {
+        "MSG_CN": "[경기남부경찰청] 김포시에서 배회중인 김학균씨(남,40세)를 찾습니다-179cm,75kg,녹색체크무늬셔츠,베이지색 하의와 신발 vo.la/Wv53w / ☎182",
+        "RCPTN_RGN_NM": "경기도 김포시 ",
+        "CRT_DT": "2023/09/19 12:22:17",
+        "EMRG_STEP_ID": "4372",
+        "REG_YMD": "2023-09-19",
+        "DST_SE_ID": "14",
+        "RCPTN_RGN_ID": "29",
+        "EMRG_STEP_NM": "안전안내",
+        "SN": 205355,
+        "DST_SE_NM": "기타",
+        "MDFCN_YMD": "2023-09-19"
+      },
+      {
+        "MSG_CN": "[서울경찰청] 노원구에서 실종된 김현주씨(여,41세)를 찾습니다 -160cm,68kg,꽃무늬티,회색칠부바지,검정슬리퍼\r\nvo.la/bhWwm / ☎182",
+        "RCPTN_RGN_NM": "서울특별시 노원구 ",
+        "CRT_DT": "2023/09/19 13:30:45",
+        "EMRG_STEP_ID": "4372",
+        "REG_YMD": "2023-09-19",
+        "DST_SE_ID": "14",
+        "RCPTN_RGN_ID": "145",
+        "EMRG_STEP_NM": "안전안내",
+        "SN": 205356,
+        "DST_SE_NM": "기타",
+        "MDFCN_YMD": "2023-09-19"
+      },
+      {
+        "MSG_CN": "[서울경찰청] 용산구에서 배회중인 신철화씨(남,62세)를 찾습니다-165cm,80kg,흰색환자복상하의,흰색운동화,대머리 vo.la/8giBG / ☎182",
+        "RCPTN_RGN_NM": "서울특별시 용산구 ",
+        "CRT_DT": "2023/09/19 13:36:14",
+        "EMRG_STEP_ID": "4372",
+        "REG_YMD": "2023-09-19",
+        "DST_SE_ID": "14",
+        "RCPTN_RGN_ID": "157",
+        "EMRG_STEP_NM": "안전안내",
+        "SN": 205357,
+        "DST_SE_NM": "기타",
+        "MDFCN_YMD": "2023-09-19"
+      },
+      {
+        "MSG_CN": "[서울경찰청] 종로구에서 목격된 신철화씨(남,62세)를 찾습니다-165cm,80kg,흰색환자복상하의,흰색운동화,대머리 \r\nvo.la/8giBG / ☎182",
+        "RCPTN_RGN_NM": "서울특별시 종로구 ",
+        "CRT_DT": "2023/09/19 13:40:24",
+        "EMRG_STEP_ID": "4372",
+        "REG_YMD": "2023-09-19",
+        "DST_SE_ID": "14",
+        "RCPTN_RGN_ID": "159",
+        "EMRG_STEP_NM": "안전안내",
+        "SN": 205358,
+        "DST_SE_NM": "기타",
+        "MDFCN_YMD": "2023-09-19"
+      },
+      {
+        "MSG_CN": "[경기북부경찰청] 고양시에서 실종된 정혜덕씨(남, 82세)를 찾습니다 - 170cm, 75kg, 긴팔회색상의, 검정긴바지\r\nvo.la/FHnjD / ☎182",
+        "RCPTN_RGN_NM": "경기도 고양시 덕양구 ,경기도 고양시 일산동구 ,경기도 고양시 일산서구 ",
+        "CRT_DT": "2023/09/19 13:46:35",
+        "EMRG_STEP_ID": "4372",
+        "REG_YMD": "2023-09-19",
+        "DST_SE_ID": "14",
+        "RCPTN_RGN_ID": "8519,8552,8566",
+        "EMRG_STEP_NM": "안전안내",
+        "SN": 205359,
+        "DST_SE_NM": "기타",
+        "MDFCN_YMD": "2023-09-19"
+      }
+    ]
+  },
+  "text": null
+}

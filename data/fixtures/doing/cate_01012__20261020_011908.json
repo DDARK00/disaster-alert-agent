@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "source": "doing",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:19:08+00:00",
+    "http_status": 200,
+    "elapsed_ms": 143,
+    "call_no_today": 16,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588?serviceKey=***&numOfRows=100&pageNo=1&returnType=json&safety_cate=01012",
+    "error": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 100,
+    "pageNo": 1,
+    "totalCount": 12,
+    "body": [
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "내가 있는 지역이 지진해일의 위험이 있는 지역인지 미리 확인합니다.",
+        "safety_cate_nm3": "지진해일 내습 시 선박 위에 있다면",
+        "safety_cate4": null,
+        "safety_cate3": "01012005",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "선박에 대한 조치가 끝난 후에 자신이 육지에 있다면 동료들과 함께 신속히 고지대로 대피합니다.",
+        "safety_cate_nm3": "지진해일 내습 시 선박 위에 있다면",
+        "safety_cate4": null,
+        "safety_cate3": "01012005",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "일반적으로 일본 서해안에서 규모 7.0이상의 지진이 발생하면 약 1~2시간 후 동해안 지역에 약 3~4m 높이의 지진해일이 발생할 수 있습니다.",
+        "safety_cate_nm3": "지진해일이 발생하면 이렇게 대피합니다",
+        "safety_cate4": "01012006001",
+        "safety_cate3": "01012006",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "지진 해일",
+        "safety_cate_nm3": null,
+        "safety_cate4": null,
+        "safety_cate3": null,
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": "http://125.60.33.158:1935/Caption/Caption/mp4:TidalWave2_Caption.mp4/playlist.m3u8",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "지진해일은 지진과 마찬가지로 한 번의 큰 파도로 끝나지 않습니다. 지진해일 특보가 해제될 때까지 낮은 곳으로 가지 않습니다.",
+        "safety_cate_nm3": "지진해일이 발생하면 이렇게 대피합니다",
+        "safety_cate4": "01012006001",
+        "safety_cate3": "01012006",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "지진해일이 내습하면 항만 등에서 그 파고는 거대해지고 유속이 급격하게 증가하므로 선박의 안전에 특히 주의해야 합니다.",
+        "safety_cate_nm3": "지진해일 내습 시 선박 위에 있다면",
+        "safety_cate4": null,
+        "safety_cate3": "01012005",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "지진해일이 오기 전 해안의 바닷물이 갑자기 빠져나가거나, 기차와 같은 큰 소리를 내면서 다가오기도 합니다. 이 때 높은 곳으로 대피합니다.",
+        "safety_cate_nm3": "지진해일이 발생하면 이렇게 대피합니다",
+        "safety_cate4": "01012006001",
+        "safety_cate3": "01012006",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "항만, 포구 등에 정박해 있거나, 해안가에서 조업 중인 선박은 지진해일 발생여부를 인지한 후, 시간적 여유가 있다면 선박을 수심이 깊은 지역으로 이동시킵니다.",
+        "safety_cate_nm3": "지진해일 내습 시 선박 위에 있다면",
+        "safety_cate4": null,
+        "safety_cate3": "01012005",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "해안가에 있을 때 지진을 느꼈다면 곧 지진해일이 올 수도 있으니 빨리 해안에서 멀리 떨어진 곳으로 대피합니다.",
+        "safety_cate_nm3": "지진해일이 발생하면 이렇게 대피합니다",
+        "safety_cate4": "01012006001",
+        "safety_cate3": "01012006",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": "해안에서 지진을 느끼거나 지진해일 특보가 발령되면 지진해일 긴급 대피장소나 높은 곳으로 대피합니다. 피할 시간이 없다면 주변 튼튼한 건물의 3층 이상으로 대피합니다.",
+        "safety_cate_nm3": "지진해일이 발생하면 이렇게 대피합니다",
+        "safety_cate4": "01012006001",
+        "safety_cate3": "01012006",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": null,
+        "safety_cate_nm3": "지진해일이 발생하면 이렇게 대피합니다",
+        "safety_cate4": "01012006001",
+        "safety_cate3": "01012006",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": "http://mepv2.safekorea.go.kr/mdbs_html/images/mobileWeb/newEarthquake/P13-2.jpg",
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "지진해일",
+        "actRmks": null,
+        "safety_cate_nm3": "지진해일이 발생하면 이렇게 대피합니다",
+        "safety_cate4": "01012006001",
+        "safety_cate3": "01012006",
+        "safety_cate2": "01012",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      }
+    ]
+  },
+  "text": null
+}

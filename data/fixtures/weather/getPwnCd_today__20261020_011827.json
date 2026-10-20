@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "source": "weather",
+    "operation": "getPwnCd",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:18:27+00:00",
+    "http_status": 200,
+    "elapsed_ms": 55,
+    "call_no_today": 2,
+    "url": "http://apis.data.go.kr/1360000/WthrWrnInfoService/getPwnCd?serviceKey=***&numOfRows=30&pageNo=1&dataType=JSON",
+    "error": null
+  },
+  "json": {
+    "response": {
+      "header": {
+        "resultCode": "00",
+        "resultMsg": "NORMAL_SERVICE"
+      },
+      "body": {
+        "dataType": "JSON",
+        "items": {
+          "item": [
+            {
+              "allEndTime": 202610200200,
+              "areaCode": "S1152010",
+              "areaName": "동해중부안쪽먼바다",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202610200200,
+              "stnId": "108",
+              "tmFc": 202610200000,
+              "tmSeq": 114,
+              "warnVar": 6,
+              "warnStress": 0,
+              "startTime": 0
+            },
+            {
+              "allEndTime": 202610200200,
+              "areaCode": "S1152020",
+              "areaName": "동해중부바깥먼바다",
+              "cancel": "0",
+              "command": "2",
+              "endTime": 202610200200,
+              "stnId": "108",
+              "tmFc": 202610200000,
+              "tmSeq": 114,
+              "warnVar": 6,
+              "warnStress": 0,
+              "startTime": 0
+            }
+          ]
+        },
+        "pageNo": 1,
+        "numOfRows": 30,
+        "totalCount": 2
+      }
+    }
+  },
+  "text": null
+}

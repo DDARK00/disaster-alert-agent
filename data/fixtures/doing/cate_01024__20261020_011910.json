@@ -1,0 +1,25 @@
+{
+  "meta": {
+    "source": "doing",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:19:10+00:00",
+    "http_status": 200,
+    "elapsed_ms": 129,
+    "call_no_today": 28,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588?serviceKey=***&numOfRows=100&pageNo=1&returnType=json&safety_cate=01024",
+    "error": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 100,
+    "pageNo": 1,
+    "totalCount": 0,
+    "body": null
+  },
+  "text": null
+}

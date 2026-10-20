@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "source": "doing",
+    "operation": "",
+    "mode": "live",
+    "fetched_at": "2026-10-20T01:18:56+00:00",
+    "http_status": 200,
+    "elapsed_ms": 127,
+    "call_no_today": 5,
+    "url": "https://www.safetydata.go.kr/V2/api/DSSP-IF-20588?serviceKey=***&numOfRows=3&pageNo=1&returnType=json&safety_cate=01003",
+    "error": null
+  },
+  "json": {
+    "header": {
+      "resultMsg": "NORMAL SERVICE",
+      "resultCode": "00",
+      "errorMsg": null
+    },
+    "numOfRows": 3,
+    "pageNo": 1,
+    "totalCount": 69,
+    "body": [
+      {
+        "safety_cate_nm2": "호우",
+        "actRmks": "- 외부에 있는 가족, 지인, 이웃과 연락하여 안전을 확인하고 위험정보 등을 공유합니다.",
+        "safety_cate_nm3": "호우특보 중 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01003003",
+        "safety_cate2": "01003",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "호우",
+        "actRmks": "- 상수도 공급이 중단 될 수 있으므로, 욕조 등에 미리 물을 받아둡니다.",
+        "safety_cate_nm3": "호우특보 예보시 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01003002",
+        "safety_cate2": "01003",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      },
+      {
+        "safety_cate_nm2": "호우",
+        "actRmks": "2. 산간·계곡, 하천, 방파제 등 위험지역에서는 주변에 있는 사람들과 함께 안전한 곳으로 이동합니다.",
+        "safety_cate_nm3": "호우특보 예보시 행동요령",
+        "safety_cate4": null,
+        "safety_cate3": "01003002",
+        "safety_cate2": "01003",
+        "safety_cate1": "01",
+        "contentsUrl": null,
+        "safety_cate_nm1": "자연재난"
+      }
+    ]
+  },
+  "text": null
+}
