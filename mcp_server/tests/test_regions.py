@@ -23,9 +23,15 @@ class Resolve(unittest.TestCase):
         self.assertEqual(resolve_location("광주광역시 강풍")["chosen"], M)
         self.assertEqual(resolve_location("광산구 비 많이 와")["chosen"], M)
 
-    def test_history_makes_assumption_not_certainty(self):
+    def test_shared_name_ignores_history(self):
+        # 같은 이름('광주')이면 이전 질문의 지역으로 한쪽만 고르지 않고 둘 다 조회한다 (T-041 — 이전엔 assumed)
         r = resolve_location("광주 지금 어때", history_region_id=M)
-        self.assertEqual((r["status"], r["chosen"]), ("assumed", M))
+        self.assertEqual((r["status"], r["chosen"]), ("ambiguous", None))
+        self.assertEqual({c["id"] for c in r["candidates"]}, {M, G})
+
+    def test_history_used_when_no_region_named(self):
+        r = resolve_location("지금 비 와?", history_region_id=M)
+        self.assertEqual((r["status"], r["chosen"]), ("resolved", M))
 
     def test_explicit_beats_history(self):
         r = resolve_location("경기 광주는?", history_region_id=M)

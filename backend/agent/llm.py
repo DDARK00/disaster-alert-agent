@@ -49,9 +49,10 @@ class FakeLLM(BaseLLM):
     """task/payload 로 결정론 출력을 만든다. bad_write_times 로 검증 실패 경로를 시험할 수 있다."""
 
     def __init__(self, bad_write_times: int = 0, fail_tasks: set[str] | None = None, garbage_tasks: set[str] | None = None,
-                 place: str = ""):
+                 place: str = "", extra_hazards: list[str] | None = None):
         self.name = "fake"
         self.place = place  # intent 가 돌려줄 장소 표현 (테스트용)
+        self.extra_hazards = extra_hazards or []  # intent 에 덧붙일 유형 — 질문에 없는 유형을 내는 모델 흉내 (테스트용)
         self.bad_write_times = bad_write_times
         self.fail_tasks = fail_tasks or set()
         self.garbage_tasks = garbage_tasks or set()
@@ -67,7 +68,7 @@ class FakeLLM(BaseLLM):
         if task in self.garbage_tasks:
             return "죄송합니다, 잘 모르겠어요 ```not json```"
         if task == "intent":
-            out = {"intent": p.get("rule_intent", "status"), "hazards": p.get("rule_hazards", [])}
+            out = {"intent": p.get("rule_intent", "status"), "hazards": self.extra_hazards + p.get("rule_hazards", [])}
             if self.place:
                 out["place"] = self.place
             return json.dumps(out, ensure_ascii=False)

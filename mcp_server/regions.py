@@ -88,7 +88,10 @@ def resolve_location(text: str, history_region_id: str | None = None,
         scores[rid] = scores.get(rid, 0) + w
         reasons.setdefault(rid, []).append(f"{why}(+{w})")
 
-    for alias, targets in _matches(text):
+    matches = _matches(text)
+    # 같은 이름이 여러 지역인 표현('광주', '고성')을 썼으면 대화 이력으로 한쪽을 고르지 않는다 — 이력은 지역을 말하지 않았을 때만 (T-041)
+    shared_name = any(len({rid for rid, _, _ in targets if rid}) > 1 for _, targets in matches)
+    for alias, targets in matches:
         for rid, w, kind in targets:
             if rid is None:
                 province = province or kind.split(":", 1)[1]
@@ -97,7 +100,7 @@ def resolve_location(text: str, history_region_id: str | None = None,
                 districts.setdefault(rid, alias)
             else:
                 add(rid, w, f"{'명시 표현' if kind == 'strong' else '약한 표현'} '{alias}'")
-    if history_region_id in regions:
+    if history_region_id in regions and not shared_name:
         add(history_region_id, W_HISTORY, "대화 이력")
     if browser_region_id in regions:
         add(browser_region_id, W_BROWSER, "브라우저 위치")

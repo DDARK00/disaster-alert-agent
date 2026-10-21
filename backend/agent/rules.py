@@ -62,6 +62,12 @@ def is_emergency(text: str) -> bool:
     return bool(EMERGENCY.search(text))
 
 
+def hazard_grounded(hazard: str, text: str) -> bool:
+    """재난 유형이 질문 글자에 근거가 있는가 — 유형 이름 또는 동의어(hazard_synonyms)가 원문에 있을 때만 (코드 검사).
+    LLM 이 낸 유형은 이 검사를 통과해야 쓴다 (ADR-023, T-039). 장소의 place_candidate 와 같은 원칙."""
+    return hazard in text or any(w in text for w in HAZARD_SYNONYMS.get(hazard, []))
+
+
 def parse_hazards(text: str) -> dict:
     found: list[str] = []
     for name, words in HAZARD_SYNONYMS.items():

@@ -83,6 +83,7 @@ class State(TypedDict, total=False):
     validation: dict
     feedback: list
     rewrites: int
+    rejections: list   # AI 답변이 검증에서 반려된 사유 (시도별). 템플릿 대체 뒤에도 meta 에 남는다 (T-040)
     timings: dict
     llm_errors: list
     failures: list
@@ -178,7 +179,7 @@ def build_graph(deps: Deps):
         rule_h = [h for h in rules.parse_hazards(q)["hazards"] if h in names]
         rule_i = rules.detect_intent(q)
         errors = list(state.get("llm_errors", []))
-        intent, hazards, source, place = rule_i, list(rule_h), "rules", ""
+        intent, hazards, source, place, dropped = rule_i, list(rule_h), "rules", "", []
         usage = list(state.get("llm_usage", []))
         try:
             raw = await deps.llm.complete(
@@ -189,7 +190,11 @@ def build_graph(deps: Deps):
             if obj.get("intent") in ALLOWED_INTENTS:
                 intent = obj["intent"]
             llm_h = [h for h in (obj.get("hazards") or []) if h in names]
-            hazards = list(dict.fromkeys(llm_h + rule_h))  # recall 우선: 합집합
+            # AI가 낸 유형은 질문 글자에 근거(유형 이름·동의어)가 있을 때만 채택한다. 근거 없는 유형은 버리고 진단에 남긴다
+            dropped = [h for h in llm_h if not rules.hazard_grounded(h, q)]
+            hazards = list(dict.fromkeys([h for h in llm_h if h not in dropped] + rule_h))
+            if dropped:
+                log.info("parse_intent: 질문에 근거 없는 유형 제외 %s", dropped)
             place = rules.place_candidate(obj.get("place"), q)  # 원문에 있는 장소 표현만 (코드 검사)
             source = "llm+rules"
         except (LLMError, ValueError, TypeError) as e:
@@ -197,7 +202,7 @@ def build_graph(deps: Deps):
             fail = _llm_failure(e)
         else:
             fail = None
-        writer({"event": "intent", "intent": intent, "hazards": hazards, "hazard_source": source})
+        writer({"event": "intent", "intent": intent, "hazards": hazards, "hazard_source": source, "hazards_dropped": dropped})
         return {"intent": intent, "hazards": hazards, "hazard_source": source, "place": place, "llm_errors": errors,
                 "llm_usage": usage, "failures": list(state.get("failures", [])) + ([fail] if fail else [])}
 
@@ -454,7 +459,7 @@ def build_graph(deps: Deps):
         try:
             # 답변이 행동요령 묶음·증상 대처·쉼터로 길어져 900 토큰에서 끝이 잘렸다(면책 줄 누락) → 쓰기만 여유를 둔다
             text = compose.tidy_llm(await deps.llm.complete(rules_text, user, task="write", max_tokens=WRITE_MAX_TOKENS,
-                                                            payload={"judgements": js, "intent": intent}, usage=usage))
+                                                            payload={"judgements": js, "intent": intent}, usage=usage), js)
             source = "llm" if deps.llm.name != "fake" else "fake"
         except Exception as e:  # noqa: BLE001
             errors.append(f"write: {type(e).__name__}: {e}")
@@ -473,6 +478,8 @@ def build_graph(deps: Deps):
         if not v["ok"]:
             out["feedback"] = v["violations"]
             out["rewrites"] = state.get("rewrites", 0) + 1
+            out["rejections"] = list(state.get("rejections", [])) + [
+                {"attempt": state.get("rewrites", 0) + 1, "violations": v["violations"]}]
         return out
 
     def after_validate(state: State) -> str:
@@ -483,6 +490,8 @@ def build_graph(deps: Deps):
     async def fallback(state: State, writer):
         text = compose.render_answer(state["judgements"], state["intent"])
         v = validate(text, state["judgements"])
+        # final.validation 은 템플릿 검증 결과가 되므로, AI 답변이 탈락한 사유는 meta.rejections 와 로그에 따로 남긴다
+        log.warning("AI 답변 검증 반려 → 템플릿 대체: %s", [r["violations"] for r in state.get("rejections", [])])
         writer({"event": "validation", **v, "attempt": "template"})
         return {"answer": text, "answer_source": "template_fallback", "validation": v}
 
@@ -500,6 +509,7 @@ def build_graph(deps: Deps):
                      "as_of": js[0]["as_of"] if js else state.get("as_of"), "llm": deps.llm.name,
                      "timings_ms": state.get("timings", {}), "llm_errors": state.get("llm_errors", []),
                      "failures": state.get("failures", []), "llm_usage": state.get("llm_usage", []),
+                     "rejections": state.get("rejections", []),
                      "disclaimer": compose.DISCLAIMER},
         }
         return {"final": final}

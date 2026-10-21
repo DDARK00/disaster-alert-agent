@@ -7,11 +7,33 @@ from config.catalog import msg, reason
 
 DISCLAIMER = msg("disclaimer")
 RULE_LINE = re.compile(r"^\s*([-*_])(\s*\1){2,}\s*$")
+CITE_TAIL = re.compile(r"\s*\[[EMGS]\d+\]")
+RAW_TAG = re.compile(r"\s*(\[[^\[\]\n]{1,30}\])")
+NO_INFO, NO_RISK = msg("markers.no_info"), msg("markers.no_risk")
 
 
-def tidy_llm(text: str) -> str:
-    """LLM 출력의 내용 없는 구분선('---')·줄 끝 공백만 지운다 (검증 전, 문장은 건드리지 않는다 — 모든 내용 줄은 그대로 검증)."""
-    return "\n".join(line.rstrip() for line in text.splitlines() if not RULE_LINE.match(line))
+def is_gap_line(line: str) -> bool:
+    """'정보 없음' 줄(조회 실패·범위 밖·데이터에 없음). '확인된 위험 정보 없음'은 판정 문장이라 제외."""
+    return NO_INFO in line and NO_RISK not in line
+
+
+def tidy_llm(text: str, judgements: list[dict] | None = None) -> str:
+    """LLM 출력의 형식만 정돈한다 (검증 전, 문장은 건드리지 않는다 — 모든 내용 줄은 그대로 검증).
+    - 내용 없는 구분선('---')·줄 끝 공백을 지운다.
+    - '정보 없음' 줄에 붙은 근거 번호를 뗀다: 근거가 없다는 줄이라 번호는 무관한 근거를 가리킨다 (qwen 이 습관적으로 [G1]을 붙임, T-039).
+    - 근거 번호 꼴이 아니고 공식 원문에도 없는 대괄호 태그를 뗀다: qwen 이 근거 데이터의 키 이름을 '[Gaps]'처럼 붙임 (T-039).
+      공식 원문에 있는 태그([행정안전부] 등)는 둔다.
+    검증기의 같은 규칙('정보 없음 줄에 근거 번호', '근거 번호 꼴이 아닌 태그')은 그대로 두고, 형식만 코드가 고친다."""
+    texts = [e.get("text", "") for j in (judgements or []) for e in j["evidence"]]
+
+    def raw_tag(m: re.Match) -> str:
+        t = m.group(1)
+        return m.group(0) if CITE_TAIL.fullmatch(t) or any(t in x for x in texts) else ""
+
+    def fix(line: str) -> str:
+        line = RAW_TAG.sub(raw_tag, line)
+        return (CITE_TAIL.sub("", line) if is_gap_line(line) else line).rstrip()
+    return "\n".join(fix(line) for line in text.splitlines() if not RULE_LINE.match(line))
 
 
 def _cite(e: dict) -> str:

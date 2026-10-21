@@ -269,6 +269,36 @@ class Validator(unittest.TestCase):
         self.assertEqual([(g["source"], g["cause"]) for g in js["gaps"]], [("쉼터 목록(폭염)", "api_timeout")])
         self.assertTrue(validate(compose.render_answer([js]), [js])["ok"])
 
+    def test_raw_bracket_tag_rejected_but_official_tag_allowed(self):
+        # 모델이 쓴 날것 태그([Gaps])는 위반, 공식 원문에 있는 태그([행정안전부])는 허용 (T-039)
+        ok = compose.render_answer(self.j)
+        bad = ok.replace("[M1]", "[M1] [Gaps]")
+        self.assertIn("근거 번호 꼴이 아닌 태그: [Gaps]", validate(bad, self.j)["violations"])
+        self.assertEqual(compose.tidy_llm(bad, self.j), ok.rstrip("\n"))   # LLM 출력은 검증 전에 태그만 뗀다 (검증기는 그대로)
+        j = [judge.judge_region(alert_resp(alerts=[("폭염", "경보")]),
+                                {**msg_resp(1), "messages": [{**msg_resp(1)["messages"][0], "text": "[행정안전부] 폭염경보 발효"}]}, {})]
+        text = compose.render_answer(j)
+        self.assertIn("[행정안전부]", text)
+        self.assertTrue(validate(text, j)["ok"], validate(text, j))
+        self.assertIn("[행정안전부]", compose.tidy_llm(text, j))   # 공식 원문의 태그는 떼지 않는다
+
+    def test_no_info_line_with_citation_and_duplicated_shelter_header_rejected(self):
+        js = [judge.judge_region(alert_resp(alerts=[("폭염", "경보")]), msg_resp(0, status="no_coverage"), {})]
+        ok = compose.render_answer(js)
+        line = next(l for l in ok.splitlines() if "정보 없음" in l)
+        self.assertTrue(validate(ok, js)["ok"])
+        bad = ok.replace(line, line + " [G1]")
+        self.assertTrue(any("정보 없음 줄에 근거 번호" in x for x in validate(bad, js)["violations"]))
+        self.assertEqual(compose.tidy_llm(bad), ok.rstrip("\n"))   # LLM 출력은 검증 전에 번호만 뗀다 (검증기는 그대로)
+        self.assertTrue(validate(compose.tidy_llm(bad), js)["ok"])
+        sh = {"폭염": {"status": "ok", "kind_label": "무더위쉼터", "source": "행정안전부 통합대피소", "source_label": "통합대피소",
+                     "shelters": [{"id": "T1", "name": "가경로당", "address": "경기도 광주시 경안로 1", "kind_name": "x"}]}}
+        js = [judge.judge_region(alert_resp(alerts=[("폭염", "경보")]), None, {}, sh)]
+        ok = compose.render_answer(js)
+        head = next(e["group_label"] for e in js[0]["evidence"] if e["kind"] == "shelter")
+        dup = ok.replace("### 경기도 광주시\n", "### 경기도 광주시\n- " + head + " [S1]\n")
+        self.assertTrue(any("쉼터 제목 줄 중복" in x for x in validate(dup, js)["violations"]), validate(dup, js))
+
     def test_unknown_citation_rejected(self):
         self.assertFalse(validate(compose.render_answer(self.j) + " [E99]", self.j)["ok"])
 

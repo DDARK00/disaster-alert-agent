@@ -54,7 +54,7 @@ input[type=text],select{border:1px solid var(--line);background:var(--surface);b
 .go{border:0;background:var(--ink);color:var(--paper);border-radius:4px;padding:0 22px;font-weight:600;cursor:pointer}
 .go:disabled{opacity:.5;cursor:progress}
 
-/* 노선도: 판단 → 근거 → 빠른 답 → 최종 답 (SSE judgement / evidence / quick / final) */
+/* 노선도: 판단 → 근거 → 요약 정보 → 최종 답 (SSE judgement / evidence / quick / final) */
 .rail{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);margin:28px 0 0;padding:0}
 .st{position:relative;padding:22px 12px 0 0}
 .st::before{content:"";position:absolute;top:7px;left:0;right:0;height:4px;background:var(--line)}
@@ -70,6 +70,7 @@ input[type=text],select{border:1px solid var(--line);background:var(--surface);b
 .st.wait b{color:var(--sub);font-weight:400}
 .st span{display:block;font-size:13px;color:var(--sub);line-height:1.45;margin-top:2px}
 .st.run span{color:var(--official)}
+.st span:empty::before{content:"\00a0"}   /* 요약이 없는 정거장도 줄 높이를 지켜 세부 노드 줄이 나란히 */
 @keyframes pulse{50%{box-shadow:0 0 0 6px var(--official-soft)}}
 /* 정거장 아래 세부 노드: 지나가는 순서대로 한 줄씩. AI 노드는 초록 원, 코드 노드는 먹색 사각 (색만으로 구분하지 않게 모양도 다름) */
 .nodes{list-style:none;margin:8px 0 0;padding:0;font-size:13px;line-height:1.45}
@@ -83,6 +84,7 @@ input[type=text],select{border:1px solid var(--line);background:var(--surface);b
 .nodes .dt{color:var(--sub)}
 .nodes li.bad .dt{color:var(--alarm)}
 .nodes li.gap .dt{color:var(--hatch)}
+.nodes .drop{color:var(--alarm)}
 .nodes .ms{display:none;color:var(--official);margin-left:auto;padding-left:6px;white-space:nowrap}
 body.devon .nodes .ms{display:inline}
 @keyframes enter{from{opacity:0;transform:translateY(-3px)}}
@@ -187,7 +189,7 @@ body:not(.devon) .dev{display:none}
   <ol class="rail" id="rail" aria-label="처리 단계" hidden>
     <li class="st wait" id="st-judge"><i class="dot"></i><b>판단</b><span></span><ul class="nodes" id="nl-judge"></ul></li>
     <li class="st wait" id="st-evidence"><i class="dot"></i><b>근거</b><span></span><ul class="nodes" id="nl-evidence"></ul></li>
-    <li class="st wait" id="st-quick"><i class="dot"></i><b>빠른 답</b><span></span><ul class="nodes" id="nl-quick"></ul></li>
+    <li class="st wait" id="st-quick"><i class="dot"></i><b>요약 정보</b><span></span><ul class="nodes" id="nl-quick"></ul></li>
     <li class="st wait" id="st-final"><i class="dot"></i><b>최종 답</b><span></span><ul class="nodes" id="nl-final"></ul></li>
   </ol>
   <p class="legend" id="legend" hidden><span><i class="ai"></i>AI가 관여한 단계</span><span><i></i>코드가 처리한 단계</span></p>
@@ -221,7 +223,9 @@ let es = null, lastRegion = "", evById = {}, shown = "", running = "";
 function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
 
 // 개발자 보기 — 기억은 이 브라우저에만 (저장이 막혀도 꺼짐으로 동작)
-function setDev(on){ document.body.classList.toggle("devon",on); $("devToggle").checked=on; try{ localStorage.setItem("dev",on?"1":"0"); }catch(e){} }
+function setDev(on){ document.body.classList.toggle("devon",on); $("devToggle").checked=on; try{ localStorage.setItem("dev",on?"1":"0"); }catch(e){} devTitles(); }
+// 검증 위반 사유는 개발자 보기에서만 마우스를 올리면 보인다
+function devTitles(){ const on=document.body.classList.contains("devon"); document.querySelectorAll(".nodes li[data-why]").forEach(li=>li.title=on?li.dataset.why:""); }
 $("devToggle").addEventListener("change",e=>setDev(e.target.checked));
 (()=>{ let on=new URLSearchParams(location.search).get("dev")==="1"; try{ on=on||localStorage.getItem("dev")==="1"; }catch(e){} setDev(on); })();
 
@@ -273,7 +277,7 @@ function stepEvent(d){
     advance(at);
     const name=d.node==="write"&&writes++>0?"재작성":NODE_NAME[d.node];   // 검증 위반 뒤 다시 쓰면 그대로 보인다
     nodeLi[d.node]=nodeLine(at,name,AI_NODES.has(d.node));
-    if(d.node==="fallback") detail("fallback","검증된 기본 요약을 최종 답으로");
+    if(d.node==="fallback") detail("fallback","기본 요약으로 바꾸는 중");
   } else {
     const li=nodeLi[d.node]; if(!li) return;
     li.classList.remove("run"); if(d.ms!=null) li.querySelector(".ms").textContent=d.ms+"ms";   // 숫자는 개발자 보기에서만 보임
@@ -292,7 +296,8 @@ function resetView(){
 // ── 판단 ────────────────────────────────────────
 function showLocation(d){
   const names=d.candidates.map(c=>c.name);
-  const t=d.status==="ambiguous"?names.join(", ")+" — 모두 조회":names[0]?names[0]+(d.status==="assumed"?" (가정)":""):"지역 없음";
+  // 같은 이름이 여러 곳이면 광주처럼 둘 다 조회(show_both)하거나, 그 밖은 되묻는다(ask)
+  const t=d.status==="ambiguous"?names.join(", ")+(d.ask?" — 어느 곳인지 되묻기":" — 모두 조회"):names[0]?names[0]+(d.status==="assumed"?" (가정)":""):"지역 없음";
   detail("gate",t); $("st-judge").querySelector("span").textContent=t;
 }
 // 판정 띠 제목: 특보마다 "폭염경보 발효 중" (경보 먼저, 예고는 뒤). 띠 색은 코드가 정한 전체 수준(j.level = 가장 높은 등급)
@@ -424,15 +429,17 @@ function run(){
   on("progress",d=>{ $("progress").textContent=d.text; $("progress").className=d.stage==="source_failed"?"bad":""; });
   on("intent",d=>{ askedHazards=d.hazards||[]; const t=(INTENT_KO[d.intent]||d.intent)+(d.hazards.length?" · "+d.hazards.join("·"):"");
     if(/llm/.test(d.hazard_source||"")) detail("parse_intent",t);
-    else { nodeLi.parse_intent?.classList.remove("ai"); detail("parse_intent",t+" (AI 없이 규칙으로)"); } });
+    else { nodeLi.parse_intent?.classList.remove("ai"); detail("parse_intent",t+" (AI 없이 규칙으로)"); }
+    // 질문에 근거 없어 버린 AI 유형은 개발자 보기에만 (T-039)
+    if((d.hazards_dropped||[]).length&&nodeLi.parse_intent) nodeLi.parse_intent.querySelector(".dt").appendChild(el("span","dev drop"," · 제외: "+d.hazards_dropped.join("·")+"(질문에 없음)")); });
   on("location",showLocation);
   on("links",showLinks);
   on("plan",d=>{ const t=d.steps.map(x=>STEP_KO[x]||x).join(" + ");
     if(d.source!=="rules"){ nodeLi.plan?.classList.add("ai"); detail("plan",t); } else detail("plan",t+" (규칙 표)"); });
   on("source",d=>{ const k=srcKey(d.name), c=srcs[k]||(srcs[k]={n:0,bad:false}); c.n+=d.count||0; c.bad=c.bad||d.status!=="ok";
-    // 행동요령 count 는 재난 유형 수라 숫자를 붙이지 않는다 (행 수는 근거 정거장 요약에)
+    // 조회 줄은 어느 소스를 확인했고 어느 것이 실패했는지만 — 개수는 근거 정거장 요약(evidence, 예고·여러 지역 포함)이 기준
     const parts=["특보","문자","행동요령","쉼터"].concat(Object.keys(srcs)).filter((k,i,a)=>srcs[k]&&a.indexOf(k)===i)
-      .map(k=>srcs[k].bad?k+" 정보 없음":k==="행동요령"?k:k+" "+srcs[k].n);
+      .map(k=>srcs[k].bad?k+" 정보 없음":k);
     detail("research",parts.join(" · "),Object.values(srcs).some(c=>c.bad)?"gap":null); });
   on("judgement",d=>showJudgements(d.judgements));
   on("evidence",showEvidence);
@@ -440,8 +447,11 @@ function run(){
   on("quick",d=>{ $("result").hidden=false; renderAnswer(d.answer); shown=d.answer;
     $("sumhead").textContent="기본 요약 · AI 답변을 작성·검증하는 중입니다";
     const li=nodeLine("quick","기본 요약",false); li.classList.remove("run"); li.querySelector(".dt").textContent="고정 양식 · 검증 통과";
-    station("quick","done","먼저 보여 줌"); });
-  on("validation",d=>detail("validate",d.ok?"통과":"위반 "+d.violations.length+"건",d.ok?null:"bad"));
+    station("quick","done",""); });
+  // 템플릿 대체의 검증(attempt "template")은 '고정 양식 전환' 줄에, AI 답변 검증은 그 시도의 '검증' 줄에 (T-040)
+  on("validation",d=>{ const node=d.attempt==="template"?"fallback":"validate";
+    detail(node,(node==="fallback"?"기본 요약 검증 ":"")+(d.ok?"통과":"위반 "+d.violations.length+"건"),d.ok?null:"bad");
+    if(!d.ok&&nodeLi[node]){ nodeLi[node].dataset.why=d.violations.join("\n"); devTitles(); } });
   on("token",d=>{ if(shown) return;   // 요약이 이미 보이면 토큰을 덧쓰지 않고 final 에서 한 번에 교체
     if(!started){ started=true; $("result").hidden=false; ans.className="typing"; ans.textContent=""; } ans.textContent+=d.text; });
   on("final",f=>{

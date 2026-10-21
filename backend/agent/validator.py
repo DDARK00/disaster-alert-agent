@@ -9,6 +9,7 @@ from config.catalog import RULES, msg
 FORBIDDEN: list[str] = RULES["forbidden"]
 MK: dict[str, str] = msg("markers")
 CITE = re.compile(r"\[([EMGS]\d+)\]")
+TAG = re.compile(r"\[[^\[\]\n]{1,30}\]")   # 대괄호 태그 일반 — 근거 번호 꼴이 아니면 날것 태그([Gaps] 등)
 URL = re.compile(r"https?://|www\.|kakao\.com", re.I)
 KAKAO_LINK = re.compile(r"https://map\.kakao\.com/link/(map|to)/\d+")
 KAKAO_SEARCH = re.compile(r"https://map\.kakao\.com/link/search/[0-9A-Za-z%._~-]+")
@@ -68,6 +69,12 @@ def validate(answer: str, judgements: list[dict]) -> dict:
     if URL.search(answer):  # 링크는 코드가 만든 칩으로만 (LLM 이 지어낸 링크 차단)
         v.append("답변 본문에 링크 금지")
 
+    # 근거 번호 꼴이 아닌 대괄호 태그는 화면에 그대로 보인다 → 위반(재작성, 끝내 실패하면 템플릿). 공식 원문에 있는 태그([행정안전부] 등)는 허용
+    texts = [e.get("text", "") for j in judgements for e in j["evidence"]]
+    for t in sorted(set(TAG.findall(answer))):
+        if not CITE.fullmatch(t) and not any(t in x for x in texts):
+            v.append(f"근거 번호 꼴이 아닌 태그: {t}")
+
     cited = set(CITE.findall(answer))
     for c in cited - ids:
         v.append(f"존재하지 않는 근거 인용: [{c}]")
@@ -78,6 +85,8 @@ def validate(answer: str, judgements: list[dict]) -> dict:
         s = line.strip()
         if s.startswith(("-", "•", "*")) and not CITE.search(s) and MK["no_info"] not in s and MK["no_guarantee"] not in s:
             v.append(f"근거 없는 항목: '{s[:40]}'")
+        if MK["no_info"] in s and MK["no_risk"] not in s and CITE.search(s):  # '정보 없음' 줄은 근거가 없다는 줄 — 번호를 붙이면 무관한 근거를 가리킨다
+            v.append(f"정보 없음 줄에 근거 번호: '{s[:40]}'")
 
     for j in judgements:
         if j["region"] not in answer:
@@ -122,6 +131,11 @@ def validate(answer: str, judgements: list[dict]) -> dict:
         for head in dict.fromkeys(guide_heading(e, j["evidence"]) for e in j["evidence"] if e["kind"] == "guide"):
             if head not in sections[j["region"]]:
                 v.append(f"{j['region']}: 행동요령 묶음 제목 없음 '{head}'")
+        # 쉼터 제목(운영 여부 미확인 안내)은 지역마다 한 번 — 항목처럼 한 번 더 쓰면 같은 문장이 두 번 보인다
+        for head in dict.fromkeys(e["group_label"] for e in j["evidence"] if e["kind"] == "shelter" and e.get("group_label")):
+            key = head.split(":")[0]
+            if sections[j["region"]].count(key) > 1:
+                v.append(f"{j['region']}: 쉼터 제목 줄 중복 '{key}'")
         # 광역시 구 이름으로 물었으면 '구가 아니라 시 전체 기준' 문장을 그대로 (구 단위로 확인한 것처럼 읽히지 않게, ADR-017)
         if j.get("scope_note") and j["scope_note"] not in sections[j["region"]]:
             v.append(f"{j['region']}: 시 전체 기준 안내 없음")

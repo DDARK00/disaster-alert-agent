@@ -49,6 +49,28 @@ class Flow(unittest.TestCase):
         self.assertIn("meta", final)
         self.assertEqual(final["meta"]["mode"], "replay")
 
+    def test_llm_hazard_not_in_question_is_dropped(self):
+        # "광주 지금 밖에 나가도 돼?"에 qwen 이 '태풍'을 낸 사례 (T-039). 질문에 근거 없는 유형은 버리고 진단에 남긴다
+        final, events, _ = R("경기도 광주 지금 밖에 나가도 돼?", llm=FakeLLM(extra_hazards=["태풍", "호우"]))
+        intent = next(e for e in events if e.get("event") == "intent")
+        self.assertEqual(intent["hazards"], [])
+        self.assertEqual(intent["hazards_dropped"], ["태풍", "호우"])
+        self.assertEqual(final["hazards"], [])
+        j = final["judgements"][0]
+        self.assertNotIn("태풍", {e.get("hazard") for e in j["evidence"]})
+        self.assertNotIn("태풍", final["answer"])
+        # 유형이 비어도 발효 중 특보는 빠짐없이 (지역 기준 조회) + 그 특보의 행동요령
+        self.assertEqual(j["level"], "warning")
+        self.assertEqual([(e["hazard"], e["level"]) for e in j["evidence"] if e["kind"] == "alert"], [("폭염", "경보")])
+        self.assertTrue(any(e["kind"] == "guide" and e["hazard"] == "폭염" for e in j["evidence"]))
+        self.assertTrue(final["validation"]["ok"])
+
+    def test_llm_hazard_in_question_is_kept(self):
+        final, events, _ = R("경기도 광주 태풍 오는데 나가도 돼?", llm=FakeLLM(extra_hazards=["태풍"]))
+        intent = next(e for e in events if e.get("event") == "intent")
+        self.assertEqual((intent["hazards"], intent["hazards_dropped"]), (["태풍"], []))
+        self.assertIn("태풍", {e.get("hazard") for e in final["judgements"][0]["evidence"] if e["kind"] == "guide"})
+
     def test_ambiguous_gwangju_queries_both_regions(self):
         final, events, _ = R("광주 호우 어때", as_of="2026-08-27 17:00")
         self.assertEqual({j["region_id"] for j in final["judgements"]}, {"gwangju_metro", "gyeonggi_gwangju"})
@@ -86,10 +108,11 @@ class Flow(unittest.TestCase):
         self.assertEqual(final["route"], "ask_region")
         self.assertIn("어느 지역", final["answer"])
 
-    def test_history_region_makes_bare_gwangju_assumed(self):
+    def test_history_does_not_pick_one_gwangju(self):
+        # 같은 이름이면 이력을 무시하고 둘 다 조회 (T-041). 지역을 말하지 않은 질문에서만 이력을 쓴다
         final, _, _ = R("광주 폭염 어때", history_region_id="gyeonggi_gwangju")
-        self.assertEqual(final["location"]["status"], "assumed")
-        self.assertEqual([j["region_id"] for j in final["judgements"]], ["gyeonggi_gwangju"])
+        self.assertEqual(final["location"]["status"], "ambiguous")
+        self.assertEqual({j["region_id"] for j in final["judgements"]}, {"gyeonggi_gwangju", "gwangju_metro"})
 
     def test_missing_guide_hazard_not_substituted(self):
         # 건조: 공식 행동요령에 없음 → 다른 재난으로 대체하지 않고 '해당 항목이 없습니다'
@@ -123,6 +146,10 @@ class Resilience(unittest.TestCase):
         self.assertEqual(final["answer_source"], "template_fallback")
         self.assertTrue(final["validation"]["ok"])
         self.assertNotIn("안전합니다", final["answer"])
+        # final.validation 은 템플릿 검증 — AI 답변이 탈락한 사유는 시도별로 meta.rejections 에 (T-040)
+        self.assertEqual([r["attempt"] for r in final["meta"]["rejections"]], [1, 2])
+        self.assertTrue(all(r["violations"] for r in final["meta"]["rejections"]))
+        self.assertEqual([e["attempt"] for e in events if e.get("event") == "validation"], [1, 2, "template"])
 
     def test_llm_down_everywhere_still_answers_from_rules_and_template(self):
         llm = FakeLLM(fail_tasks={"intent", "plan", "write"})

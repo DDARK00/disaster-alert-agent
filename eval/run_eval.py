@@ -19,6 +19,8 @@
   no_duplicate                   : 중복률 0 — 한 지역의 행동요령 근거 중 유사 쌍(judge.similar, rules.yaml similar_threshold)이 없다
   group_ok                       : 묶음 정합성 — '하지 말 것'에 든 행이 모두 금지 문장(judge.is_prohibition, ADR-020)인가
   must_action                    : 필수 행동 포함 — must_actions 단어를 모두 포함한 '증상이 있으면' 근거가 답변에 인용됐는가
+  hazard_scope                   : 질문에 없는 유형이 끼지 않았는가 (hazards_only 항목, T-039) — 행동요령·쉼터 근거의 유형이 허용 목록
+                                   (발효 중·예고 특보의 유형) 안에 있고, 그 밖의 유형 이름이 근거 원문에 없는데 답변에 나오지 않는다
 검증기·판정 코드는 백엔드 것을 그대로 쓴다 — 평가용으로 느슨한 기준을 따로 만들지 않는다.
 
 장애 주입 항목(`fault` 필드)은 HTTP 가 아니라 프로세스 내에서 같은 그래프·MCP 서버로 돈다 (eval/faults.py, 네트워크 경계만 바꿈).
@@ -41,6 +43,7 @@ ROOT = HERE.parent
 sys.path.insert(0, str(ROOT / "backend"))
 sys.path.insert(0, str(ROOT))
 from agent.judge import is_prohibition, similar  # noqa: E402
+from agent.rules import HAZARD_SYNONYMS  # noqa: E402
 from agent.validator import CITE, FORBIDDEN, validate  # noqa: E402
 from config.catalog import msg  # noqa: E402
 
@@ -48,7 +51,7 @@ DATASET = HERE / "dataset.jsonl"
 RISKY = {"upcoming", "advisory", "warning", "severe"}
 ZONE_CODE = re.compile(r"\bL\d{7}\b")
 METRICS = ["route", "regions", "level", "no_missed_risk", "no_forbidden", "grounded", "emergency_fixed", "cause",
-           "not_in_data", "structured", "shelter", "no_duplicate", "group_ok", "must_action"]
+           "not_in_data", "structured", "shelter", "no_duplicate", "group_ok", "must_action", "hazard_scope"]
 
 
 def load() -> list[dict]:
@@ -146,6 +149,13 @@ def score(out: dict, expect: dict) -> dict[str, int]:
     words = expect.get("must_actions")
     s["must_action"] = int(any(e["id"] in cited and e.get("group") == "symptom" and all(w in e["text"] for w in words)
                                for g in gs for e in g)) if words else 1
+    s["hazard_scope"] = 1
+    if "hazards_only" in expect:  # 유형 단어 없는 질문: AI가 지어낸 유형의 행동요령·문장이 없어야 한다
+        allowed = set(expect["hazards_only"])
+        ev = [e for j in out["judgements"] for e in j["evidence"]]
+        texts = " ".join(e.get("text", "") for e in ev)
+        s["hazard_scope"] = int(all(e["hazard"] in allowed for e in ev if e["kind"] in ("guide", "shelter"))
+                                and not any(h in out["answer"] and h not in texts for h in set(HAZARD_SYNONYMS) - allowed))
     if expect.get("guide"):
         guide_ev = [e for j in out["judgements"] for e in j["evidence"] if e["kind"] == "guide"]
         s["level"] &= int(bool(guide_ev))
