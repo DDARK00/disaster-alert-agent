@@ -32,5 +32,5 @@ doc/api_spec/
 # 신규 API 응답 원본 (이용허락 확인 전 저장소 제외)
 data/fixtures/probe/
 
-# AI 세션 간 인계용 내부 문서 (공개 저장소 제외)
+# 내부 작업 문서 (공개 저장소 제외)
 doc/internal/

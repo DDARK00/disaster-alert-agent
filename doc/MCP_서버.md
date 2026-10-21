@@ -20,7 +20,7 @@
 - 특보 조회 실패·replay 범위 밖 → `source.status != ok`, 문구는 "정보 없음 … 위험 여부를 알 수 없으니 공식 채널에서 확인". (`test_out_of_coverage_is_not_reported_as_no_risk`)
 - live 실패는 `source.cause`(원인 코드)와 원인별 문구(`causes.*`)를 싣는다. 분류는 `failures.py`(코드 표·키워드는 rules.yaml `api_errors`), ADR-014. 키 미설정이면 호출하지 않고 `api_auth_error`.
 - 위험이 없을 때 문구는 "확인된 위험 정보 없음 (기준 시각, 조회 구역) … 공식 채널도 함께 확인해 주세요"(ADR-016). "안전합니다"는 쓰지 않는다.
-- 행동요령이 없는 유형(건조·열대야)은 다른 재난으로 대체하지 않는다.
+- 행동요령이 없는 유형(건조)은 다른 재난으로 대체하지 않는다. 예외는 `hazard_map.json`의 `guide_from`으로 정한 같은 계열뿐(열대야 → 폭염, 응답에 `borrowed_from`, 답변에 그 사실을 밝힘, ADR-020). 열대야는 무더위쉼터(`shelter: heat`)도 쓴다.
 - 모든 특보 응답에 `disclaimer`(공식 경보 아님) 포함.
 
 ## 데이터 소스 (ADR-013, ADR-015)

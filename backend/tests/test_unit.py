@@ -191,6 +191,13 @@ class GuideQuality(unittest.TestCase):
         self.assertEqual([r for r, g in got.items() if g == "symptom"], ["g7", "g8"])
         self.assertEqual([e["id"] for e in j["evidence"] if e["kind"] == "guide"], [f"G{i}" for i in range(1, len(got) + 1)])
 
+    def test_district_scope_note_required(self):
+        j = judge.judge_region(alert_resp(), None, {})
+        j["scope_note"] = msg("region.district_scope", district="해운대구", region=j["region"])
+        ok = compose.render_answer([j])
+        self.assertTrue(validate(ok, [j])["ok"])
+        self.assertIn("시 전체 기준 안내 없음", " ".join(validate(ok.replace(j["scope_note"], ""), [j])["violations"]))
+
     def test_zero_selected_rows_say_not_in_data(self):
         rows = [{"id": "x", "phase": "after", "text": "피해를 입은 경우 신고합니다."}]
         j, got = self.pick(active=False, hz="강풍", rows=rows)

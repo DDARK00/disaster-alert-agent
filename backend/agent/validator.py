@@ -122,6 +122,9 @@ def validate(answer: str, judgements: list[dict]) -> dict:
         for head in dict.fromkeys(guide_heading(e, j["evidence"]) for e in j["evidence"] if e["kind"] == "guide"):
             if head not in sections[j["region"]]:
                 v.append(f"{j['region']}: 행동요령 묶음 제목 없음 '{head}'")
+        # 광역시 구 이름으로 물었으면 '구가 아니라 시 전체 기준' 문장을 그대로 (구 단위로 확인한 것처럼 읽히지 않게, ADR-017)
+        if j.get("scope_note") and j["scope_note"] not in sections[j["region"]]:
+            v.append(f"{j['region']}: 시 전체 기준 안내 없음")
         # 다른 유형의 행동요령을 쓰면(열대야 → 폭염) 그 사실을 밝힌다
         if any(e.get("borrowed_from") for e in j["evidence"]) and MK["guide_borrowed"] not in sections[j["region"]]:
             v.append(f"{j['region']}: 다른 유형 행동요령 사용 안내 없음")
