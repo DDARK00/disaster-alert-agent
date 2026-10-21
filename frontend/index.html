@@ -138,7 +138,7 @@ const NODE_KO = {route:"분기",parse_intent:"의도",gate:"지역",plan:"계획
 const KIND_KO = {alert:"특보",pending:"예고",released:"해제",message:"문자",guide:"행동요령",shelter:"쉼터"};
 const DISCLAIMER = document.getElementById("disclaimer").textContent.trim();
 const $ = id => document.getElementById(id);
-let es = null, lastRegion = "", evById = {}, shown = "";
+let es = null, lastRegion = "", evById = {}, shown = "", fault = "";  // fault: 장애 주입 시나리오(DEMO_FAULTS=1 서버에서만 목록에 옴)
 
 function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
 
@@ -148,7 +148,7 @@ async function loadScenarios(){
     const box = $("scenarios");
     list.forEach(s=>{
       const b = el("button","scn",s.title); b.type="button"; b.setAttribute("aria-pressed","false");
-      b.onclick = ()=>{ lastRegion=""; document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true");
+      b.onclick = ()=>{ lastRegion=""; fault=s.fault||""; document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); b.setAttribute("aria-pressed","true");
         $("q").value=s.message; $("mode").value=s.mode; $("asof").value=s.as_of||""; $("scnNote").textContent=s.note||""; run(); };
       box.appendChild(b);
     });
@@ -273,6 +273,7 @@ function run(){
   resetView(); $("send").disabled=true;
   const p=new URLSearchParams({message:q, mode:$("mode").value});
   if($("asof").value.trim()) p.set("as_of",$("asof").value.trim());
+  if(fault) p.set("fault",fault);
   if(lastRegion) p.set("history_region_id",lastRegion);   // 서버는 상태를 갖지 않는다 — 이전 지역은 클라이언트가 전달
   const ans=$("answer"); let started=false;
   es=new EventSource(API+"/chat/stream?"+p);
@@ -305,7 +306,7 @@ function run(){
   on("error",d=>{ ans.className=""; $("ansPanel").style.display=""; const p=el("p","err","정보 없음 — 답변을 만들지 못했습니다. 위험 여부는 공식 채널에서 확인해 주세요."); p.title=d.message||""; ans.replaceChildren(p); $("progress").textContent=""; es&&es.close(); es=null; $("send").disabled=false; });
   es.onerror=()=>{ if(es&&es.readyState===EventSource.CLOSED){ $("send").disabled=false; } };
 }
-$("f").addEventListener("submit",e=>{ e.preventDefault(); document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); run(); });
+$("f").addEventListener("submit",e=>{ e.preventDefault(); fault=""; document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); run(); });
 resetView(); loadScenarios();
 </script>
 </body>

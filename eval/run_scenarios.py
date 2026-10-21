@@ -4,13 +4,16 @@
     .venv/bin/python eval/run_scenarios.py --base http://localhost:8100 --live
 
 확인: error 이벤트 없음 · final 도착 · 검증 통과(또는 template_fallback) · 금지 표현 0 · 인용 id 실재
-      · 위급은 fixed+119 · 모호 '광주'는 두 지역. 이벤트 도착 시각으로 SSE 버퍼링 여부도 본다.
+      · 위급은 fixed+119 · 모호 '광주'는 두 지역 · quick 은 검증 통과·final 전. 이벤트 도착 시각으로 SSE 버퍼링 여부도 본다.
+      + 시나리오별 check (scenarios.json): route · regions · guide · shelter · max_shelters · ask_candidates · links
+        · min_messages · district_scope · cause. 장애 주입 시나리오(fault)는 서버가 DEMO_FAULTS=1 일 때만 목록에 준다.
 판정은 백엔드 validator 를 그대로 다시 돌린다 (느슨한 별도 기준을 만들지 않는다).
 """
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -18,13 +21,17 @@ from pathlib import Path
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent.validator import FORBIDDEN, validate  # noqa: E402
+from config.catalog import msg  # noqa: E402
 
 
 def stream(client: httpx.Client, base: str, sc: dict) -> dict:
     params = {"message": sc["message"], "mode": sc["mode"]}
     if sc.get("as_of"):
         params["as_of"] = sc["as_of"]
+    if sc.get("fault"):
+        params["fault"] = sc["fault"]
     t0 = time.perf_counter()
     events: list[tuple[float, str, dict]] = []
     with client.stream("GET", f"{base}/chat/stream", params=params) as r:
@@ -69,6 +76,7 @@ def check(sc: dict, res: dict) -> tuple[list[str], dict]:
         problems.append("quick 이 final 뒤에 옴")
     if "".join(d["text"] for _, n, d in evs if n == "token") != ans:
         problems.append("token 합 ≠ final.answer")
+    problems += check_specific(sc.get("check") or {}, f, [d for _, n, d in evs if n == "links"])
     t = {n: round(ts, 2) for ts, n, _ in reversed(evs)}  # 이벤트별 첫 도착 시각
     vals = [d for _, n, d in evs if n == "validation"]
     info = {"src": src, "levels": [j["level"] for j in js], "validations": [(d["attempt"], d["ok"]) for d in vals],
@@ -77,6 +85,40 @@ def check(sc: dict, res: dict) -> tuple[list[str], dict]:
             "t_final": t.get("final"),
             "n_events": len(names)}
     return problems, info
+
+
+def check_specific(c: dict, f: dict, links: list[dict]) -> list[str]:
+    """시나리오별 합격 조건 (scenarios.json check). 판정은 응답 데이터로만 — 답변 문장을 따로 해석하지 않는다."""
+    p: list[str] = []
+    js = f.get("judgements") or []
+    ev = [e for j in js for e in j["evidence"]]
+    if "route" in c and f["route"] != c["route"]:
+        p.append(f"route {f['route']} ≠ {c['route']}")
+    if "regions" in c and [j["region_id"] for j in js] != c["regions"]:
+        p.append(f"지역 {[j['region_id'] for j in js]} ≠ {c['regions']}")
+    if c.get("guide") and not any(e["kind"] == "guide" for e in ev):
+        p.append("행동요령 근거 없음")
+    sh = [e for e in ev if e["kind"] == "shelter"]
+    if "shelter" in c and bool(sh) != c["shelter"]:
+        p.append(f"쉼터 {len(sh)}곳 (기대 {'있음' if c['shelter'] else '없음'})")
+    if sh and msg("markers.shelter_notice") not in f["answer"]:
+        p.append("쉼터 운영 여부 미확인 안내 없음")
+    if "max_shelters" in c and len(sh) > c["max_shelters"]:
+        p.append(f"쉼터 {len(sh)}곳 > {c['max_shelters']}")
+    if "ask_candidates" in c and len((f.get("location") or {}).get("candidates") or []) != c["ask_candidates"]:
+        p.append("되묻기 후보 수가 다름")
+    if c.get("links") and not (f.get("links") or links):
+        p.append("지도 링크 칩 없음")
+    if "min_messages" in c and sum(e["kind"] == "message" for e in ev) < c["min_messages"]:
+        p.append(f"재난문자 {sum(e['kind'] == 'message' for e in ev)}건 < {c['min_messages']}")
+    if c.get("district_scope") and not all(j.get("scope_note") and j["scope_note"] in f["answer"] for j in js):
+        p.append("광역시 전체 기준 안내 없음")
+    if c.get("district_scope") and re.search(r"\bL\d{7}\b", f["answer"]):
+        p.append("특보구역 코드 노출")
+    if "cause" in c and (c["cause"] not in {x.get("cause") for x in f["meta"].get("failures", [])}
+                         or msg(f"causes.{c['cause']}") not in f["answer"]):
+        p.append(f"원인 {c['cause']} 문구 없음")
+    return p
 
 
 def main() -> int:

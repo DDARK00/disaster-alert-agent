@@ -13,7 +13,7 @@ import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from langsmith import tracing_context
@@ -21,6 +21,7 @@ from langsmith import tracing_context
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+from agent.demo_faults import FAULTS, FaultGateway  # noqa: E402
 from agent.deps import Deps, Settings  # noqa: E402
 from config.catalog import VERSION_TAG, VERSIONS  # noqa: E402
 from config.settings import load_dotenv_file  # noqa: E402
@@ -89,22 +90,38 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
 
     @app.get("/scenarios")
     async def scenarios():
-        return json.loads((HERE / "scenarios.json").read_text(encoding="utf-8"))
+        items = json.loads((HERE / "scenarios.json").read_text(encoding="utf-8"))
+        # 장애 주입 시나리오는 DEMO_FAULTS=1 일 때만 보인다 (ADR-021)
+        return [s for s in items if not s.get("fault") or app.state.deps.settings.demo_faults]
+
+    def graph_for(fault: str | None):
+        """fault 가 없으면 기본 그래프. 있으면 DEMO_FAULTS=1 일 때만 요청 단위 장애 게이트웨이로 그래프를 만든다.
+        꺼져 있으면 기능이 없는 것처럼 404 (공개 서비스에 장애를 일으키는 경로를 두지 않는다)."""
+        if not fault:
+            return app.state.graph
+        d = app.state.deps
+        if not d.settings.demo_faults:
+            raise HTTPException(status_code=404, detail="Not Found")
+        if fault not in FAULTS:
+            raise HTTPException(status_code=400, detail="unknown fault")
+        return build_graph(Deps(mcp=FaultGateway(d.mcp, fault), llm=d.llm, settings=d.settings))
 
     @app.get("/chat")
     async def chat(message: str = Query(..., min_length=1, max_length=500), mode: str | None = None,
                    as_of: str | None = None, history_region_id: str | None = None,
-                   browser_region_id: str | None = None):
+                   browser_region_id: str | None = None, fault: str | None = None):
+        graph = graph_for(fault)
         run_id = uuid.uuid4().hex[:12]
         init = init_state(message, mode, as_of, history_region_id, browser_region_id, run_id)
         side: list[dict] = []
-        state = await app.state.graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": side.append}})
+        state = await graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": side.append}})
         return with_links(state["final"], side)
 
     @app.get("/chat/stream")
     async def chat_stream(message: str = Query(..., min_length=1, max_length=500), mode: str | None = None,
                           as_of: str | None = None, history_region_id: str | None = None,
-                          browser_region_id: str | None = None):
+                          browser_region_id: str | None = None, fault: str | None = None):
+        graph = graph_for(fault)
         run_id = uuid.uuid4().hex[:12]
         queue: asyncio.Queue = asyncio.Queue()
         init = init_state(message, mode, as_of, history_region_id, browser_region_id, run_id)
@@ -117,7 +134,7 @@ def create_app(mcp_target=None, llm: BaseLLM | None = None) -> FastAPI:
 
         async def runner():
             try:
-                state = await app.state.graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": emit}})
+                state = await graph.ainvoke(init, config={**trace_config(init), "configurable": {"emit": emit}})
                 final = with_links(state["final"], side)
                 text = final["answer"]
                 for i in range(0, len(text), CHUNK):  # 검증을 통과한 답변만 스트리밍 (validate-then-stream)

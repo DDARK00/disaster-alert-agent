@@ -26,6 +26,7 @@ class Settings:
     mcp_url: str = ""
     mcp_python: str = ""
     cors_origins: str = "*"
+    demo_faults: bool = False            # DEMO_FAULTS=1: 시연용 장애 주입 허용 (기본 꺼짐, 공개 배포에서 켜지 않는다, ADR-021)
     # MCP 서버 (mcp)
     mcp_transport: str = "stdio"
     mcp_host: str = "0.0.0.0"
@@ -42,6 +43,7 @@ class Settings:
             llm_model=g("LLM_MODEL", "qwen3:8b"), llm_api_key=g("LLM_API_KEY", ""),
             llm_timeout=float(g("LLM_TIMEOUT", "120")), llm_no_think=g("LLM_NO_THINK", "0") == "1",
             mcp_url=g("MCP_URL", ""), mcp_python=g("MCP_PYTHON", ""), cors_origins=g("CORS_ORIGINS", "*"),
+            demo_faults=g("DEMO_FAULTS", "0") == "1",
             mcp_transport=g("MCP_TRANSPORT", "stdio"), mcp_host=g("MCP_HOST", "0.0.0.0"),
             mcp_port=int(g("MCP_PORT", "8200")), mcp_path=g("MCP_PATH", "/mcp"),
         )

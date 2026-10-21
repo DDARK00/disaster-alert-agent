@@ -7,7 +7,7 @@
 | `GET /health` | `{status, mcp, llm, data_mode, sources, mcp_link}` — MCP 연결 실패 시 503. `sources`: 소스별 최근 live 호출 `{last_ok_at, last_fail_at, last_cause, fail_count}`(키·URL 없음, MCP 프로세스 기동 이후), `mcp_link`: 백엔드→MCP 최근 성공·실패와 원인 (ADR-014) |
 | `GET /scenarios` | 시연 시나리오 목록 (`backend/scenarios.json`) |
 | `GET /chat` | 최종 결과 JSON |
-| `GET /chat/stream` | SSE. 쿼리: `message`, `mode?`, `as_of?`, `history_region_id?`, `browser_region_id?` |
+| `GET /chat/stream` | SSE. 쿼리: `message`, `mode?`, `as_of?`, `history_region_id?`, `browser_region_id?`, `fault?`(`DEMO_FAULTS=1`일 때만, 아니면 404) |
 
 서버는 대화 상태를 보관하지 않는다(Stateless). 직전에 확정된 지역은 클라이언트가 `history_region_id`로 보낸다.
 
@@ -35,6 +35,8 @@
 
 `location.place`: `{status, region_id, result_count}` (Kakao 요약). 장소 → 지역 규칙: 명시 지역 표현 우선 · 이력/브라우저 추정과 다르면 두 지역 모두 · 지명이 없을 때만 `assumed` · '광주'처럼 지역명뿐이면 Kakao 미호출 (T-025).
 
+`final.meta.llm_usage`: `[{task: intent|write, prompt_tokens, completion_tokens, ms}]` — LLM 호출별 토큰(OpenAI 호환 `usage`, 재작성마다 write 한 줄). 개발자 상세용(화면 툴팁). 입력이 모델 컨텍스트를 넘으면 앞이 잘리므로 평가 요약에 write 입력 토큰 최대·중앙값을 낸다.
+
 `final.meta.failures`: `[{stage: source|mcp|llm, source?, region_id?, cause, status}]` — 이번 요청에서 난 실패 전부(LLM 실패 `llm_unavailable` 포함).
 
 `route`: `disaster` / `emergency` / `not_in_data`(공식 데이터에 없는 행동요령 질문 — 고정 "해당 항목이 없습니다", rules.yaml `not_in_official_data`) / `out_of_scope` / `ask_region`(지역 없음 · 같은 이름이 여러 곳 — 후보 나열 · 도 이름만 — 시·군 요청) / `unavailable`(MCP에 연결하지 못함 — 고정 "정보 없음" 응답에 원인 문구).
@@ -47,7 +49,7 @@
 `route → parse_intent → gate → plan → research → judge → write → validate → finalize` (+ fixed_response, ask_region, unavailable, fallback). LLM 은 parse_intent·write 두 곳만(plan 은 코드 규칙, ADR-018). 설명은 `agent/graph.py` 상단 주석.
 
 ## 환경변수
-`config/settings.py`의 `Settings.from_env()` 한 곳에서 읽는다: `MCP_URL`(없으면 stdio 서브프로세스), `DATA_MODE`, `LLM_BACKEND`(fake|openai_compat), `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`, `LLM_TIMEOUT`, `LLM_NO_THINK`(1이면 `/no_think` + `reasoning_effort=none`, T-020), `MAX_REWRITES`, `CORS_ORIGINS`. `LANGSMITH_*`는 langsmith가 직접 읽는다.
+`config/settings.py`의 `Settings.from_env()` 한 곳에서 읽는다: `MCP_URL`(없으면 stdio 서브프로세스), `DATA_MODE`, `LLM_BACKEND`(fake|openai_compat), `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY`, `LLM_TIMEOUT`, `LLM_NO_THINK`(1이면 `/no_think` + `reasoning_effort=none`, T-020), `MAX_REWRITES`, `CORS_ORIGINS`, `DEMO_FAULTS`(1이면 시연용 장애 주입 허용, 기본 꺼짐, ADR-021). `LANGSMITH_*`는 langsmith가 직접 읽는다.
 
 ## 규칙·문구·프롬프트 (ADR-012)
 | 파일 | 내용 | 쓰는 곳 |

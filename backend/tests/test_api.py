@@ -178,5 +178,42 @@ class Staged(unittest.TestCase):
         self.assertFalse(any(e["event"] in ("evidence", "quick") for e in evs))  # MCP 중단: 근거 없음 → 고정 응답만
 
 
+class DemoFaults(unittest.TestCase):
+    """시연용 장애 주입은 DEMO_FAULTS=1 일 때만 (ADR-021). 기본은 목록에 없고 요청은 404."""
+    Q = {"message": "경기도 광주 폭염 어때?", "mode": "replay", "as_of": "2026-08-24 12:00"}
+
+    def client(self, on: bool):
+        import os
+        from unittest import mock
+        env = {k: v for k, v in os.environ.items() if k != "DEMO_FAULTS"} | ({"DEMO_FAULTS": "1"} if on else {})
+        with mock.patch.dict(os.environ, env, clear=True):
+            cm = TestClient(backend_server.create_app(mcp_target=mcp_module.mcp, llm=FakeLLM()))
+            c = cm.__enter__()
+        self.addCleanup(cm.__exit__, None, None, None)
+        return c
+
+    def test_off_by_default_hidden_and_rejected(self):
+        c = self.client(False)
+        self.assertFalse([s for s in c.get("/scenarios").json() if s.get("fault")])
+        for path in ("/chat", "/chat/stream"):
+            self.assertEqual(c.get(path, params={**self.Q, "fault": "mcp_down"}).status_code, 404, path)
+        self.assertEqual(c.get("/chat", params=self.Q).status_code, 200)  # fault 없는 요청은 그대로
+
+    def test_on_each_fault_shows_its_cause_phrase(self):
+        from config.catalog import msg
+        c = self.client(True)
+        scs = [s for s in c.get("/scenarios").json() if s.get("fault")]
+        self.assertEqual({s["fault"] for s in scs}, set(backend_server.FAULTS))
+        self.assertEqual(c.get("/chat", params={**self.Q, "fault": "nope"}).status_code, 400)
+        for s in scs:
+            f = c.get("/chat", params={"message": s["message"], "mode": s["mode"], "as_of": s["as_of"], "fault": s["fault"]}).json()
+            want = s["check"]["cause"]
+            self.assertIn(want, {x.get("cause") for x in f["meta"]["failures"]}, s["id"])
+            self.assertIn(msg(f"causes.{want}"), f["answer"], s["id"])
+            self.assertIn("정보 없음", f["answer"])
+        # 장애 주입은 요청 단위 — 다음 일반 요청은 정상
+        self.assertEqual(c.get("/chat", params=self.Q).json()["judgements"][0]["level"], "warning")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -54,6 +54,14 @@ def msg_resp(n=1, status="ok"):
             "messages": [{"sn": i, "created_at": "2026-08-24 10:00:00", "scope": "direct", "label": "폭염", "text": f"문자{i}"} for i in range(n)]}
 
 
+class PastedMessage(unittest.TestCase):
+    def test_pasted_alert_text_reads_region_hazard_and_guide_intent(self):
+        q = "[재난문자] 광주광역시 폭염주의보 발효 중. 한낮 야외활동을 자제하고 물을 자주 마시기 바랍니다. 이거 받았는데 뭐 해야 해?"
+        self.assertEqual(rules.route(q), "disaster")
+        self.assertEqual(rules.detect_intent(q), "guide")
+        self.assertIn("폭염", rules.parse_hazards(q)["hazards"])
+
+
 class Judge(unittest.TestCase):
     def test_level_is_max_alert_level(self):
         j = judge.judge_region(alert_resp(alerts=[("폭염", "주의보"), ("호우", "경보")]), msg_resp(0), {})
