@@ -17,9 +17,9 @@
 | `disaster_briefing_prompt` | Prompt | `region`, `hazards`, `question` | 답변 작성 규칙(안전 문구 규칙) |
 
 ## 안전 규칙이 코드에 들어간 곳
-- 특보 조회 실패·replay 범위 밖 → `source.status != ok`, 문구는 "정보 없음 … 안전하다는 뜻이 아닙니다". (`test_out_of_coverage_is_not_reported_as_no_risk`)
+- 특보 조회 실패·replay 범위 밖 → `source.status != ok`, 문구는 "정보 없음 … 위험 여부를 알 수 없으니 공식 채널에서 확인". (`test_out_of_coverage_is_not_reported_as_no_risk`)
 - live 실패는 `source.cause`(원인 코드)와 원인별 문구(`causes.*`)를 싣는다. 분류는 `failures.py`(코드 표·키워드는 rules.yaml `api_errors`), ADR-014. 키 미설정이면 호출하지 않고 `api_auth_error`.
-- 위험이 없을 때 문구는 "확인된 위험 정보 없음 (기준 시각, 조회 구역) … 안전을 보장하지 않습니다". "안전합니다"는 쓰지 않는다.
+- 위험이 없을 때 문구는 "확인된 위험 정보 없음 (기준 시각, 조회 구역) … 공식 채널도 함께 확인해 주세요"(ADR-016). "안전합니다"는 쓰지 않는다.
 - 행동요령이 없는 유형(건조·열대야)은 다른 재난으로 대체하지 않는다.
 - 모든 특보 응답에 `disclaimer`(공식 경보 아님) 포함.
 
@@ -63,4 +63,4 @@
 - replay는 커밋된 fixture만 읽는다. live 캡처(`*_live__*`, gitignore)는 섞지 않는다(T-023).
 
 ## 테스트
-`sh/test.sh` (MCP 41건 중 2건은 선택 스모크로 skip: 상태 접기 11, 지역 7, 서버 통합 10, capture 4, Kakao mock 7). 컨테이너 실행은 `MCP_TRANSPORT=http` (`doc/도커.md`).
+`sh/test.sh` — MCP 쪽: 상태 접기, 지역 해석(전국 해석 표·신구 표기·생성본 최신 여부), 서버 통합, capture, 장애 원인, 행동요령 어댑터, 쉼터 어댑터(주소 필터·이름 필터·상한·결정성·캐시·폴백), Kakao mock. Kakao 실호출 스모크 2건은 선택 실행이라 기본 skip. 컨테이너 실행은 `MCP_TRANSPORT=http` (`doc/도커.md`).
