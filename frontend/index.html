@@ -399,7 +399,9 @@ function renderAnswer(text){
     else if(line.startsWith("▶")){ ul=sub=null; const t=line.replace(/^▶\s*/,""); root.appendChild(el("h5",/하지 말/.test(t)?"dont":null,t)); }
     else if(bullet){
       const li=el("li"); addCites(li,bullet[2]);
-      if(bullet[1].length>=2&&ul&&ul.lastChild&&!("loose" in ul.dataset)){ if(!sub){ sub=el("ul"); ul.lastChild.appendChild(sub);} sub.appendChild(li); }
+      // 번호표로 끝나는 항목(근거 한 건)은 들여쓰기와 상관없이 같은 단계 — 모델이 쉼터 [S2]·[S3]를 들여 써도 [S1] 아래로 넣지 않는다
+      const cited=/\[[EMGS]\d+\][\s.]*$/.test(bullet[2]); if(cited) li.dataset.cited="";
+      if(!cited&&bullet[1].length>=2&&ul&&ul.lastChild&&!("loose" in ul.dataset)&&!("cited" in ul.lastChild.dataset)){ if(!sub){ sub=el("ul"); ul.lastChild.appendChild(sub);} sub.appendChild(li); }
       else { if(!ul){ ul=el("ul"); root.appendChild(ul);} sub=null; ul.appendChild(li); }
     }
     else { ul=sub=null; const p=el("p"); addCites(p,line); root.appendChild(p);
