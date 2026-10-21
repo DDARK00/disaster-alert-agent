@@ -50,6 +50,26 @@ from config.catalog import msg  # noqa: E402
 DATASET = HERE / "dataset.jsonl"
 RISKY = {"upcoming", "advisory", "warning", "severe"}
 ZONE_CODE = re.compile(r"\bL\d{7}\b")
+# 검증 반려 사유 묶음: validator.validate 는 위반을 문구로만 내므로, 그 문구 틀(지역명·인용 등 변수 부분 제외)로 종류를 정한다.
+# validator.py 의 v.append 문구와 1:1 — 문구가 바뀌면 여기도 바꾼다 (맞는 틀이 없으면 '기타: 문구 앞부분')
+REJECT_KINDS = [(name, re.compile(rx)) for name, rx in [
+    ("금지 표현", r"^금지 표현:"), ("면책·119 문구 누락", r"^공식 경보 아님/119 안내 문구 누락"), ("본문 링크", r"^답변 본문에 링크 금지"),
+    ("근거 번호 꼴이 아닌 태그", r"^근거 번호 꼴이 아닌 태그:"), ("없는 근거 인용", r"^존재하지 않는 근거 인용:"),
+    ("쉼터 운영 미확인 안내 없음", r"^쉼터 인용인데"), ("근거 없는 항목", r"^근거 없는 항목:"),
+    ("정보 없음 줄에 근거 번호", r"^정보 없음 줄에 근거 번호:"), ("지역 누락", r"^지역 누락:"),
+    ("조회 실패인데 정보 없음 표기 없음", r"^조회 실패인데"), ("위험 없음 문구가 규정과 다름", r"^위험 없음 표현이 규정 문구가 아님"),
+    ("발효 중 특보 근거 인용 없음", r": 발효 중 특보 근거 인용 없음$"), ("소스 조회 실패 미표기", r" 조회 실패 미표기$"),
+    ("공식 데이터에 없음 미표기", r" 공식 데이터에 없음 미표기$"), ("지역 섹션 밖 인용", r"^지역 섹션 밖 인용:"),
+    ("지역 섹션 없음", r"^지역 섹션 없음:"), ("다른 지역 근거 인용", r": 이 지역 근거가 아닌 인용 "),
+    ("특보 근거 인용 없음", r": 특보 근거 \[\w+\] 인용 없음$"), ("필수 행동요령 인용 없음", r": 필수 행동요령 \[\w+\] 인용 없음$"),
+    ("행동요령 묶음 제목 없음", r": 행동요령 묶음 제목 없음 "), ("쉼터 제목 줄 중복", r": 쉼터 제목 줄 중복 "),
+    ("시 전체 기준 안내 없음", r": 시 전체 기준 안내 없음$"), ("다른 유형 행동요령 사용 안내 없음", r": 다른 유형 행동요령 사용 안내 없음$")]]
+
+
+def reject_kind(violation: str) -> str:
+    return next((name for name, rx in REJECT_KINDS if rx.search(violation)), "기타: " + violation[:20])
+
+
 METRICS = ["route", "regions", "level", "no_missed_risk", "no_forbidden", "grounded", "emergency_fixed", "cause",
            "not_in_data", "structured", "shelter", "no_duplicate", "group_ok", "must_action", "hazard_scope"]
 
@@ -91,7 +111,7 @@ def ask_fault(ex: dict) -> dict:
             f, name = asyncio.run(go())
     return {"route": f["route"], "answer": f["answer"], "answer_source": f["answer_source"],
             "judgements": f.get("judgements") or [], "llm": name, "validation": f.get("validation"),
-            "failures": f["meta"].get("failures", [])}
+            "failures": f["meta"].get("failures", []), "rejections": f["meta"].get("rejections", [])}
 
 
 def ask(client: httpx.Client, base: str, ex: dict) -> dict:
@@ -109,7 +129,8 @@ def ask(client: httpx.Client, base: str, ex: dict) -> dict:
     return {"route": f["route"], "answer": f["answer"], "answer_source": f["answer_source"],
             "judgements": f.get("judgements") or [], "llm": f["meta"]["llm"], "validation": f.get("validation"),
             "failures": f["meta"].get("failures", []), "timings_ms": f["meta"].get("timings_ms", {}),
-            "llm_usage": f["meta"].get("llm_usage", []), "elapsed_ms": int(f.get("_elapsed_ms", 0))}
+            "llm_usage": f["meta"].get("llm_usage", []), "rejections": f["meta"].get("rejections", []),
+            "elapsed_ms": int(f.get("_elapsed_ms", 0))}
 
 
 def score(out: dict, expect: dict) -> dict[str, int]:
@@ -196,6 +217,28 @@ def run_local(base: str, only: list[str] | None) -> int:
               f"{med([u['prompt_tokens'] for u in writes])} · 출력 토큰 중앙값 {med([u['completion_tokens'] for u in writes])} · "
               f"초당 생성 중앙값 {med(tps):.1f} · 재작성 {rew}회 · 템플릿 대체 "
               f"{sum(o['answer_source'] == 'template_fallback' for _, o, _ in rows)}건")
+    rejected = [(ex, o) for ex, o, _ in rows if o.get("rejections")]
+    if rejected:  # 검증 반려 사유 (final.meta.rejections, 시도별). 채점과 무관한 관찰용
+        fb = lambda o: o["answer_source"] == "template_fallback"
+        attempts = Counter(r["attempt"] for _, o in rejected for r in o["rejections"])
+        print(f"  검증 반려 {len(rejected)}건 (재작성 후 통과 {sum(not fb(o) for _, o in rejected)} · 템플릿 대체 "
+              f"{sum(fb(o) for _, o in rejected)}) · 시도별 반려 {dict(sorted(attempts.items()))}")
+        # 종류별 항목 수: 시도 n 에서 그 종류가 나온 항목 / 템플릿 대체 건은 마지막 시도의 종류 (한 시도 안 같은 종류는 1로)
+        kinds: dict[str, Counter] = {}
+        for _, o in rejected:
+            for r in o["rejections"]:
+                for k in {reject_kind(v) for v in r["violations"]}:
+                    kinds.setdefault(k, Counter())[r["attempt"]] += 1
+            if fb(o):
+                for k in {reject_kind(v) for v in o["rejections"][-1]["violations"]}:
+                    kinds.setdefault(k, Counter())["fallback"] += 1
+        cols = sorted(attempts)
+        print("    " + " · ".join(f"시도{a}" for a in cols) + " · 템플릿대체 — 종류")
+        for k, c in sorted(kinds.items(), key=lambda x: -sum(v for a, v in x[1].items() if a != "fallback")):
+            print("    " + " · ".join(f"{c[a]:>4}" for a in cols) + f" · {c['fallback']:>4} — {k}")
+        for ex, o in rejected:
+            print(f"    {ex['id']:<32} {'템플릿 대체' if fb(o) else '재작성 통과'} "
+                  + " / ".join(f"시도{r['attempt']}: " + "; ".join(r["violations"]) for r in o["rejections"]))
     for m in METRICS:
         print(f"  {m:<16} {total[m]}/{n}")
     return 0 if all(total[m] == n for m in METRICS) else 1
