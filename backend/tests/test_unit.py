@@ -54,6 +54,18 @@ def msg_resp(n=1, status="ok"):
             "messages": [{"sn": i, "created_at": "2026-08-24 10:00:00", "scope": "direct", "label": "폭염", "text": f"문자{i}"} for i in range(n)]}
 
 
+class Scope(unittest.TestCase):
+    def test_city_and_district_names_are_in_scope(self):
+        # 시·군 이름은 data/regions.json 에서 (손으로 늘리지 않음) — 지역명 + 일반 표현만 있어도 범위 안
+        for q in ("수원 어때?", "해운대 어때?", "세종 위험해?", "춘천 괜찮아?", "포항 어때"):
+            self.assertEqual(rules.route(q), "disaster", q)
+
+    def test_true_out_of_scope_stays_out(self):
+        for q in ("삼성전자 주가 어때?", "오늘 점심 뭐 먹지?", "파이썬 코드 짜줘", "영화 추천해줘", "노래 가사 알려줘",
+                  "수영 배우고 싶어", "연수 일정 알려줘"):
+            self.assertEqual(rules.route(q), "out_of_scope", q)
+
+
 class PastedMessage(unittest.TestCase):
     def test_pasted_alert_text_reads_region_hazard_and_guide_intent(self):
         q = "[재난문자] 광주광역시 폭염주의보 발효 중. 한낮 야외활동을 자제하고 물을 자주 마시기 바랍니다. 이거 받았는데 뭐 해야 해?"

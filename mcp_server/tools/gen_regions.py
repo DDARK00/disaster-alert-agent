@@ -133,7 +133,11 @@ def build() -> dict:
                         "dssp_prefixes": dssp, "dssp_sido_wide": wide,
                         "aliases_strong": list(dict.fromkeys(strong)), "aliases_weak": list(dict.fromkeys(weak)),
                         **({"districts": districts} if districts else {}),
-                        "kakao_prefixes": list(dssp), "generated": True})
+                        "kakao_prefixes": list(dssp),
+                        # 쉼터 조회 범위: 시도 사각형 + 이 지역 주소 접두어(신구 시도 표기 모두) (M)
+                        **({"shelter_area": {"bbox": s["bbox"], "addr_prefixes": list(dssp), "bbox_scope": "sido"}}
+                           if s.get("bbox") else {}),
+                        "generated": True})
     ids = Counter(r["id"] for r in regions)
     dup = [k for k, v in ids.items() if v > 1]
     if dup:

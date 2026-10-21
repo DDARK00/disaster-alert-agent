@@ -4,7 +4,9 @@ LLM 이 실패하거나 엉뚱한 값을 내도 이 모듈이 안전망이다 (r
 """
 from __future__ import annotations
 
-from config.catalog import RULES, msg, words_regex
+import json
+
+from config.catalog import ROOT, RULES, msg, words_regex
 
 SUPPORTED_REGIONS_TEXT = msg("supported_regions")
 
@@ -17,6 +19,21 @@ ASK_REGION_TEXT = msg("fixed.ask_region")
 HAZARD_SYNONYMS: dict[str, list[str]] = RULES["hazard_synonyms"]
 GENERIC_DISASTER_WORDS = RULES["generic_disaster_words"]
 REGION_WORDS = RULES["region_words"]
+
+
+def _region_aliases() -> list[str]:
+    """범위 판단용 지명: data/regions.json(전국 생성본)의 별칭·광역시 구 이름·도 별칭 (손으로 목록을 늘리지 않는다, M).
+    일상어와 겹치는 줄임말은 생성 단계에서 이미 빠져 있다(region_build.yaml short_alias_stopwords)."""
+    data = json.loads((ROOT / "data" / "regions.json").read_text(encoding="utf-8"))
+    words = {a for r in data["regions"] for a in r.get("aliases_strong", []) + r.get("aliases_weak", []) + r.get("districts", [])}
+    words |= {a for p in data.get("provinces", []) for a in p.get("aliases", [])}
+    # 광역시 구 이름에서 '구'를 뗀 말은 3글자 이상만 ('해운대'·'미추홀'). 2글자('수영'·'사상'·'연수')는 일상어와 겹친다
+    words |= {d[:-1] for r in data["regions"] for d in r.get("districts", []) if d.endswith("구") and len(d) >= 4}
+    return sorted(words)
+
+
+# 범위 판단(is_out_of_scope)에만 쓴다 — 장소 표현 검사(place_candidate)는 예전 목록 그대로
+SCOPE_REGION_WORDS = sorted(set(REGION_WORDS) | set(_region_aliases()))
 
 GO_OUT = words_regex(RULES["intent_words"]["go_out"])
 GUIDE = words_regex(RULES["intent_words"]["guide"])
@@ -68,7 +85,7 @@ def is_out_of_scope(text: str) -> bool:
         return False
     if any(w in text for w in GENERIC_DISASTER_WORDS):
         return False
-    if any(w in text for w in REGION_WORDS):
+    if any(w in text for w in SCOPE_REGION_WORDS):  # 시·군·구 이름만 있어도 범위 안 ("수원 어때?")
         return False
     return True
 

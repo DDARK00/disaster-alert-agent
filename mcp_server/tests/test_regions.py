@@ -68,6 +68,20 @@ NATION = [  # (입력, 상태, 확정 지역 이름 또는 None)
 
 
 class Nationwide(unittest.TestCase):
+    def test_generated_regions_have_sido_shelter_range_and_own_prefixes(self):
+        # 쉼터 범위: 시도 사각형 + 그 지역 주소 접두어(신구 시도 표기) — 다른 시군 시설은 주소로 걸러진다
+        import shelters
+        for r in load_regions().values():
+            a = r.get("shelter_area")
+            self.assertTrue(a, r["id"])
+            self.assertEqual(set(a), {"bbox", "addr_prefixes"} | ({"bbox_scope"} if r.get("generated") else set()))
+            if r.get("generated"):
+                self.assertEqual(a["addr_prefixes"], r["dssp_prefixes"])
+        suwon = next(r for r in load_regions().values() if r["name"] == "경기도 수원시")
+        self.assertTrue(shelters.in_area("경기도 수원시 장안구 정조로 1", suwon["shelter_area"]["addr_prefixes"]))
+        self.assertFalse(shelters.in_area("경기도 수원군 가상로 1", suwon["shelter_area"]["addr_prefixes"]))
+        self.assertFalse(shelters.in_area("경기도 화성시 봉담읍 1", suwon["shelter_area"]["addr_prefixes"]))
+
     def test_resolution_table(self):
         regions = load_regions()
         for text, status, name in NATION:

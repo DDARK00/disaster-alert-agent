@@ -153,6 +153,22 @@
       "kakao_prefixes": [
         "경기도 광명시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 광명시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -186,6 +202,22 @@
       "kakao_prefixes": [
         "경기도 과천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 과천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -219,6 +251,22 @@
       "kakao_prefixes": [
         "경기도 안산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 안산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -252,6 +300,22 @@
       "kakao_prefixes": [
         "경기도 시흥시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 시흥시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -285,6 +349,22 @@
       "kakao_prefixes": [
         "경기도 부천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 부천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -318,6 +398,22 @@
       "kakao_prefixes": [
         "경기도 김포시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 김포시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -351,6 +447,22 @@
       "kakao_prefixes": [
         "경기도 동두천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 동두천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -384,6 +496,22 @@
       "kakao_prefixes": [
         "경기도 연천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 연천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -417,6 +545,22 @@
       "kakao_prefixes": [
         "경기도 포천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 포천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -450,6 +594,22 @@
       "kakao_prefixes": [
         "경기도 가평군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 가평군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -483,6 +643,22 @@
       "kakao_prefixes": [
         "경기도 고양시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 고양시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -514,6 +690,22 @@
       "kakao_prefixes": [
         "경기도 양주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 양주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -547,6 +739,22 @@
       "kakao_prefixes": [
         "경기도 의정부시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 의정부시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -580,6 +788,22 @@
       "kakao_prefixes": [
         "경기도 수원시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 수원시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -613,6 +837,22 @@
       "kakao_prefixes": [
         "경기도 성남시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 성남시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -646,6 +886,22 @@
       "kakao_prefixes": [
         "경기도 안양시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 안양시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -677,6 +933,22 @@
       "kakao_prefixes": [
         "경기도 구리시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 구리시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -710,6 +982,22 @@
       "kakao_prefixes": [
         "경기도 남양주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 남양주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -741,6 +1029,22 @@
       "kakao_prefixes": [
         "경기도 오산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 오산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -774,6 +1078,22 @@
       "kakao_prefixes": [
         "경기도 평택시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 평택시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -807,6 +1127,22 @@
       "kakao_prefixes": [
         "경기도 군포시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 군포시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -840,6 +1176,22 @@
       "kakao_prefixes": [
         "경기도 의왕시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 의왕시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -873,6 +1225,22 @@
       "kakao_prefixes": [
         "경기도 하남시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 하남시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -904,6 +1272,22 @@
       "kakao_prefixes": [
         "경기도 이천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 이천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -937,6 +1321,22 @@
       "kakao_prefixes": [
         "경기도 안성시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 안성시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -968,6 +1368,22 @@
       "kakao_prefixes": [
         "경기도 화성시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 화성시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1007,6 +1423,22 @@
       "kakao_prefixes": [
         "경기도 파주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 파주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1046,6 +1478,22 @@
       "kakao_prefixes": [
         "경기도 용인시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 용인시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1083,6 +1531,22 @@
       "kakao_prefixes": [
         "경기도 여주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 여주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1120,6 +1584,22 @@
       "kakao_prefixes": [
         "경기도 양평군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.89,
+            38.29
+          ],
+          "lot": [
+            126.37,
+            127.86
+          ]
+        },
+        "addr_prefixes": [
+          "경기도 양평군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1158,6 +1638,23 @@
         "강원특별자치도 태백시",
         "강원도 태백시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 태백시",
+          "강원도 태백시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1196,6 +1693,23 @@
         "강원특별자치도 영월군",
         "강원도 영월군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 영월군",
+          "강원도 영월군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1234,6 +1748,23 @@
         "강원특별자치도 횡성군",
         "강원도 횡성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 횡성군",
+          "강원도 횡성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1272,6 +1803,23 @@
         "강원특별자치도 원주시",
         "강원도 원주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 원주시",
+          "강원도 원주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1310,6 +1858,23 @@
         "강원특별자치도 철원군",
         "강원도 철원군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 철원군",
+          "강원도 철원군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1348,6 +1913,23 @@
         "강원특별자치도 화천군",
         "강원도 화천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 화천군",
+          "강원도 화천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1386,6 +1968,23 @@
         "강원특별자치도 춘천시",
         "강원도 춘천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 춘천시",
+          "강원도 춘천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1426,6 +2025,23 @@
         "강원특별자치도 동해시",
         "강원도 동해시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 동해시",
+          "강원도 동해시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1468,6 +2084,23 @@
         "강원특별자치도 삼척시",
         "강원도 삼척시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 삼척시",
+          "강원도 삼척시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1510,6 +2143,23 @@
         "강원특별자치도 속초시",
         "강원도 속초시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 속초시",
+          "강원도 속초시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1552,6 +2202,23 @@
         "강원특별자치도 고성군",
         "강원도 고성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 고성군",
+          "강원도 고성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1594,6 +2261,23 @@
         "강원특별자치도 양양군",
         "강원도 양양군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 양양군",
+          "강원도 양양군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1636,6 +2320,23 @@
         "강원특별자치도 평창군",
         "강원도 평창군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 평창군",
+          "강원도 평창군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1678,6 +2379,23 @@
         "강원특별자치도 강릉시",
         "강원도 강릉시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 강릉시",
+          "강원도 강릉시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1720,6 +2438,23 @@
         "강원특별자치도 정선군",
         "강원도 정선군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 정선군",
+          "강원도 정선군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1762,6 +2497,23 @@
         "강원특별자치도 홍천군",
         "강원도 홍천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 홍천군",
+          "강원도 홍천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1804,6 +2556,23 @@
         "강원특별자치도 양구군",
         "강원도 양구군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 양구군",
+          "강원도 양구군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1844,6 +2613,23 @@
         "강원특별자치도 인제군",
         "강원도 인제군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.02,
+            38.62
+          ],
+          "lot": [
+            127.08,
+            129.37
+          ]
+        },
+        "addr_prefixes": [
+          "강원특별자치도 인제군",
+          "강원도 인제군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1877,6 +2663,22 @@
       "kakao_prefixes": [
         "충청남도 천안시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 천안시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1908,6 +2710,22 @@
       "kakao_prefixes": [
         "충청남도 공주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 공주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1941,6 +2759,22 @@
       "kakao_prefixes": [
         "충청남도 아산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 아산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -1974,6 +2808,22 @@
       "kakao_prefixes": [
         "충청남도 논산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 논산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2007,6 +2857,22 @@
       "kakao_prefixes": [
         "충청남도 금산군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 금산군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2040,6 +2906,22 @@
       "kakao_prefixes": [
         "충청남도 부여군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 부여군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2073,6 +2955,22 @@
       "kakao_prefixes": [
         "충청남도 청양군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 청양군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2104,6 +3002,22 @@
       "kakao_prefixes": [
         "충청남도 예산군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 예산군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2137,6 +3051,22 @@
       "kakao_prefixes": [
         "충청남도 태안군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 태안군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2170,6 +3100,22 @@
       "kakao_prefixes": [
         "충청남도 당진시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 당진시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2203,6 +3149,22 @@
       "kakao_prefixes": [
         "충청남도 서산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 서산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2236,6 +3198,22 @@
       "kakao_prefixes": [
         "충청남도 서천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 서천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2269,6 +3247,22 @@
       "kakao_prefixes": [
         "충청남도 계룡시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 계룡시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2306,6 +3300,22 @@
       "kakao_prefixes": [
         "충청남도 보령시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 보령시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2343,6 +3353,22 @@
       "kakao_prefixes": [
         "충청남도 홍성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.97,
+            37.07
+          ],
+          "lot": [
+            125.5,
+            127.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청남도 홍성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2374,6 +3400,22 @@
       "kakao_prefixes": [
         "충청북도 보은군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 보은군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2407,6 +3449,22 @@
       "kakao_prefixes": [
         "충청북도 괴산군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 괴산군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2440,6 +3498,22 @@
       "kakao_prefixes": [
         "충청북도 옥천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 옥천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2471,6 +3545,22 @@
       "kakao_prefixes": [
         "충청북도 영동군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 영동군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2504,6 +3594,22 @@
       "kakao_prefixes": [
         "충청북도 충주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 충주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2537,6 +3643,22 @@
       "kakao_prefixes": [
         "충청북도 제천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 제천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2570,6 +3692,22 @@
       "kakao_prefixes": [
         "충청북도 진천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 진천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2601,6 +3739,22 @@
       "kakao_prefixes": [
         "충청북도 음성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 음성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2634,6 +3788,22 @@
       "kakao_prefixes": [
         "충청북도 단양군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 단양군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2667,6 +3837,22 @@
       "kakao_prefixes": [
         "충청북도 증평군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 증평군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2704,6 +3890,22 @@
       "kakao_prefixes": [
         "충청북도 청주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.0,
+            37.27
+          ],
+          "lot": [
+            127.27,
+            128.66
+          ]
+        },
+        "addr_prefixes": [
+          "충청북도 청주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2742,6 +3944,23 @@
         "전라남도 담양군",
         "전남광주통합특별시 담양군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 담양군",
+          "전남광주통합특별시 담양군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2778,6 +3997,23 @@
         "전라남도 장성군",
         "전남광주통합특별시 장성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 장성군",
+          "전남광주통합특별시 장성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2816,6 +4052,23 @@
         "전라남도 화순군",
         "전남광주통합특별시 화순군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 화순군",
+          "전남광주통합특별시 화순군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2854,6 +4107,23 @@
         "전라남도 보성군",
         "전남광주통합특별시 보성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 보성군",
+          "전남광주통합특별시 보성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2894,6 +4164,23 @@
         "전라남도 여수시",
         "전남광주통합특별시 여수시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 여수시",
+          "전남광주통합특별시 여수시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2932,6 +4219,23 @@
         "전라남도 광양시",
         "전남광주통합특별시 광양시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 광양시",
+          "전남광주통합특별시 광양시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -2970,6 +4274,23 @@
         "전라남도 순천시",
         "전남광주통합특별시 순천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 순천시",
+          "전남광주통합특별시 순천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3008,6 +4329,23 @@
         "전라남도 장흥군",
         "전남광주통합특별시 장흥군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 장흥군",
+          "전남광주통합특별시 장흥군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3044,6 +4382,23 @@
         "전라남도 강진군",
         "전남광주통합특별시 강진군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 강진군",
+          "전남광주통합특별시 강진군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3082,6 +4437,23 @@
         "전라남도 영암군",
         "전남광주통합특별시 영암군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 영암군",
+          "전남광주통합특별시 영암군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3120,6 +4492,23 @@
         "전라남도 함평군",
         "전남광주통합특별시 함평군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 함평군",
+          "전남광주통합특별시 함평군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3158,6 +4547,23 @@
         "전라남도 목포시",
         "전남광주통합특별시 목포시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 목포시",
+          "전남광주통합특별시 목포시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3200,6 +4606,23 @@
         "전라남도 신안군",
         "전남광주통합특별시 신안군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 신안군",
+          "전남광주통합특별시 신안군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3236,6 +4659,23 @@
         "전라남도 진도군",
         "전남광주통합특별시 진도군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 진도군",
+          "전남광주통합특별시 진도군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3276,6 +4716,23 @@
         "전라남도 영광군",
         "전남광주통합특별시 영광군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 영광군",
+          "전남광주통합특별시 영광군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3318,6 +4775,23 @@
         "전라남도 나주시",
         "전남광주통합특별시 나주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 나주시",
+          "전남광주통합특별시 나주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3360,6 +4834,23 @@
         "전라남도 곡성군",
         "전남광주통합특별시 곡성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 곡성군",
+          "전남광주통합특별시 곡성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3402,6 +4893,23 @@
         "전라남도 구례군",
         "전남광주통합특별시 구례군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 구례군",
+          "전남광주통합특별시 구례군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3444,6 +4952,23 @@
         "전라남도 고흥군",
         "전남광주통합특별시 고흥군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 고흥군",
+          "전남광주통합특별시 고흥군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3486,6 +5011,23 @@
         "전라남도 해남군",
         "전남광주통합특별시 해남군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 해남군",
+          "전남광주통합특별시 해남군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3528,6 +5070,23 @@
         "전라남도 완도군",
         "전남광주통합특별시 완도군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 완도군",
+          "전남광주통합특별시 완도군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3570,6 +5129,23 @@
         "전라남도 무안군",
         "전남광주통합특별시 무안군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.8,
+            35.52
+          ],
+          "lot": [
+            125.0,
+            127.92
+          ]
+        },
+        "addr_prefixes": [
+          "전라남도 무안군",
+          "전남광주통합특별시 무안군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3608,6 +5184,23 @@
         "전북특별자치도 고창군",
         "전라북도 고창군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 고창군",
+          "전라북도 고창군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3646,6 +5239,23 @@
         "전북특별자치도 김제시",
         "전라북도 김제시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 김제시",
+          "전라북도 김제시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3682,6 +5292,23 @@
         "전북특별자치도 완주군",
         "전라북도 완주군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 완주군",
+          "전라북도 완주군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3720,6 +5347,23 @@
         "전북특별자치도 진안군",
         "전라북도 진안군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 진안군",
+          "전라북도 진안군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3758,6 +5402,23 @@
         "전북특별자치도 무주군",
         "전라북도 무주군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 무주군",
+          "전라북도 무주군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3794,6 +5455,23 @@
         "전북특별자치도 장수군",
         "전라북도 장수군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 장수군",
+          "전라북도 장수군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3832,6 +5510,23 @@
         "전북특별자치도 임실군",
         "전라북도 임실군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 임실군",
+          "전라북도 임실군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3870,6 +5565,23 @@
         "전북특별자치도 순창군",
         "전라북도 순창군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 순창군",
+          "전라북도 순창군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3908,6 +5620,23 @@
         "전북특별자치도 익산시",
         "전라북도 익산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 익산시",
+          "전라북도 익산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3946,6 +5675,23 @@
         "전북특별자치도 정읍시",
         "전라북도 정읍시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 정읍시",
+          "전라북도 정읍시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -3984,6 +5730,23 @@
         "전북특별자치도 전주시",
         "전라북도 전주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 전주시",
+          "전라북도 전주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4022,6 +5785,23 @@
         "전북특별자치도 남원시",
         "전라북도 남원시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 남원시",
+          "전라북도 남원시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4064,6 +5844,23 @@
         "전북특별자치도 부안군",
         "전라북도 부안군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 부안군",
+          "전라북도 부안군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4108,6 +5905,23 @@
         "전북특별자치도 군산시",
         "전라북도 군산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.28,
+            36.16
+          ],
+          "lot": [
+            125.9,
+            127.93
+          ]
+        },
+        "addr_prefixes": [
+          "전북특별자치도 군산시",
+          "전라북도 군산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4141,6 +5955,22 @@
       "kakao_prefixes": [
         "경상북도 구미시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 구미시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4174,6 +6004,22 @@
       "kakao_prefixes": [
         "경상북도 영천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 영천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4207,6 +6053,22 @@
       "kakao_prefixes": [
         "경상북도 경산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 경산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4238,6 +6100,22 @@
       "kakao_prefixes": [
         "경상북도 청도군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 청도군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4269,6 +6147,22 @@
       "kakao_prefixes": [
         "경상북도 고령군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 고령군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4302,6 +6196,22 @@
       "kakao_prefixes": [
         "경상북도 성주군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 성주군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4335,6 +6245,22 @@
       "kakao_prefixes": [
         "경상북도 칠곡군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 칠곡군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4366,6 +6292,22 @@
       "kakao_prefixes": [
         "경상북도 상주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 상주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4399,6 +6341,22 @@
       "kakao_prefixes": [
         "경상북도 문경시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 문경시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4432,6 +6390,22 @@
       "kakao_prefixes": [
         "경상북도 예천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 예천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4465,6 +6439,22 @@
       "kakao_prefixes": [
         "경상북도 영주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 영주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4496,6 +6486,22 @@
       "kakao_prefixes": [
         "경상북도 의성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 의성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4529,6 +6535,22 @@
       "kakao_prefixes": [
         "경상북도 청송군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 청송군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4562,6 +6584,22 @@
       "kakao_prefixes": [
         "경상북도 영덕군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 영덕군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4595,6 +6633,22 @@
       "kakao_prefixes": [
         "경상북도 포항시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 포항시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4632,6 +6686,22 @@
       "kakao_prefixes": [
         "경상북도 김천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 김천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4671,6 +6741,22 @@
       "kakao_prefixes": [
         "경상북도 안동시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 안동시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4706,6 +6792,22 @@
       "kakao_prefixes": [
         "경상북도 영양군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 영양군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4741,6 +6843,22 @@
       "kakao_prefixes": [
         "경상북도 봉화군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 봉화군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4778,6 +6896,22 @@
       "kakao_prefixes": [
         "경상북도 울진군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 울진군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4817,6 +6951,22 @@
       "kakao_prefixes": [
         "경상북도 경주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 경주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4848,6 +6998,22 @@
       "kakao_prefixes": [
         "경상남도 양산시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 양산시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4881,6 +7047,22 @@
       "kakao_prefixes": [
         "경상남도 창원시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 창원시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4914,6 +7096,22 @@
       "kakao_prefixes": [
         "경상남도 김해시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 김해시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4947,6 +7145,22 @@
       "kakao_prefixes": [
         "경상남도 밀양시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 밀양시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -4980,6 +7194,22 @@
       "kakao_prefixes": [
         "경상남도 의령군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 의령군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5013,6 +7243,22 @@
       "kakao_prefixes": [
         "경상남도 함안군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 함안군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5046,6 +7292,22 @@
       "kakao_prefixes": [
         "경상남도 창녕군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 창녕군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5077,6 +7339,22 @@
       "kakao_prefixes": [
         "경상남도 진주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 진주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5110,6 +7388,22 @@
       "kakao_prefixes": [
         "경상남도 통영시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 통영시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5141,6 +7435,22 @@
       "kakao_prefixes": [
         "경상남도 사천시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 사천시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5174,6 +7484,22 @@
       "kakao_prefixes": [
         "경상남도 거제시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 거제시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5207,6 +7533,22 @@
       "kakao_prefixes": [
         "경상남도 고성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 고성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5238,6 +7580,22 @@
       "kakao_prefixes": [
         "경상남도 남해군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 남해군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5275,6 +7633,22 @@
       "kakao_prefixes": [
         "경상남도 하동군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 하동군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5314,6 +7688,22 @@
       "kakao_prefixes": [
         "경상남도 산청군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 산청군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5351,6 +7741,22 @@
       "kakao_prefixes": [
         "경상남도 함양군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 함양군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5388,6 +7794,22 @@
       "kakao_prefixes": [
         "경상남도 거창군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 거창군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5427,6 +7849,22 @@
       "kakao_prefixes": [
         "경상남도 합천군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.46,
+            35.92
+          ],
+          "lot": [
+            127.57,
+            129.23
+          ]
+        },
+        "addr_prefixes": [
+          "경상남도 합천군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5472,6 +7910,22 @@
       "kakao_prefixes": [
         "제주특별자치도 제주시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.1,
+            34.0
+          ],
+          "lot": [
+            126.08,
+            126.98
+          ]
+        },
+        "addr_prefixes": [
+          "제주특별자치도 제주시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5515,6 +7969,22 @@
       "kakao_prefixes": [
         "제주특별자치도 서귀포시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            33.1,
+            34.0
+          ],
+          "lot": [
+            126.08,
+            126.98
+          ]
+        },
+        "addr_prefixes": [
+          "제주특별자치도 서귀포시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5576,6 +8046,22 @@
       "kakao_prefixes": [
         "서울특별시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.41,
+            37.72
+          ],
+          "lot": [
+            126.76,
+            127.19
+          ]
+        },
+        "addr_prefixes": [
+          "서울특별시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5628,6 +8114,22 @@
       "kakao_prefixes": [
         "인천광역시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.0,
+            37.98
+          ],
+          "lot": [
+            124.6,
+            126.8
+          ]
+        },
+        "addr_prefixes": [
+          "인천광역시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5661,6 +8163,22 @@
       "kakao_prefixes": [
         "인천광역시 강화군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.0,
+            37.98
+          ],
+          "lot": [
+            124.6,
+            126.8
+          ]
+        },
+        "addr_prefixes": [
+          "인천광역시 강화군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5704,6 +8222,22 @@
       "kakao_prefixes": [
         "인천광역시 옹진군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            37.0,
+            37.98
+          ],
+          "lot": [
+            124.6,
+            126.8
+          ]
+        },
+        "addr_prefixes": [
+          "인천광역시 옹진군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5739,6 +8273,22 @@
       "kakao_prefixes": [
         "대전광역시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.18,
+            36.5
+          ],
+          "lot": [
+            127.24,
+            127.56
+          ]
+        },
+        "addr_prefixes": [
+          "대전광역시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5785,6 +8335,22 @@
       "kakao_prefixes": [
         "대구광역시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.6,
+            36.33
+          ],
+          "lot": [
+            128.35,
+            128.86
+          ]
+        },
+        "addr_prefixes": [
+          "대구광역시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5818,6 +8384,22 @@
       "kakao_prefixes": [
         "대구광역시 군위군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.6,
+            36.33
+          ],
+          "lot": [
+            128.35,
+            128.86
+          ]
+        },
+        "addr_prefixes": [
+          "대구광역시 군위군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5855,6 +8437,22 @@
       "kakao_prefixes": [
         "대구광역시 달성군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.6,
+            36.33
+          ],
+          "lot": [
+            128.35,
+            128.86
+          ]
+        },
+        "addr_prefixes": [
+          "대구광역시 달성군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5905,6 +8503,22 @@
       "kakao_prefixes": [
         "부산광역시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            34.87,
+            35.4
+          ],
+          "lot": [
+            128.76,
+            129.31
+          ]
+        },
+        "addr_prefixes": [
+          "부산광역시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5942,6 +8556,22 @@
       "kakao_prefixes": [
         "울산광역시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.32,
+            35.73
+          ],
+          "lot": [
+            128.96,
+            129.47
+          ]
+        },
+        "addr_prefixes": [
+          "울산광역시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -5975,6 +8605,22 @@
       "kakao_prefixes": [
         "세종특별자치시"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            36.4,
+            36.74
+          ],
+          "lot": [
+            127.13,
+            127.41
+          ]
+        },
+        "addr_prefixes": [
+          "세종특별자치시"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     },
     {
@@ -6013,6 +8659,22 @@
       "kakao_prefixes": [
         "경상북도 울릉군"
       ],
+      "shelter_area": {
+        "bbox": {
+          "lat": [
+            35.57,
+            37.56
+          ],
+          "lot": [
+            127.8,
+            131.9
+          ]
+        },
+        "addr_prefixes": [
+          "경상북도 울릉군"
+        ],
+        "bbox_scope": "sido"
+      },
       "generated": true
     }
   ],

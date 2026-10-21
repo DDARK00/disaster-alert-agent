@@ -7,6 +7,7 @@ RUN pip install --no-cache-dir -r backend/requirements.txt
 COPY backend/ backend/
 COPY config/ config/
 COPY prompts/ prompts/
+COPY data/regions.json data/regions.json
 ENV MCP_URL=http://mcp:8200/mcp DATA_MODE=replay LLM_BACKEND=fake
 EXPOSE 8100
 HEALTHCHECK --interval=10s --timeout=5s --start-period=15s --retries=5 \
