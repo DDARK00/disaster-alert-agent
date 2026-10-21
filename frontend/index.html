@@ -258,7 +258,9 @@ const SRC_KO={llm:"AI 작성(검증 통과)",fake:"고정 응답",fixed:"고정 
 function showMeta(f){
   const m=f.meta, box=$("meta"); box.replaceChildren();
   const v=f.validation; const t=Object.entries(m.timings_ms||{}).map(([k,x])=>k+" "+x+"ms").join(" · ");
-  box.title="run "+m.run_id+" · LLM "+m.llm+" · 데이터 "+m.mode+" · 답변 출처 "+(f.answer_source||"-");  // 개발자 상세
+  // 개발자 상세: 내부 이름·run id·호출별 입력/출력 토큰 (입력이 모델 컨텍스트를 넘으면 앞이 잘린다)
+  const u=(m.llm_usage||[]).map(x=>x.task+" 입력 "+(x.prompt_tokens??"-")+"/출력 "+(x.completion_tokens??"-")+" 토큰 "+x.ms+"ms").join(" · ");
+  box.title="run "+m.run_id+" · LLM "+m.llm+" · 데이터 "+m.mode+" · 답변 출처 "+(f.answer_source||"-")+(u?"\n"+u:"");
   box.appendChild(document.createTextNode("모델 "+llmLabel(m.llm)+" · 답변 "+(SRC_KO[f.answer_source]||f.answer_source||"-")+" · 검증 "));
   box.appendChild(el("span",v&&v.ok?null:"bad",v?(v.ok?"통과":"위반"):"-"));
   if(m.llm_errors&&m.llm_errors.length) box.appendChild(document.createTextNode(" · LLM 오류 "+m.llm_errors.length+"건(규칙/템플릿으로 대체)"));

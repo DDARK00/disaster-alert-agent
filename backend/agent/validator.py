@@ -111,7 +111,18 @@ def validate(answer: str, judgements: list[dict]) -> dict:
         for c in sorted(sec_cited - own):
             v.append(f"{j['region']}: 이 지역 근거가 아닌 인용 [{c}]")
         # 발효 중·예고 특보는 하나도 빠짐없이 인용 (일부만 말하면 위험을 줄여 전달하게 된다)
+        # 증상·응급 대처(필수 행동, rules.yaml must_actions)도 빠짐없이 인용 (ADR-020)
         for e in j["evidence"]:
             if e["kind"] in ("alert", "pending") and e["id"] not in sec_cited:
                 v.append(f"{j['region']}: 특보 근거 [{e['id']}] 인용 없음")
+            if e["kind"] == "guide" and e.get("group") == "symptom" and e["id"] not in sec_cited:
+                v.append(f"{j['region']}: 필수 행동요령 [{e['id']}] 인용 없음")
+        # 행동요령 묶음 제목(지금 할 일 / 하지 말 것 등)을 그대로 쓴다 — 금지 행이 권고처럼 읽히지 않게 (ADR-016, ADR-020)
+        from .compose import guide_heading  # 순환 import 방지
+        for head in dict.fromkeys(guide_heading(e, j["evidence"]) for e in j["evidence"] if e["kind"] == "guide"):
+            if head not in sections[j["region"]]:
+                v.append(f"{j['region']}: 행동요령 묶음 제목 없음 '{head}'")
+        # 다른 유형의 행동요령을 쓰면(열대야 → 폭염) 그 사실을 밝힌다
+        if any(e.get("borrowed_from") for e in j["evidence"]) and MK["guide_borrowed"] not in sections[j["region"]]:
+            v.append(f"{j['region']}: 다른 유형 행동요령 사용 안내 없음")
     return {"ok": not v, "violations": v}

@@ -92,11 +92,22 @@ class Flow(unittest.TestCase):
         self.assertEqual([j["region_id"] for j in final["judgements"]], ["gyeonggi_gwangju"])
 
     def test_missing_guide_hazard_not_substituted(self):
-        final, _, _ = R("경기도 광주 열대야 행동요령 알려줘", as_of="2026-08-25 12:00")
+        # 건조: 공식 행동요령에 없음 → 다른 재난으로 대체하지 않고 '해당 항목이 없습니다'
+        final, _, _ = R("경기도 광주 건조 행동요령 알려줘", as_of="2026-08-25 12:00")
         j = final["judgements"][0]
-        self.assertIn("열대야", j["hazards"])
-        self.assertTrue(any("행동요령(열대야)" in g["source"] for g in j["gaps"]))
-        self.assertFalse(any(e["kind"] == "guide" and e["hazard"] == "열대야" for e in j["evidence"]))
+        self.assertTrue(any("행동요령(건조)" in g["source"] and g["status"] == "unavailable" for g in j["gaps"]))
+        self.assertFalse(any(e["kind"] == "guide" and e["hazard"] == "건조" for e in j["evidence"]))
+        self.assertIn(msg("markers.not_in_data"), final["answer"])
+
+    def test_tropical_night_uses_heat_guides_and_says_so(self):
+        # 열대야: 전용 공식 행동요령이 없어 폭염 계열을 쓰고 그 사실을 밝힌다 (hazard_map guide_from, ADR-020)
+        final, _, _ = R("광주광역시 열대야 행동요령 알려줘", as_of="2026-08-26 20:00")
+        j = final["judgements"][0]
+        g = [e for e in j["evidence"] if e["kind"] == "guide"]
+        self.assertTrue(g and all(e["hazard"] == "열대야" and e["borrowed_from"] == "폭염" for e in g))
+        self.assertIn(msg("answer.guide_borrowed", hazard="열대야", base="폭염"), final["answer"])
+        self.assertTrue(any(e.get("group") == "symptom" for e in g))  # 발효 중 → 증상 대처 포함
+        self.assertTrue(final["validation"]["ok"])
 
 
 class Resilience(unittest.TestCase):
@@ -188,9 +199,12 @@ class Shelters(unittest.TestCase):
     def test_rain_and_typhoon_never_get_shelters(self):
         for q, as_of in (("광주광역시 호우 어때?", "2026-08-27 16:00"), ("광주광역시 태풍 대비 행동요령 알려줘", "2026-10-19 12:00")):
             final, events, _ = R(q, as_of=as_of)
-            self.assertFalse([e for j in final["judgements"] for e in j["evidence"] if e["kind"] == "shelter"], q)
-            self.assertNotIn(msg("markers.shelter_notice"), final["answer"])
-            self.assertFalse([e for e in events if e.get("event") == "source" and e["name"] == "쉼터 목록"])
+            # 호우·태풍에는 쉼터를 붙이지 않는다 (같은 시각 발효 중인 열대야의 무더위쉼터는 열대야 근거로 붙는다, ADR-020)
+            sh = [e for j in final["judgements"] for e in j["evidence"] if e["kind"] == "shelter"]
+            self.assertFalse([e for e in sh if e["hazard"] in ("호우", "태풍")], q)
+            if not sh:
+                self.assertNotIn(msg("markers.shelter_notice"), final["answer"])
+                self.assertFalse([e for e in events if e.get("event") == "source" and e["name"] == "쉼터 목록"])
 
     def test_shelter_failure_keeps_rest_of_answer(self):
         class ShelterDown(MCPGateway):

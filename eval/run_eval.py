@@ -15,6 +15,10 @@
   shelter                        : 쉼터 기대값(shelter: true/false)과 같은가 — true 면 [S#] 근거가 있고 운영 여부 미확인 안내가 답변에,
                                    false 면 쉼터 근거·안내가 없어야 한다 (호우·태풍에는 붙지 않음)
   structured                     : 기대한 행동요령 묶음(지금 할 일 / 미리 대비할 일 / 하지 말 것) 제목이 답변에 있는가 + 특보구역 코드 비노출
+                                   + groups_absent 묶음은 없어야 하고, borrowed 면 다른 유형 행동요령 사용 안내가 답변에
+  no_duplicate                   : 중복률 0 — 한 지역의 행동요령 근거 중 유사 쌍(judge.similar, rules.yaml similar_threshold)이 없다
+  group_ok                       : 묶음 정합성 — '하지 말 것'에 든 행이 모두 금지 문장(judge.is_prohibition, ADR-020)인가
+  must_action                    : 필수 행동 포함 — must_actions 단어를 모두 포함한 '증상이 있으면' 근거가 답변에 인용됐는가
 검증기·판정 코드는 백엔드 것을 그대로 쓴다 — 평가용으로 느슨한 기준을 따로 만들지 않는다.
 
 장애 주입 항목(`fault` 필드)은 HTTP 가 아니라 프로세스 내에서 같은 그래프·MCP 서버로 돈다 (eval/faults.py, 네트워크 경계만 바꿈).
@@ -36,14 +40,15 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(ROOT / "backend"))
 sys.path.insert(0, str(ROOT))
-from agent.validator import FORBIDDEN, validate  # noqa: E402
+from agent.judge import is_prohibition, similar  # noqa: E402
+from agent.validator import CITE, FORBIDDEN, validate  # noqa: E402
 from config.catalog import msg  # noqa: E402
 
 DATASET = HERE / "dataset.jsonl"
 RISKY = {"upcoming", "advisory", "warning", "severe"}
 ZONE_CODE = re.compile(r"\bL\d{7}\b")
 METRICS = ["route", "regions", "level", "no_missed_risk", "no_forbidden", "grounded", "emergency_fixed", "cause",
-           "not_in_data", "structured", "shelter"]
+           "not_in_data", "structured", "shelter", "no_duplicate", "group_ok", "must_action"]
 
 
 def load() -> list[dict]:
@@ -101,7 +106,7 @@ def ask(client: httpx.Client, base: str, ex: dict) -> dict:
     return {"route": f["route"], "answer": f["answer"], "answer_source": f["answer_source"],
             "judgements": f.get("judgements") or [], "llm": f["meta"]["llm"], "validation": f.get("validation"),
             "failures": f["meta"].get("failures", []), "timings_ms": f["meta"].get("timings_ms", {}),
-            "elapsed_ms": int(f.get("_elapsed_ms", 0))}
+            "llm_usage": f["meta"].get("llm_usage", []), "elapsed_ms": int(f.get("_elapsed_ms", 0))}
 
 
 def score(out: dict, expect: dict) -> dict[str, int]:
@@ -123,12 +128,24 @@ def score(out: dict, expect: dict) -> dict[str, int]:
     s["structured"] = int(not ZONE_CODE.search(out["answer"]) and all(
         lb in out["answer"] and any(e.get("group_label") == lb for j in out["judgements"] for e in j["evidence"])
         for lb in expect.get("groups", [])))
+    s["structured"] &= int(not any(f"▶ {lb}" in out["answer"] for lb in expect.get("groups_absent", [])))
+    if expect.get("borrowed"):
+        s["structured"] &= int(msg("markers.guide_borrowed") in out["answer"])
     sh_ev = [e for j in out["judgements"] for e in j["evidence"] if e["kind"] == "shelter"]
     notice = msg("markers.shelter_notice") in out["answer"]
     if "shelter" in expect:
         s["shelter"] = int(bool(sh_ev) and notice) if expect["shelter"] else int(not sh_ev and not notice)
     else:
         s["shelter"] = 1
+    s["shelter"] &= int(not any(e["hazard"] in expect.get("no_shelter_for", []) for e in sh_ev))
+    # 행동요령 품질 (ADR-020): 중복 0 · '하지 말 것' 정합성 · 필수 행동(증상 대처) 인용
+    gs = [[e for e in j["evidence"] if e["kind"] == "guide"] for j in out["judgements"]]
+    s["no_duplicate"] = int(not any(similar(a["text"], b["text"]) for g in gs for i, a in enumerate(g) for b in g[i + 1:]))
+    s["group_ok"] = int(all(is_prohibition(e["text"]) for g in gs for e in g if e.get("group") == "dont"))
+    cited = set(CITE.findall(out["answer"]))
+    words = expect.get("must_actions")
+    s["must_action"] = int(any(e["id"] in cited and e.get("group") == "symptom" and all(w in e["text"] for w in words)
+                               for g in gs for e in g)) if words else 1
     if expect.get("guide"):
         guide_ev = [e for j in out["judgements"] for e in j["evidence"] if e["kind"] == "guide"]
         s["level"] &= int(bool(guide_ev))
@@ -160,6 +177,15 @@ def run_local(base: str, only: list[str] | None) -> int:
         nodes = sorted({k for o in timed for k in o["timings_ms"]})
         print(f"  응답 시간 중앙값({len(timed)}건): 전체 {med([o['elapsed_ms'] for o in timed]) / 1000:.1f}초 · "
               + " · ".join(f"{k} {med([o['timings_ms'].get(k, 0) for o in timed]) / 1000:.1f}초" for k in nodes))
+    writes = [u for _, o, _ in rows for u in o.get("llm_usage", []) if u["task"] == "write" and u.get("prompt_tokens")]
+    if writes:  # write 호출별 토큰 (K7: 답변 길이 vs 검증 반려 vs 서버 속도를 숫자로 가른다)
+        med = lambda xs: sorted(xs)[len(xs) // 2]
+        rew = sum(max(0, sum(u["task"] == "write" for u in o.get("llm_usage", [])) - 1) for _, o, _ in rows)
+        tps = [u["completion_tokens"] / (u["ms"] / 1000) for u in writes if u.get("ms")]
+        print(f"  write 호출 {len(writes)}회 · 입력 토큰 최대 {max(u['prompt_tokens'] for u in writes)} · 중앙값 "
+              f"{med([u['prompt_tokens'] for u in writes])} · 출력 토큰 중앙값 {med([u['completion_tokens'] for u in writes])} · "
+              f"초당 생성 중앙값 {med(tps):.1f} · 재작성 {rew}회 · 템플릿 대체 "
+              f"{sum(o['answer_source'] == 'template_fallback' for _, o, _ in rows)}건")
     for m in METRICS:
         print(f"  {m:<16} {total[m]}/{n}")
     return 0 if all(total[m] == n for m in METRICS) else 1

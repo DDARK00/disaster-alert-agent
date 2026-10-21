@@ -55,7 +55,8 @@ class PlaceFlow(unittest.TestCase):
         st, links, _ = run("첨단지구 비 많이 와?", "첨단지구", METRO)
         self.assertTrue(links)
         blob = json.dumps(st, ensure_ascii=False, default=str)
-        self.assertNotIn("map.kakao.com", blob)
+        self.assertNotIn("map.kakao.com/link/map", blob)  # 카카오 장소 링크 (쉼터 주소 검색 링크는 코드가 만든 것이라 무관)
+        self.assertNotIn("map.kakao.com/link/to", blob)
         self.assertNotIn('"111"', blob)
 
     def test_explicit_region_is_not_overridden(self):

@@ -13,6 +13,7 @@ from agent import compose, judge, rules  # noqa: E402
 from agent.llm import FakeLLM, extract_json, make_llm  # noqa: E402
 from agent.retry import with_retry  # noqa: E402
 from agent.validator import validate  # noqa: E402
+from config.catalog import msg  # noqa: E402
 
 
 class Rules(unittest.TestCase):
@@ -95,6 +96,89 @@ class Judge(unittest.TestCase):
                                {"폭염": {"available": True, "rows": [{"phase": "during", "text": "물을 마신다", "id": "g-1"}]}})
         ids = [e["id"] for e in j["evidence"]]
         self.assertEqual(len(ids), len(set(ids)))
+
+
+class GuideQuality(unittest.TestCase):
+    """K2 유사 행 중복 제거 · K3 금지 문장 판정 · K4 필수 행동 · 행동요령 0줄 표준 문구 (ADR-020)."""
+    HEAT = [  # 실제 폭염(01009) 행 (2026-10-20 fixture 원문)
+        {"id": "g1", "phase": "during", "text": "냉방이 되지 않는 실내에서는 햇볕을 가리고 맞바람이 불도록 환기를 합니다."},
+        {"id": "g2", "phase": "during", "text": "냉방이 되지 않는 실내에서는 햇볕이 실내에 들어오지 않도록 하고, 환기가 잘 되도록 선풍기를 켜고 창문이나 출입문을 열어둡니다."},
+        {"id": "g3", "phase": "prepare", "text": "무더위에는 카페인이 들어간 음료나 주류는 삼가고, 생수나 이온음료를 마시는 것이 좋습니다."},
+        {"id": "g4", "phase": "during", "text": "물을 많이 마시고, 카페인이 들어간 음료나 주류는 마시지 않습니다."},
+        {"id": "g5", "phase": "during", "text": "창문이 닫힌 자동차 안에는 노약자나 어린이를 홀로 남겨두지 않습니다."},
+        {"id": "g6", "phase": "info", "text": "열사병 증상 : 고온 다습한 환경에서 몸의 열이 발산하지 못하여 생기는 병이다."},
+        {"id": "g7", "phase": "info", "text": "열사병 대처요령 : 즉시 119에 신고하고, 환자를 그늘로 옮겨 겉옷을 벗기고, 미지근한 물로 몸을 적셔 체온이 내려가도록 한 후 의사·의료기관 등의 지시에 따른다"},
+        {"id": "g8", "phase": "info", "text": "열경련 대처요령 : 환자는 그늘에서 쉬게 하고 소금을 물에 녹여 섭취하게 해주어야 한다. 의사의 진료에 따라 조치한다."},
+        {"id": "g9", "phase": "info", "text": "화상 대처요령 : 그늘로 환자를 이동시켜 햇빛에 노출되지 않게 한다."},
+    ]
+
+    def pick(self, active=True, hz="폭염", rows=None):
+        j = judge.judge_region(alert_resp(alerts=[(hz, "경보")] if active else []), None,
+                               {hz: {"available": True, "rows": rows or self.HEAT}})
+        return j, {e["ref"]: e["group"] for e in j["evidence"] if e["kind"] == "guide"}
+
+    def test_mixed_sentence_is_not_dont(self):
+        self.assertFalse(judge.is_prohibition(self.HEAT[3]["text"]))   # 권고 + 금지 (G7 사례) → 할 일 쪽
+        self.assertFalse(judge.is_prohibition(self.HEAT[2]["text"]))   # 금지 + 권고
+        self.assertTrue(judge.is_prohibition(self.HEAT[4]["text"]))    # 순수 금지
+        self.assertFalse(judge.is_prohibition(self.HEAT[0]["text"]))   # 순수 권고
+        self.assertFalse(judge.is_prohibition("당황하지 않고 침착하게 대피합니다."))
+        self.assertTrue(judge.is_prohibition("좌우로 왔다 갔다 하거나 손을 놓고 운전하지 말며, 과속을 하지 맙시다."))
+
+    def test_near_duplicates_keep_first_only(self):
+        self.assertTrue(judge.similar(self.HEAT[0]["text"], self.HEAT[1]["text"]))
+        self.assertTrue(judge.similar(self.HEAT[2]["text"], self.HEAT[3]["text"]))
+        self.assertFalse(judge.similar(self.HEAT[0]["text"], self.HEAT[4]["text"]))
+        _, got = self.pick()
+        self.assertIn("g1", got)
+        self.assertNotIn("g2", got)
+        self.assertEqual(sum(r in got for r in ("g3", "g4")), 1)
+        texts = [e["text"] for e in self.pick()[0]["evidence"] if e["kind"] == "guide"]
+        self.assertFalse([1 for i, a in enumerate(texts) for b in texts[i + 1:] if judge.similar(a, b)])
+
+    def test_symptom_actions_when_active_only(self):
+        _, got = self.pick()
+        self.assertEqual([r for r, g in got.items() if g == "symptom"], ["g7", "g8"])  # 우선순위 순, 상한 2, 증상 설명 행 제외
+        self.assertEqual(got["g5"], "dont")
+        _, got = self.pick(active=False)
+        self.assertNotIn("symptom", got.values())
+
+    def test_symptom_rows_must_be_cited(self):
+        j, _ = self.pick()
+        ok = compose.render_answer([j])
+        self.assertTrue(validate(ok, [j])["ok"])
+        sid = next(e["id"] for e in j["evidence"] if e.get("group") == "symptom")
+        bad = "\n".join(l for l in ok.splitlines() if f"[{sid}]" not in l)
+        self.assertIn(f"필수 행동요령 [{sid}] 인용 없음", " ".join(validate(bad, [j])["violations"]))
+
+    def test_group_headings_required_and_rule_lines_tidied(self):
+        j, _ = self.pick()
+        ok = compose.render_answer([j])
+        no_head = "\n".join(l for l in ok.splitlines() if not l.startswith("▶"))
+        self.assertTrue(any("묶음 제목 없음" in x for x in validate(no_head, [j])["violations"]))
+        tidied = compose.tidy_llm(ok.replace("\n▶", "\n---\n▶"))
+        self.assertEqual(tidied, ok)
+        self.assertTrue(validate(tidied, [j])["ok"])
+
+    def test_total_cap_keeps_must_actions_and_every_group(self):
+        from config.catalog import RULES
+        extra = [{"id": f"p{i}", "phase": "prepare", "text": t} for i, t in enumerate(
+            ["단수에 대비하여 생수를 준비합니다.", "에어컨, 선풍기 등을 사용할 수 있도록 사전에 정비합니다.",
+             "여름철에는 음식이 쉽게 상할 수 있으므로 외부에 오랫동안 방치된 것은 먹지 않습니다."])]
+        j, got = self.pick(rows=self.HEAT + extra)
+        self.assertLessEqual(len(got), RULES["guide_groups"]["max_total"])
+        self.assertEqual({"now", "symptom", "prepare", "dont"}, set(got.values()))
+        self.assertEqual([r for r, g in got.items() if g == "symptom"], ["g7", "g8"])
+        self.assertEqual([e["id"] for e in j["evidence"] if e["kind"] == "guide"], [f"G{i}" for i in range(1, len(got) + 1)])
+
+    def test_zero_selected_rows_say_not_in_data(self):
+        rows = [{"id": "x", "phase": "after", "text": "피해를 입은 경우 신고합니다."}]
+        j, got = self.pick(active=False, hz="강풍", rows=rows)
+        self.assertFalse(got)
+        self.assertTrue(any(g["source"] == "행동요령(강풍)" and g["status"] == "unavailable" for g in j["gaps"]))
+        ans = compose.render_answer([j])
+        self.assertIn(msg("markers.not_in_data"), ans)
+        self.assertTrue(validate(ans, [j])["ok"])
 
 
 class Validator(unittest.TestCase):
@@ -182,7 +266,8 @@ class Catalog(unittest.TestCase):
         self.assertEqual(validator.MK, {"no_info": "정보 없음", "no_risk": "확인된 위험 정보 없음", "no_guarantee": "공식 채널도 함께 확인",
                                         "official": "공식 경보", "emergency_call": "119",
                                         "not_in_data": "해당 항목이 없습니다",
-                                        "shelter_notice": "운영 여부·운영 시간은 이 목록에 없어"})
+                                        "shelter_notice": "운영 여부·운영 시간은 이 목록에 없어",
+                                        "guide_borrowed": "전용 항목이 없어"})
         for w in ["안전합니다", "안전해요", "걱정하지 마", "문제없", "괜찮습니다", "위험 없", "안심하", "가까운 쉼터", "운영 중인 쉼터"]:
             self.assertIn(w, validator.FORBIDDEN)
 

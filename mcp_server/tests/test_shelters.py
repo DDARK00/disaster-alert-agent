@@ -111,10 +111,11 @@ class Replay(unittest.TestCase):
     def test_tool_only_for_heat_cold_quake(self):
         self.assertEqual(server.get_shelters(GJ, "호우", mode="replay")["status"], "not_applicable")
         self.assertEqual(server.get_shelters(GJ, "태풍", mode="replay")["status"], "not_applicable")
-        for hz in ("폭염", "한파", "지진"):
+        for hz in ("폭염", "한파", "지진", "열대야"):
             self.assertEqual(server.get_shelters(GJ, hz, mode="replay")["status"], "ok", hz)
         hz = {h["name"]: h.get("shelter") for h in server.list_hazards()["hazards"]}
-        self.assertEqual({k for k, v in hz.items() if v}, {"폭염", "한파", "지진"})
+        self.assertEqual({k for k, v in hz.items() if v}, {"폭염", "한파", "지진", "열대야"})  # 열대야 = 폭염 계열 (ADR-020)
+        self.assertEqual(hz["열대야"], hz["폭염"])
 
 
 class Live(unittest.TestCase):

@@ -44,7 +44,8 @@ class Handler(BaseHTTPRequestHandler):
                 content = '{"steps": ["alerts", "messages", "guide"], "reason": "x"}'
             else:  # write: 규칙 위반 답변 → 검증이 막아야 함
                 content = "<think>생각</think>지금은 안전합니다. 걱정하지 마세요."
-            payload = {"choices": [{"message": {"content": content}}]}
+            payload = {"choices": [{"message": {"content": content}}],
+                       "usage": {"prompt_tokens": 1200, "completion_tokens": 40, "total_tokens": 1240}}
         out = json.dumps(payload).encode()
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
@@ -113,6 +114,10 @@ class HttpLLM(unittest.TestCase):
         self.assertNotIn("안전합니다", final["answer"])
         self.assertTrue(final["validation"]["ok"])
         self.assertEqual(final["judgements"][0]["level"], "warning")  # 판정은 모델과 무관
+        # 호출별 토큰 수(개발자 상세): intent 1 + write(첫 시도 + 재작성 1)
+        u = final["meta"]["llm_usage"]
+        self.assertEqual([x["task"] for x in u], ["intent", "write", "write"])
+        self.assertTrue(all(x["prompt_tokens"] == 1200 and x["completion_tokens"] == 40 for x in u))
 
     def test_graph_when_llm_server_errors(self):
         Handler.mode = "500"

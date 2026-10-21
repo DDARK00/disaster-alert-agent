@@ -137,7 +137,8 @@ def get_disaster_messages(region_id: str, as_of: str | None = None, lookback_hou
 def search_action_guide(hazard: str, phase: str | None = None, limit: int = 30, mode: str | None = None) -> dict:
     """재난 유형별 국민행동요령 (자연재난·사회재난·생활안전·민방위 — 소스는 hazard_map 으로 코드가 정한다).
     phase: prepare(사전/예보) | during(특보·발생 중) | after(이후) | info(참고).
-    API에 없는 유형(건조·열대야)은 available=False — 다른 재난의 행동요령으로 대체하지 않는다.
+    API에 없는 유형(건조)은 available=False — 다른 재난의 행동요령으로 대체하지 않는다. 예외는 hazard_map 의 guide_from
+    으로 정한 같은 계열 유형뿐(열대야 → 폭염, borrowed_from 으로 밝힘, ADR-020).
     live 는 일 1회 캐시, 실패하면 저장본으로 폴백(origin). 조회 실패로 저장본도 없으면 cause 를 싣는다."""
     mode = mode or sources.default_mode()
     g = sources.load_guide(hazard, mode)
@@ -146,6 +147,7 @@ def search_action_guide(hazard: str, phase: str | None = None, limit: int = 30, 
                 **({"cause": g["cause"]} if g.get("cause") else {})}
     rows = [r for r in g["rows"] if phase in (None, r["phase"])]
     return {"hazard": hazard, "available": True, "phase": phase, "source": g["source"], "source_name": g["source_name"],
+            **({"borrowed_from": g["borrowed_from"]} if g.get("borrowed_from") else {}),
             "source_label": g["source_label"],
             "snapshot_at": g["snapshot_at"], "origin": g["origin"], "excluded_non_citizen": g["excluded"],
             "count": len(rows), "rows": rows[:limit], "phases_present": sorted({r["phase"] for r in g["rows"]})}
@@ -168,7 +170,8 @@ def get_shelters(region_id: str, hazard: str, mode: str | None = None) -> dict:
 @mcp.tool()
 def list_hazards() -> dict:
     """지원 재난 유형과 행동요령·쉼터 구분 유무."""
-    return {"hazards": [{"name": n, "warn_var": v["warnVar"], "has_action_guide": bool(v["action_cate2"]),
+    return {"hazards": [{"name": n, "warn_var": v["warnVar"], "has_action_guide": bool(v["action_cate2"] or v.get("guide_from")),
+                         "guide_from": v.get("guide_from"),
                          "guide_source": v.get("source"), "shelter": v.get("shelter")}
                         for n, v in sources._hazard_map().items()]}
 

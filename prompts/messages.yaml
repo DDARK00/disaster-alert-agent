@@ -13,6 +13,7 @@ markers:
   emergency_call: "119"
   not_in_data: 해당 항목이 없습니다   # 공식 데이터에 없는 행동요령 (지어내지 않음)
   shelter_notice: 운영 여부·운영 시간은 이 목록에 없어   # [S#] 인용 시 필수 (운영 단정 금지)
+  guide_borrowed: 전용 항목이 없어   # 다른 유형의 행동요령을 쓸 때 필수 (열대야 → 폭염, ADR-020)
 
 disclaimer: 공식 데이터(기상청·행정안전부)를 정리한 안내로, 공식 경보를 대신하지 않습니다. 위급하면 즉시 119·112에 연락하고 공식 채널(기상청, 재난문자, 국민재난안전포털)에서 최종 확인해 주세요.
 
@@ -56,10 +57,15 @@ answer:
   level: $level_label (기준 $as_of)
   uncertain_suffix: " (해석이 불확실한 발표코드 — 공식 확인 필요)"
   message_scope: {sido_wide: 시도 전체, direct: 해당 지역}
-  guide_header: "행동요령 (행정안전부 국민행동요령, 항목마다 출처 표기):"
-  guide_group: "▶ $label ($hazard)"
-  gap: "- 정보 없음: $source — $reason. 위험 여부는 공식 채널에서 확인해 주세요."
+  # 2026-10-21 문구 정리(ADR-020): 출처는 제목 줄에 한 번, 유형 이름은 한 지역에 유형이 둘 이상일 때만 묶음 제목에 붙인다.
+  # gap 끝의 "공식 채널에서 확인" 문장은 맨 끝 면책과 겹쳐 뺐다("정보 없음" 표기는 그대로 — 정보 없음 ≠ 안전)
+  guide_header: "행동요령 (출처: $sources):"
+  guide_group: "▶ $label"
+  guide_group_hazard: "▶ $label ($hazard)"
+  gap: "- 정보 없음: $source — $reason."
   gap_unavailable: "- 정보 없음: $source — $reason."
+  # 전용 공식 행동요령이 없어 같은 계열 유형의 것을 쓸 때 (hazard_map guide_from)
+  guide_borrowed: $hazard 특보는 공식 행동요령에 전용 항목이 없어, $base 계열 공식 행동요령을 안내합니다.
   go_out: ※ 외출 가능 여부는 이 서비스가 판단하지 않습니다. 위 확인된 정보와 행동요령을 참고해 직접 판단하세요.
 
 # 광역시 구 이름으로 물었을 때 (특보·재난문자는 광역시 단위로 본다, ADR-017)
@@ -68,7 +74,7 @@ region:
 
 # judge 가 붙이는 설명
 judge:
-  since_before_window: 발효 시각은 조회 범위 이전 — 이후 해제 발표로 확인
+  since_before_window: 이전에 발표되어 계속 중인 특보 — 정확한 발표 시각은 확인 범위 밖
   messages_only_note: 기상특보는 확인되지 않았지만 최근 해당 지역에 안내 문자가 있습니다. 문자는 수준 판정에 쓰지 않고 참고로만 표시합니다.
 
 # 카카오맵 링크 칩 (ADR-011). 경로를 판단하지 않는다 — 링크로 넘기기까지만
@@ -101,14 +107,15 @@ causes:
   response_invalid: 받은 데이터의 형식이 예상과 달라 읽지 못했습니다
   mcp_unreachable: 내부 데이터 서비스에 연결하지 못해 불러오지 못했습니다
   mcp_tool_error: 내부 데이터 서비스 처리 중 오류가 나 불러오지 못했습니다
-  no_coverage: 시연 데이터가 이 시각을 덮지 않아 확인할 수 없습니다. 실시간 모드로 확인해 보세요
+  # 저장 자료(replay)가 이 시각을 포함하지 않음 — 실패(failed)와 구분되는 상태이며, 시연·replay 여부는 개발자 상세(detail)에만
+  no_coverage: 이 시각의 정보를 확인하지 못했습니다
   unknown: 원인을 확인하지 못한 오류로 불러오지 못했습니다
   not_in_data: 공식 행동요령 데이터(행정안전부 국민행동요령)에 해당 항목이 없습니다
 
 # 쉼터·대피장소 (통합대피소). "공식 목록에 있는 장소"까지만 — 운영 여부·시간은 모른다고 밝힌다. 가까운 곳·이용 가능 단정 금지.
 # 목록은 가까운 순이 아니다(좌표를 받지 않음). 지도는 이름·주소 검색 링크 칩으로만 (경로 판단 없음)
 shelters:
-  header: "공식 목록에 있는 $kind_label 일부 ($hazard · $source): 운영 여부·운영 시간은 이 목록에 없어 확인되지 않았습니다. 위치 순서가 아니며, 이용 전 해당 시설이나 시·군·구에 확인해 주세요."
+  header: "공식 목록에 있는 $kind_label 일부: 운영 여부·운영 시간은 이 목록에 없어 확인되지 않았습니다. 위치 순서가 아니며, 이용 전 해당 시설이나 시·군·구에 확인해 주세요."
   source_name: 쉼터 목록
   map_label: 카카오맵에서 찾기
   map_notice: 이름·주소 검색 결과로 넘어갑니다. 운영 여부와 경로상의 통제·침수 여부는 반영되지 않았습니다.
@@ -132,3 +139,4 @@ guide_groups:
   now_inactive: 발생하면 할 일
   prepare: 미리 대비할 일
   dont: 하지 말 것
+  symptom: 증상이 있으면

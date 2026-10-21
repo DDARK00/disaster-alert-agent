@@ -19,15 +19,15 @@ PROMPTS_DIR = ROOT / "prompts"
 REQUIRED_PROMPTS = {
     "intent": ["system"],
     "plan": ["system", "user"],
-    "write": ["user", "region_ids", "must_cite", "guide_groups", "shelter_groups", "ids_none", "must_header", "must"],
+    "write": ["user", "region_ids", "must_cite", "must_cite_guides", "guide_groups", "guide_notes", "shelter_groups", "ids_none", "must_header", "must"],
     "rewrite": ["user"],
     "briefing": ["system"],
 }
 REQUIRED_MESSAGES = [
     "supported_regions", "disclaimer", "fixed.emergency", "fixed.out_of_scope", "fixed.ask_region", "fixed.ask_region_candidates", "fixed.ask_region_province", "region.district_scope", "fixed.service_unavailable", "fixed.not_in_data",
     "answer.unknown", "answer.none", "answer.level", "answer.uncertain_suffix", "answer.message_scope",
-    "answer.guide_header", "answer.guide_group", "guide_groups.now", "guide_groups.now_inactive",
-    "guide_groups.prepare", "guide_groups.dont", "answer.gap", "answer.gap_unavailable", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",
+    "answer.guide_header", "answer.guide_group", "answer.guide_group_hazard", "guide_groups.now", "guide_groups.now_inactive",
+    "guide_groups.prepare", "guide_groups.dont", "guide_groups.symptom", "answer.guide_borrowed", "answer.gap", "answer.gap_unavailable", "answer.go_out", "judge.messages_only_note", "judge.since_before_window",
     "mcp.alert_failed", "mcp.alert_active", "mcp.alert_none", "mcp.alert_none_pending", "mcp.alert_none_no_pending",
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
     "kakao.route_notice", "kakao.map_label", "kakao.route_label",
@@ -48,9 +48,10 @@ MARKER_CHECKS = {
     "emergency_call": ["disclaimer", "fixed.emergency", "fixed.service_unavailable", "fixed.not_in_data"],
     "not_in_data": ["causes.not_in_data", "fixed.not_in_data"],
     "shelter_notice": ["shelters.header"],
+    "guide_borrowed": ["answer.guide_borrowed"],
 }
 REQUIRED_RULES = ["emergency_words", "intent_words", "hazard_synonyms", "generic_disaster_words", "region_words",
-                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "vague_place_words", "api_errors", "guide_audience", "not_in_official_data", "guide_groups", "shelters", "plan_steps"]
+                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "vague_place_words", "api_errors", "guide_audience", "not_in_official_data", "guide_groups", "shelters", "plan_steps", "must_actions"]
 SECTION = re.compile(r"^=== (\w+) ===\n", re.M)
 
 

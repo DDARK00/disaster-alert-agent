@@ -1,9 +1,17 @@
 """근거 기반 답변 템플릿 (결정론). FakeLLM 의 출력이자, LLM 답변이 검증을 통과하지 못할 때의 안전한 대체."""
 from __future__ import annotations
 
+import re
+
 from config.catalog import msg, reason
 
 DISCLAIMER = msg("disclaimer")
+RULE_LINE = re.compile(r"^\s*([-*_])(\s*\1){2,}\s*$")
+
+
+def tidy_llm(text: str) -> str:
+    """LLM 출력의 내용 없는 구분선('---')·줄 끝 공백만 지운다 (검증 전, 문장은 건드리지 않는다 — 모든 내용 줄은 그대로 검증)."""
+    return "\n".join(line.rstrip() for line in text.splitlines() if not RULE_LINE.match(line))
 
 
 def _cite(e: dict) -> str:
@@ -20,6 +28,16 @@ def gap_line(g: dict) -> str:
     if g["status"] == "unavailable":
         return msg("answer.gap_unavailable", source=g["source"], reason=msg("causes.not_in_data"))
     return msg("answer.gap", source=g["source"], reason=reason(g["status"], g.get("cause")))
+
+
+def guide_heading(e: dict, evidence: list[dict]) -> str:
+    """묶음 제목 — 한 지역에 행동요령 유형이 둘 이상일 때만 유형 이름을 붙인다 (템플릿·write 지시문 공용)."""
+    many = len({x["hazard"] for x in evidence if x["kind"] == "guide"}) > 1
+    return msg("answer.guide_group_hazard" if many else "answer.guide_group", label=e["group_label"], hazard=e["hazard"])
+
+
+def guide_sources(evidence: list[dict]) -> str:
+    return ", ".join(dict.fromkeys("행정안전부 " + (x.get("source") or "국민행동요령") for x in evidence if x["kind"] == "guide"))
 
 
 def render_answer(judgements: list[dict], intent: str = "status") -> str:
@@ -47,15 +65,15 @@ def render_answer(judgements: list[dict], intent: str = "status") -> str:
                        f"{body[:90]}{'…' if len(body) > 90 else ''} {_cite(e)}")
         guides = [x for x in evs if x["kind"] == "guide"]
         if guides:
-            out.append(msg("answer.guide_header"))
+            out.append(msg("answer.guide_header", sources=guide_sources(evs)))
+            out += j.get("guide_notes", [])  # 다른 유형의 행동요령을 쓴다는 안내 (열대야 → 폭염)
             last = None
             for e in guides:  # judge 가 묶음 순서대로 골라 둔 것을 그대로 (지금 할 일 / 미리 대비할 일 / 하지 말 것)
                 head = (e["hazard"], e.get("group_label"))
                 if e.get("group_label") and head != last:
-                    out.append(msg("answer.guide_group", label=e["group_label"], hazard=e["hazard"]))
+                    out.append(guide_heading(e, evs))
                     last = head
-                src = f" · {e['source']}" if e.get("source") else ""
-                out.append(f"- [{e['hazard']}{src}] {e['text']} {_cite(e)}")
+                out.append(f"- {e['text']} {_cite(e)}")  # 원문 그대로 (출처는 제목 줄)
         last = None
         for e in [x for x in evs if x["kind"] == "shelter"]:  # 공식 목록에 있는 장소 (운영 여부 미확인 안내가 제목)
             if e["group_label"] != last:

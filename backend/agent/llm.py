@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 
 import httpx
 from langsmith import traceable
@@ -38,7 +39,9 @@ class BaseLLM:
     name = "base"
 
     async def complete(self, system: str, user: str, *, json_mode: bool = False, task: str = "",
-                       payload: dict | None = None, max_tokens: int = 900) -> str:
+                       payload: dict | None = None, max_tokens: int = 900, usage: list | None = None) -> str:
+        """usage: 호출별 토큰 수를 담을 목록(요청마다 따로 — 객체에 상태를 두지 않는다).
+        {task, prompt_tokens, completion_tokens, ms} 를 하나 추가한다(서버가 usage 를 주지 않으면 None)."""
         raise NotImplementedError
 
 
@@ -54,8 +57,10 @@ class FakeLLM(BaseLLM):
         self.garbage_tasks = garbage_tasks or set()
         self.calls: list[str] = []
 
-    async def complete(self, system, user, *, json_mode=False, task="", payload=None, max_tokens=900):
+    async def complete(self, system, user, *, json_mode=False, task="", payload=None, max_tokens=900, usage=None):
         self.calls.append(task)
+        if usage is not None:
+            usage.append({"task": task, "prompt_tokens": None, "completion_tokens": None, "ms": 0})
         p = payload or {}
         if task in self.fail_tasks:
             raise LLMError(f"fake failure: {task}")
@@ -85,7 +90,8 @@ class OpenAICompatLLM(BaseLLM):
 
     # LANGSMITH_TRACING=true 일 때만 기록된다. payload 는 FakeLLM 용이라 트레이스에서 뺀다.
     @traceable(run_type="llm", name="llm", process_inputs=lambda i: {k: i.get(k) for k in ("system", "user", "task", "json_mode")})
-    async def complete(self, system, user, *, json_mode=False, task="", payload=None, max_tokens=900):
+    async def complete(self, system, user, *, json_mode=False, task="", payload=None, max_tokens=900, usage=None):
+        t0 = time.perf_counter()
         if self.no_think:
             user = user + "\n/no_think"
         body = {"model": self.model, "temperature": 0, "max_tokens": max_tokens,
@@ -103,9 +109,14 @@ class OpenAICompatLLM(BaseLLM):
         if r.status_code != 200:
             raise LLMError(f"LLM HTTP {r.status_code}: {r.text[:200]}")
         try:
-            text = r.json()["choices"][0]["message"]["content"] or ""
+            data = r.json()
+            text = data["choices"][0]["message"]["content"] or ""
         except (KeyError, IndexError, ValueError) as e:
             raise LLMError("LLM 응답 형식 오류") from e
+        if usage is not None:  # OpenAI 호환 응답의 usage (Ollama /v1 포함). 입력이 컨텍스트를 넘으면 앞이 잘리므로 개발자 상세에 남긴다
+            u = data.get("usage") or {}
+            usage.append({"task": task, "prompt_tokens": u.get("prompt_tokens"), "completion_tokens": u.get("completion_tokens"),
+                          "ms": int((time.perf_counter() - t0) * 1000)})
         return re.sub(r"<think>.*?</think>", "", text, flags=re.S).strip()
 
 

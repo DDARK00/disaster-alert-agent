@@ -154,15 +154,35 @@ not_in_official_data:
       - [침수, 물에 잠, 잠기, 물이 차, 지하차도]
       - [탈출, 빠져나, 문이 안 열, 창문, 깨고, 요령, 방법, 어떻게]
 
-# 행동요령 구조화 "그래서 어떻게" (ADR-016). 판정은 backend/agent/judge.py group_guides (코드), 여기는 데이터만.
-#   1) 본문에 dont_words 가 있으면 '하지 말 것'  2) 아니면 단계(hazard_map phases, cate3 기준)로 phase_to_group
-#   info·after 단계는 묶음에 넣지 않는다(참고·사후 정보). 특보 발효 중인 유형은 now 를 먼저, 아니면 prepare 를 먼저 보인다.
+# 행동요령 구조화 "그래서 어떻게" (ADR-016, ADR-020). 판정은 backend/agent/judge.py group_guides (코드), 여기는 데이터만.
+#   1) 문장의 핵심 서술이 금지일 때만 '하지 말 것' (judge.is_prohibition): 문장·쉼표로 나눈 조각 중 금지 표현(dont_words, 끝의 dont_endings)이 있는 조각이
+#      있고, 권고 조각(금지 표현 없이 recommend_endings 로 끝나는 조각 또는 문장의 마지막 조각)이 하나도 없을 때.
+#      "물을 많이 마시고, 카페인 음료는 마시지 않습니다"처럼 섞인 문장은 쪼개지 않고 단계 묶음(지금 할 일 등)에 둔다 —
+#      권고("물을 많이 마시고")가 '하지 말 것' 아래에 놓여 반대로 읽히는 오분류가 더 위험하기 때문 (금지 서술은 원문에 그대로 남는다)
+#   2) 아니면 단계(hazard_map phases, cate3 기준)로 phase_to_group. info·after 단계는 넣지 않는다(예외: must_actions → symptom).
+#   3) 거의 같은 행은 하나만 (similar_threshold: 공백·기호를 뺀 글자 2-gram Dice 계수). 한 지역 안에서 묶음 순서대로 먼저 고른 행을
+#      남기고 뒤의 것을 건너뛴 뒤 다음 후보로 채운다 (결정적).
+#   특보 발효 중인 유형은 now 를 먼저, 아니면 prepare 를 먼저 보인다.
 guide_groups:
-  dont_words: [맙시다, 마십시오, 말아야, 지 않습니다, 삼가]   # 2026-10-20 fixture 에서 확인 ('말고'·'피합니다'는 행동 지시와 섞여 제외)
+  dont_words: [맙시다, 마십시오, 말아야, 지 않습니다, 삼가, 서는 안 되, 서는 안되]   # 조각 어디에 있어도 금지 (2026-10-20·21 fixture 에서 확인, '에서는 안전한'과 구분)
+  dont_endings: [지 말고, 지 말며, 지 않고, 지 않으며]               # 조각 끝에 올 때만 금지 ('당황하지 않고 대피합니다'는 권고)
+  recommend_endings: [고, 며, 하여, 해서, 면서]
   phase_to_group: {during: now, prepare: prepare}
-  limits: {now: 3, prepare: 2, dont: 2}
-  order_active: [now, prepare, dont]
+  limits: {now: 3, symptom: 2, prepare: 2, dont: 2}
+  limits_multi: {now: 2, symptom: 1, prepare: 1, dont: 1}   # 한 지역에 행동요령 유형이 둘 이상이면 (답변 길이 제한)
+  # 한 지역의 행동요령 전체 상한 (K7). 넘치면 필수 행동 > 단계 일치 > 고른 순서로 남긴다 (judge.cap_guides).
+  # 근거: qwen3:8b 초당 약 20토큰, 폭염경보 답변 출력 약 1,080토큰·write 54초(행동요령 9 + 쉼터 3, 2026-10-21 측정)
+  max_total: 7
+  order_active: [now, symptom, prepare, dont]
   order_inactive: [prepare, now, dont]
+  similar_threshold: 0.4    # 폭염 '냉방이 되지 않는 실내…' 두 행 0.44, '카페인…' 두 행 0.49, 서로 다른 행은 대개 0.2 이하 (2026-10-21 측정)
+
+# 필수 행동 (ADR-020): 특보 발효 중이면 증상·응급 대처 행을 '증상이 있으면'(symptom) 묶음으로 반드시 넣는다 (코드가 고른다).
+# rows: 단어 묶음 목록 — 행 본문이 한 묶음의 단어를 모두 포함하면 해당. 목록 순서가 우선순위, 상한은 guide_groups.limits.symptom.
+# 단계와 무관하게 찾는다(폭염은 '폭염관련 정보'(info) 단계에 있음). 증상 설명 행은 넣지 않고 대처요령 행만.
+must_actions:
+  폭염: {rows: [[열사병, 대처요령], [열경련, 대처요령], [울열증, 대처요령]]}
+  한파: {rows: [[저체온, 병원], [동상에 걸렸을]]}
 
 # 쉼터·대피장소 (통합대피소 DSSP-IF-10941). 판정·필터는 mcp_server/shelters.py (코드), 여기는 데이터만.
 # 구분 코드와 이름이 1:1이 아니다 — 코드 1 에도 "한파쉼터,무더위쉼터" 복합 항목이 섞여 온다(doc/API_응답_스키마.md §5).

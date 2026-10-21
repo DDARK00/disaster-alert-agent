@@ -39,6 +39,7 @@ from .validator import validate, validate_links
 
 ALLOWED_INTENTS = {"status", "go_out", "guide"}
 ALLOWED_STEPS = ["alerts", "messages", "guide"]
+WRITE_MAX_TOKENS = 1600
 PROGRESS = {k: v for k, v in msg("progress").items() if k != "source_failed"}
 
 
@@ -85,6 +86,7 @@ class State(TypedDict, total=False):
     timings: dict
     llm_errors: list
     failures: list
+    llm_usage: list
     service_down: str
     final: dict
 
@@ -127,7 +129,8 @@ def emitter(config: RunnableConfig):
 
 def build_graph(deps: Deps):
     hazard_names: list[str] = []
-    shelter_hazards: set[str] = set()  # 쉼터 구분이 연결된 유형 (hazard_map shelter — 폭염·한파·지진)
+    shelter_kind: dict[str, str] = {}  # 쉼터 구분이 연결된 유형 → 구분 (hazard_map shelter — 폭염·열대야·한파·지진)
+    borrowed: set[str] = set()  # 다른 유형의 행동요령·쉼터를 쓰는 유형 (hazard_map guide_from — 열대야)
 
     async def allowed_hazards() -> list[str]:
         if not hazard_names:
@@ -136,7 +139,8 @@ def build_graph(deps: Deps):
             except Exception:  # noqa: BLE001 — MCP 불가여도 규칙 사전의 유형 이름으로 계속 (gate 에서 원인과 함께 멈춘다)
                 return list(rules.HAZARD_SYNONYMS)
             hazard_names.extend(h["name"] for h in r["hazards"])
-            shelter_hazards.update(h["name"] for h in r["hazards"] if h.get("shelter"))
+            shelter_kind.update({h["name"]: h["shelter"] for h in r["hazards"] if h.get("shelter")})
+            borrowed.update(h["name"] for h in r["hazards"] if h.get("guide_from"))
         return hazard_names
 
     def timed(name: str, fn):
@@ -175,10 +179,12 @@ def build_graph(deps: Deps):
         rule_i = rules.detect_intent(q)
         errors = list(state.get("llm_errors", []))
         intent, hazards, source, place = rule_i, list(rule_h), "rules", ""
+        usage = list(state.get("llm_usage", []))
         try:
             raw = await deps.llm.complete(
                 prompt("intent", hazard_names=", ".join(f'"{n}"' for n in names)),
-                q, json_mode=True, task="intent", payload={"text": q, "rule_hazards": rule_h, "rule_intent": rule_i})
+                q, json_mode=True, task="intent", payload={"text": q, "rule_hazards": rule_h, "rule_intent": rule_i},
+                usage=usage)
             obj = extract_json(raw)
             if obj.get("intent") in ALLOWED_INTENTS:
                 intent = obj["intent"]
@@ -193,7 +199,7 @@ def build_graph(deps: Deps):
             fail = None
         writer({"event": "intent", "intent": intent, "hazards": hazards, "hazard_source": source})
         return {"intent": intent, "hazards": hazards, "hazard_source": source, "place": place, "llm_errors": errors,
-                "failures": list(state.get("failures", [])) + ([fail] if fail else [])}
+                "llm_usage": usage, "failures": list(state.get("failures", [])) + ([fail] if fail else [])}
 
     # ── gate (코드) ──
     async def gate(state: State, writer):
@@ -326,7 +332,12 @@ def build_graph(deps: Deps):
 
         # 쉼터·대피장소: 계획과 무관하게 코드가 붙인다 — 관련 재난 중 쉼터 구분이 있는 유형만 (호우·태풍 등은 없음)
         await allowed_hazards()
-        pairs = sorted((rid, hz) for rid, hzs in wanted.items() for hz in hzs if hz in shelter_hazards)
+        pairs = []
+        for rid, hzs in sorted(wanted.items()):  # 같은 구분(폭염·열대야 = 무더위쉼터)은 지역마다 한 번만, 자기 구분인 유형 우선
+            kinds: dict[str, str] = {}
+            for hz in sorted((h for h in hzs if h in shelter_kind), key=lambda h: (h in borrowed, h)):
+                kinds.setdefault(shelter_kind[hz], hz)
+            pairs += [(rid, hz) for hz in kinds.values()]
 
         async def shelter(rid: str, hz: str):
             try:
@@ -380,6 +391,7 @@ def build_graph(deps: Deps):
     async def write_node(state: State, writer):
         js, intent = state["judgements"], state["intent"]
         errors = list(state.get("llm_errors", []))
+        usage = list(state.get("llm_usage", []))  # 재작성마다 한 줄씩 (write 호출 수 = 재작성 + 1)
         rules_text = await deps.mcp.prompt("disaster_briefing_prompt", {
             "region": ", ".join(j["region"] for j in js), "hazards": ", ".join(state.get("hazards", [])) or "미지정",
             "question": state["query"]})
@@ -398,14 +410,20 @@ def build_graph(deps: Deps):
             if alert_ids:
                 region_ids.append(prompt("write", "must_cite", region=j["region"],
                                          alert_ids=", ".join(f"[{i}]" for i in alert_ids)))
+            symptom_ids = [e["id"] for e in j["evidence"] if e["kind"] == "guide" and e.get("group") == "symptom"]
+            if symptom_ids:
+                region_ids.append(prompt("write", "must_cite_guides", region=j["region"],
+                                         ids=", ".join(f"[{i}]" for i in symptom_ids)))
             # 행동요령 묶음(지금 할 일 / 미리 대비할 일 / 하지 말 것)은 judge 가 정했다 — LLM 은 풀어 쓰기만 (ADR-016)
             groups: dict[str, list[str]] = {}
             for e in j["evidence"]:
                 if e["kind"] == "guide" and e.get("group_label"):
-                    groups.setdefault(msg("answer.guide_group", label=e["group_label"], hazard=e["hazard"]), []).append(e["id"])
+                    groups.setdefault(compose.guide_heading(e, j["evidence"]), []).append(e["id"])
             if groups:
-                region_ids.append(prompt("write", "guide_groups", region=j["region"], groups="\n".join(
-                    f"  {head}: " + ", ".join(f"[{i}]" for i in ids) for head, ids in groups.items())))
+                notes = "".join(prompt("write", "guide_notes", note=n) for n in j.get("guide_notes", []))
+                # 쓸 모양 그대로 보여 준다 (제목 줄 + 항목 줄). 'head: [G1], [G2]' 목록으로 주면 작은 모델이 그 목록을 베꼈다
+                region_ids.append(prompt("write", "guide_groups", region=j["region"], notes=notes, groups="\n".join(
+                    head + "\n" + "\n".join(f"- (근거 {i}의 내용) [{i}]" for i in ids) for head, ids in groups.items())))
             # 쉼터: 제목 줄(운영 여부 미확인 안내)을 그대로, 그 아래 [S#] 항목만 — 가까움·운영 여부를 지어내지 않는다
             sgroups: dict[str, list[str]] = {}
             for e in j["evidence"]:
@@ -426,22 +444,25 @@ def build_graph(deps: Deps):
                 sentences.append(msg("answer.unknown"))
             sentences += [compose.gap_line(g) for g in j["gaps"] if g["status"] in ("failed", "no_coverage", "unavailable")]
             sentences += list(dict.fromkeys(e["group_label"] for e in j["evidence"] if e["kind"] == "shelter"))
+            sentences += j.get("guide_notes", [])
             must += [prompt("write", "must", region=j["region"], sentence=s) for s in sentences]
         if must:
             user += "\n" + prompt("write", "must_header") + "\n" + "\n".join(f"* {m}" for m in must)
         if state.get("feedback"):
             user += "\n\n" + prompt("rewrite", "user", violations="\n".join(f"- {v}" for v in state["feedback"]))
         try:
-            text = await deps.llm.complete(rules_text, user, task="write", payload={"judgements": js, "intent": intent})
+            # 답변이 행동요령 묶음·증상 대처·쉼터로 길어져 900 토큰에서 끝이 잘렸다(면책 줄 누락) → 쓰기만 여유를 둔다
+            text = compose.tidy_llm(await deps.llm.complete(rules_text, user, task="write", max_tokens=WRITE_MAX_TOKENS,
+                                                            payload={"judgements": js, "intent": intent}, usage=usage))
             source = "llm" if deps.llm.name != "fake" else "fake"
         except Exception as e:  # noqa: BLE001
             errors.append(f"write: {type(e).__name__}: {e}")
             text, source = compose.render_answer(js, intent), "template_llm_error"
             fail = _llm_failure(e)
             if fail:
-                return {"answer": text, "answer_source": source, "llm_errors": errors,
+                return {"answer": text, "answer_source": source, "llm_errors": errors, "llm_usage": usage,
                         "failures": list(state.get("failures", [])) + [fail]}
-        return {"answer": text, "answer_source": source, "llm_errors": errors}
+        return {"answer": text, "answer_source": source, "llm_errors": errors, "llm_usage": usage}
 
     # ── validate (코드) ──
     async def validate_node(state: State, writer):
@@ -477,7 +498,7 @@ def build_graph(deps: Deps):
             "meta": {"run_id": state.get("run_id") or uuid.uuid4().hex[:12], "mode": mode,
                      "as_of": js[0]["as_of"] if js else state.get("as_of"), "llm": deps.llm.name,
                      "timings_ms": state.get("timings", {}), "llm_errors": state.get("llm_errors", []),
-                     "failures": state.get("failures", []),
+                     "failures": state.get("failures", []), "llm_usage": state.get("llm_usage", []),
                      "disclaimer": compose.DISCLAIMER},
         }
         return {"final": final}

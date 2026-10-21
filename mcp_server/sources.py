@@ -265,6 +265,10 @@ def load_guide(hazard: str, mode: str = "replay") -> dict:
     hm = _hazard_map().get(hazard)
     if hm is None:
         return {"available": False, "reason": f"알 수 없는 재난 유형: {hazard}", "rows": []}
+    if hm.get("guide_from"):  # 전용 행동요령이 없어 같은 계열 유형의 것을 쓴다 (열대야 → 폭염, ADR-020). 답변에 밝힌다
+        base = hm["guide_from"]
+        g = guides.load(hazard, _hazard_map()[base], mode)
+        return {**g, "borrowed_from": base} if g["available"] else g
     if not hm["action_cate2"]:
         return {"available": False, "reason": f"'{hazard}'는 공식 행동요령 데이터에 해당 항목이 없음", "rows": []}
     return guides.load(hazard, hm, mode)

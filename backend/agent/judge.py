@@ -6,6 +6,8 @@
 """
 from __future__ import annotations
 
+import re
+
 from config.catalog import RULES, msg, reason
 
 from .validator import URL, shelter_link  # 본문 링크 금지와 같은 기준
@@ -17,29 +19,101 @@ MAX_MESSAGES = RULES["evidence"]["max_messages"]
 GROUPS = RULES["guide_groups"]
 NICHE_WORDS = tuple(RULES["niche_words"])
 FORBIDDEN = tuple(RULES["forbidden"])
+MUST_ACTIONS: dict[str, dict] = RULES["must_actions"]
+SENTENCE = re.compile(r"(?<=[.!?])\s+|(?<=[.!?])(?=\S)|\s-\s|-\s|[●※]")
+NON_TEXT = re.compile(r"[^가-힣A-Za-z0-9]")
+
+
+def is_prohibition(text: str) -> bool:
+    """문장의 핵심 서술이 금지인가 (ADR-020). 문장·쉼표로 나눈 조각 중 금지 조각이 있고 권고 조각이 없을 때만 True.
+    섞인 문장("물을 많이 마시고, 카페인 음료는 마시지 않습니다")은 False — 쪼개지 않고 단계 묶음에 둔다."""
+    pro = rec = 0
+    for sent in SENTENCE.split(text):
+        segs = [x.strip(" .") for x in re.split(r"[,，]", sent) if x.strip(" .")]
+        for i, seg in enumerate(segs):
+            if any(w in seg for w in GROUPS["dont_words"]) or seg.endswith(tuple(GROUPS["dont_endings"])):
+                pro += 1
+            elif seg.endswith(tuple(GROUPS["recommend_endings"])) or i == len(segs) - 1:
+                rec += 1
+    return pro > 0 and rec == 0
+
+
+def _bigrams(text: str) -> set[str]:
+    t = NON_TEXT.sub("", text)
+    return {t[i:i + 2] for i in range(len(t) - 1)}
+
+
+def similarity(a: str, b: str) -> float:
+    """공백·기호를 뺀 글자 2-gram Dice 계수 (0~1)."""
+    x, y = _bigrams(a), _bigrams(b)
+    return 2 * len(x & y) / (len(x) + len(y)) if x and y else 0.0
+
+
+def similar(a: str, b: str) -> bool:
+    return similarity(a, b) >= GROUPS["similar_threshold"]
 
 
 def guide_group(r: dict) -> str | None:
-    """행 하나 → 묶음 (now | prepare | dont | None). 금지 표현 키워드가 단계보다 먼저다."""
+    """행 하나 → 묶음 (now | prepare | dont | None). 금지 서술이 단계보다 먼저다."""
     if r["phase"] in ("info",):
         return None
-    if any(w in r["text"] for w in GROUPS["dont_words"]):
+    if is_prohibition(r["text"]):
         return "dont"
     return GROUPS["phase_to_group"].get(r["phase"])
+
+
+def must_rows(rows: list[dict], hazard: str) -> list[dict]:
+    """필수 행동(증상·응급 대처, rules.yaml must_actions) — 우선순위 순, 단계 무관."""
+    out: list[dict] = []
+    for words in (MUST_ACTIONS.get(hazard) or {}).get("rows", []):
+        out += [r for r in rows if all(w in r["text"] for w in words) and r not in out]
+    return out
+
+
+def cap_guides(rows: list[dict], active_hazards: set[str]) -> list[dict]:
+    """지역 전체 행동요령 상한 (rules.yaml guide_groups.max_total, K7). 남길 우선순위: 필수 행동(symptom) > 묶음마다 첫 행
+    (묶음이 통째로 사라지지 않게 — '하지 말 것'이 빠지면 위험) > 단계 일치(발효 중이면 during, 아니면 prepare) > 고른 순서.
+    남긴 행은 원래 순서(묶음 순서) 그대로 — 원문은 바꾸지 않는다."""
+    limit = GROUPS["max_total"]
+    if len(rows) <= limit:
+        return rows
+
+    firsts = {next(i for i, x in enumerate(rows) if (x["hazard"], x["group"]) == k)
+              for k in {(x["hazard"], x["group"]) for x in rows}}
+
+    def rank(i_e):
+        i, e = i_e
+        phase_ok = e["phase"] == ("during" if e["hazard"] in active_hazards else "prepare")
+        return (0 if e["group"] == "symptom" else 1 if i in firsts else 2 if phase_ok else 3, i)
+    keep = {i for i, _ in sorted(enumerate(rows), key=rank)[:limit]}
+    return [e for i, e in enumerate(rows) if i in keep]
 
 
 def group_label(group: str, active: bool) -> str:
     return msg(f"guide_groups.{'now_inactive' if group == 'now' and not active else group}")
 
 
-def group_guides(rows: list[dict], active: bool) -> list[tuple[str, dict]]:
-    """'그래서 어떻게': 지금 할 일 / 미리 대비할 일 / 하지 말 것 (ADR-016). 묶음별 상한, 원문 순서 유지.
+def group_guides(rows: list[dict], active: bool, hazard: str = "", seen: list[str] | None = None,
+                 limits: dict | None = None) -> list[tuple[str, dict]]:
+    """'그래서 어떻게': 지금 할 일 / 증상이 있으면 / 미리 대비할 일 / 하지 말 것 (ADR-016, ADR-020). 묶음별 상한, 원문 순서 유지.
+    증상이 있으면(symptom)은 발효 중일 때만, must_actions 행. 거의 같은 행(seen 포함)은 건너뛰고 다음 후보로 채운다.
     LLM 은 여기서 고른 항목만 풀어 쓴다."""
     order = GROUPS["order_active"] if active else GROUPS["order_inactive"]
+    seen = seen if seen is not None else []
+    must = must_rows(rows, hazard) if active else []
+    limits = limits or GROUPS["limits"]
     out = []
     for grp in order:
-        picked = [r for r in rows if guide_group(r) == grp][:GROUPS["limits"][grp]]
-        out += [(grp, r) for r in picked]
+        cands = must if grp == "symptom" else [r for r in rows if guide_group(r) == grp and r not in must]
+        n = 0
+        for r in cands:
+            if n >= limits[grp]:
+                break
+            if any(similar(r["text"], t) for t in seen):
+                continue
+            seen.append(r["text"])
+            out.append((grp, r))
+            n += 1
     return out
 
 
@@ -103,9 +177,16 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict],
                              "scope": m["scope"], "label": m["label"], "text": m["text"], "ref": f"SN{m['sn']}"})
         ev.extend(msg_rows)
 
-    guide_rows = []
+    guide_rows, guide_notes = [], []
     active_hazards = {a["hazard"] for a in alerts["alerts"]} if weather_ok else set()
-    for hz, g in guides.items():
+    seen: list[str] = []  # 지역 안에서 이미 고른 행 (유형이 달라도 같은 문장은 한 번만 — 태풍·호우 공통 문장 등)
+    shown = {hz for hz, g in guides.items() if g.get("available") and not (
+        g.get("borrowed_from") in guides and guides[g["borrowed_from"]].get("available"))}
+    limits = GROUPS["limits_multi"] if len(shown) > 1 else GROUPS["limits"]
+    for hz, g in sorted(guides.items(), key=lambda kv: bool(kv[1].get("borrowed_from"))):  # 자기 행동요령이 있는 유형 먼저
+        if g.get("available") and hz not in shown:
+            continue  # 열대야 + 폭염: 같은 폭염 행동요령이므로 한 번만
+
         if g.get("available"):
             # 일반 시민 대상: 축산·농업·작업장 대상 문구는 뒤로 미룬다 (안정 정렬, 삭제하지 않음)
             g = {**g, "rows": sorted(g["rows"], key=lambda r: any(k in r["text"] for k in NICHE_WORDS))}
@@ -119,11 +200,22 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict],
         # 공식 원문이라도 금지 표현("…지붕이 안전하니…")이 든 행은 근거로 쓰지 않는다 — 고쳐 쓰지 않고 뺀다 (T-024)
         # 본문 링크는 검증기가 막으므로(링크는 칩으로만) URL 이 든 원문 행도 근거에서 뺀다 (T-030)
         rows = [r for r in g["rows"] if not any(w in r["text"] for w in FORBIDDEN) and not URL.search(r["text"])]
-        for group, r in group_guides(rows, active=hz in active_hazards):
-            # [G#] 인용에 소스(기관·API 이름)를 함께 싣는다 (ADR-013)
-            guide_rows.append({"id": f"G{len(guide_rows) + 1}", "kind": "guide", "hazard": hz, "phase": r["phase"],
+        picked = group_guides(rows, active=hz in active_hazards, hazard=g.get("borrowed_from") or hz, seen=seen, limits=limits)
+        if not picked:  # 받았지만 고를 행이 없음 — 0줄로 조용히 나가지 않고 '해당 항목이 없습니다'로 밝힌다
+            gaps.append({"source": f"행동요령({hz})", "status": "unavailable", "cause": None,
+                         "reason": msg("causes.not_in_data"), "detail": "선택된 행 없음"})
+            continue
+        if g.get("borrowed_from"):
+            guide_notes.append(msg("answer.guide_borrowed", hazard=hz, base=g["borrowed_from"]))
+        for group, r in picked:
+            # [G#] 인용에 소스(기관·API 이름)를 함께 싣는다 (ADR-013). id 는 전체 상한 적용 뒤 매긴다
+            guide_rows.append({"kind": "guide", "hazard": hz, "phase": r["phase"],
                                "group": group, "group_label": group_label(group, hz in active_hazards),
-                               "text": r["text"], "ref": r["id"], "source": g.get("source_label") or g.get("source")})
+                               "text": r["text"], "ref": r["id"], "source": g.get("source_label") or g.get("source"),
+                               **({"borrowed_from": g["borrowed_from"]} if g.get("borrowed_from") else {})})
+    guide_rows = cap_guides(guide_rows, active_hazards)
+    for i, e in enumerate(guide_rows, 1):
+        e["id"] = f"G{i}"
     ev.extend(guide_rows)
 
     n_shelter = 0
@@ -134,7 +226,7 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict],
             continue
         if sh.get("status") != "ok":
             continue  # 해당 없음·범위 데이터 없음: 쉼터 없이 정상 응답 (실패가 아님)
-        header = msg("shelters.header", kind_label=sh["kind_label"], hazard=hz, source=sh.get("source_label") or sh["source"])
+        header = msg("shelters.header", kind_label=sh["kind_label"])  # 출처(통합대피소)는 근거의 source 에
         for s_ in sh["shelters"]:
             n_shelter += 1
             ev.append({"id": f"S{n_shelter}", "kind": "shelter", "hazard": hz, "text": f"{s_['name']} — {s_['address']}",
@@ -146,7 +238,7 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict],
         note = msg("judge.messages_only_note")
     return {"region_id": region_id, "region": alerts["region"], "level": level, "level_label": LEVEL_LABEL[level],
             "hazards": hazards, "uncertain": uncertain, "as_of": alerts["as_of"], "mode": alerts["mode"],
-            "zones": alerts["zones"], "zone_names": alerts.get("zone_names") or alerts["zones"], "evidence": ev, "gaps": gaps, "note": note, "statement": alerts["statement"]}
+            "zones": alerts["zones"], "zone_names": alerts.get("zone_names") or alerts["zones"], "evidence": ev, "gaps": gaps, "note": note, "guide_notes": guide_notes, "statement": alerts["statement"]}
 
 
 def evidence_view(j: dict) -> dict:
