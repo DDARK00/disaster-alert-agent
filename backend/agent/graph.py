@@ -402,7 +402,8 @@ def build_graph(deps: Deps):
             if sgroups:
                 region_ids.append(prompt("write", "shelter_groups", region=j["region"], groups="\n".join(
                     f"  {head}\n    → " + ", ".join(f"[{i}]" for i in ids) for head, ids in sgroups.items())))
-        user = prompt("write", "user", facts=json.dumps(facts, ensure_ascii=False), region_ids="\n".join(region_ids))
+        user = prompt("write", "user", facts=json.dumps(facts, ensure_ascii=False), region_ids="\n".join(region_ids),
+                      disclaimer=compose.DISCLAIMER)
         must = []
         for j in js:
             # 템플릿(compose)과 같은 표준 문구를 요구한다 — 문구 정의는 prompts/messages.yaml 한 곳

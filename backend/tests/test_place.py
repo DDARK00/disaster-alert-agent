@@ -86,6 +86,13 @@ class PlaceFlow(unittest.TestCase):
         _, _, m = run("광주 호우 어때?", "서울역", METRO)  # 원문에 없는 장소(LLM 지어냄)
         m.assert_not_called()
 
+    def test_vague_place_is_not_sent(self):  # T-033: '우리 동네'가 Kakao 1위 장소의 지역으로 가정되던 문제
+        for q, place in (("우리 동네 날씨 위험해?", "우리 동네"), ("여기 비 와?", "여기"), ("이 근처 폭염 어때?", "이 근처")):
+            st, links, m = run(q, place, GOYANG)
+            m.assert_not_called()
+            self.assertEqual(st["final"]["route"], "ask_region", q)
+            self.assertEqual(links, [])
+
     def test_kakao_failure_changes_nothing(self):
         for r in ({"status": "failed", "detail": "HTTP 500"}, {"status": "unavailable", "detail": "키 없음"}):
             st, links, _ = run("첨단지구 비 와?", "첨단지구", r)

@@ -23,17 +23,19 @@ GUIDE = words_regex(RULES["intent_words"]["guide"])
 
 
 REGION_SUFFIXES = RULES["region_suffixes"]
+VAGUE_PLACE_WORDS = RULES["vague_place_words"]
 
 
 def place_candidate(place, query: str) -> str:
-    """LLM 이 뽑은 장소 표현을 검사한다 (코드). 질문 원문에 그대로 있고, 지명·행정구역 접미만이 아닐 때만 쓴다."""
+    """LLM 이 뽑은 장소 표현을 검사한다 (코드). 질문 원문에 그대로 있고, 지명·행정구역 접미·막연한 위치 표현
+    ('우리 동네', '여기')만이 아닐 때만 쓴다."""
     if not isinstance(place, str):
         return ""
     place = place.strip()
     if not place or len(place) > 40 or place not in query:
         return ""
     rest = place
-    for w in sorted(REGION_WORDS, key=len, reverse=True):
+    for w in sorted(REGION_WORDS + VAGUE_PLACE_WORDS, key=len, reverse=True):
         rest = rest.replace(w, " ")
     tokens = [t for t in rest.split() if t not in REGION_SUFFIXES]
     return place if "".join(tokens) else ""
