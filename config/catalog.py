@@ -48,7 +48,7 @@ MARKER_CHECKS = {
     "shelter_notice": ["shelters.header"],
 }
 REQUIRED_RULES = ["emergency_words", "intent_words", "hazard_synonyms", "generic_disaster_words", "region_words",
-                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "vague_place_words", "api_errors", "guide_audience", "not_in_official_data", "guide_groups", "shelters"]
+                  "forbidden", "levels", "evidence", "niche_words", "region_suffixes", "vague_place_words", "api_errors", "guide_audience", "not_in_official_data", "guide_groups", "shelters", "plan_steps"]
 SECTION = re.compile(r"^=== (\w+) ===\n", re.M)
 
 

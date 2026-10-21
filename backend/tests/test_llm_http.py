@@ -119,7 +119,7 @@ class HttpLLM(unittest.TestCase):
         final = self.graph_run(self.llm())
         self.assertEqual(final["answer_source"], "template_llm_error")
         self.assertEqual(final["judgements"][0]["level"], "warning")
-        self.assertGreaterEqual(len(final["meta"]["llm_errors"]), 3)
+        self.assertGreaterEqual(len(final["meta"]["llm_errors"]), 2)  # intent·write (plan 은 코드 규칙, ADR-018)
 
 
 if __name__ == "__main__":

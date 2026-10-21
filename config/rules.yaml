@@ -179,3 +179,12 @@ shelters:
     heat: {label: 무더위쉼터, codes: ["2"], name_word: 무더위}
     cold: {label: 한파쉼터, codes: ["1"], name_word: 한파}
     quake: {label: 지진 옥외대피장소, codes: ["3", "4"], name_word: null}
+
+# 조회 계획 (ADR-018): 의도 → 조회 단계. 적용은 backend/agent/graph.py rule_plan (코드). 특보(alerts)는 항상 넣는다.
+# 근거: qwen 계획 LLM 이 28건 중 27건에서 의도만으로 같은 단계를 골랐다(T-032). 규칙으로 정해지지 않던 go_out
+# (qwen 2건 중 1건만 행동요령 포함)은 행동요령을 넣는다 — 외출 판단에는 '하지 말 것'이 필요하고, 결정을 매번 같게 하기 위해.
+# 쉼터는 계획과 무관하게 코드가 붙인다(hazard_map shelter).
+plan_steps:
+  status: [alerts, messages]
+  guide: [alerts, guide]
+  go_out: [alerts, messages, guide]

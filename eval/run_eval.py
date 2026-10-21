@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from collections import Counter
 import json
 import re
 import sys
@@ -93,10 +94,14 @@ def ask(client: httpx.Client, base: str, ex: dict) -> dict:
         params["as_of"] = ex["as_of"]
     if ex.get("history_region_id"):
         params["history_region_id"] = ex["history_region_id"]
+    import time
+    t0 = time.perf_counter()
     f = client.get(f"{base}/chat", params=params).json()
+    f["_elapsed_ms"] = (time.perf_counter() - t0) * 1000
     return {"route": f["route"], "answer": f["answer"], "answer_source": f["answer_source"],
             "judgements": f.get("judgements") or [], "llm": f["meta"]["llm"], "validation": f.get("validation"),
-            "failures": f["meta"].get("failures", [])}
+            "failures": f["meta"].get("failures", []), "timings_ms": f["meta"].get("timings_ms", {}),
+            "elapsed_ms": int(f.get("_elapsed_ms", 0))}
 
 
 def score(out: dict, expect: dict) -> dict[str, int]:
@@ -147,7 +152,14 @@ def run_local(base: str, only: list[str] | None) -> int:
             got = {j["region_id"]: j["level"] for j in out["judgements"]}
             print(f"{'PASS' if not bad else 'FAIL'} {ex['id']:<32} src={out['answer_source']:<17} got={got} {'✗ ' + ','.join(bad) if bad else ''}")
     n = len(rows)
-    print(f"\n{n}건 · LLM {rows[0][1]['llm'] if rows else '-'}")
+    print(f"\n{n}건 · LLM {rows[0][1]['llm'] if rows else '-'} · 답변 출처 "
+          + str(dict(sorted(Counter(o["answer_source"] for _, o, _ in rows).items()))))
+    timed = [o for ex, o, _ in rows if o.get("elapsed_ms") and o["answer_source"] != "fixed"]
+    if timed:  # 응답 시간 (HTTP 항목 중 고정 응답 제외, final.meta.timings_ms)
+        med = lambda xs: sorted(xs)[len(xs) // 2]
+        nodes = sorted({k for o in timed for k in o["timings_ms"]})
+        print(f"  응답 시간 중앙값({len(timed)}건): 전체 {med([o['elapsed_ms'] for o in timed]) / 1000:.1f}초 · "
+              + " · ".join(f"{k} {med([o['timings_ms'].get(k, 0) for o in timed]) / 1000:.1f}초" for k in nodes))
     for m in METRICS:
         print(f"  {m:<16} {total[m]}/{n}")
     return 0 if all(total[m] == n for m in METRICS) else 1

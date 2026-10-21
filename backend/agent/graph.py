@@ -3,13 +3,14 @@
 route ─┬─ emergency / not_in_data / out_of_scope ─→ fixed_response ─→ END   (LLM 미사용)
        └─ disaster → parse_intent(LLM+규칙) → gate(코드) ─┬─ ask_region ─→ END
                                                           ├─ unavailable (MCP 불가, 원인 문구) ─→ END
-                                                          └─ plan(LLM+제약) → research(병렬+재시도, 쉼터는 코드가 붙임)
+                                                          └─ plan(코드 규칙) → research(병렬+재시도, 쉼터는 코드가 붙임)
                                                              → judge(코드) → write(LLM) → validate(코드)
                                                                  ├ ok → finalize
                                                                  ├ 위반 & 재작성 가능 → write
                                                                  └ 위반 → fallback(템플릿) → finalize
 
-역할 분담: 판단(route/gate/judge/validate)은 코드, 이해·계획·설명(parse_intent/plan/write)은 LLM.
+역할 분담: 판단(route/gate/plan/judge/validate)은 코드, 이해·설명(parse_intent/write)은 LLM.
+(plan 은 LLM 이었으나 의도만으로 정해져 규칙 표로 바꿨다 — ADR-018)
 LLM 이 실패하거나 엉뚱해도 규칙/템플릿으로 떨어진다 (안전 우선).
 """
 from __future__ import annotations
@@ -24,7 +25,7 @@ from typing import Any, TypedDict
 from langgraph.graph import END, START, StateGraph
 from langchain_core.runnables import RunnableConfig
 
-from config.catalog import msg, prompt, reason
+from config.catalog import RULES, msg, prompt, reason
 
 from . import compose, judge, rules
 from .deps import Deps
@@ -35,6 +36,14 @@ from .validator import validate, validate_links
 
 ALLOWED_INTENTS = {"status", "go_out", "guide"}
 ALLOWED_STEPS = ["alerts", "messages", "guide"]
+
+
+def rule_plan(intent: str) -> list[str]:
+    """의도 → 조회 단계 (config/rules.yaml plan_steps, ADR-018). 특보 조회는 항상, 순서는 ALLOWED_STEPS.
+    알 수 없는 의도는 status 로 본다."""
+    table = RULES["plan_steps"]
+    want = set(table.get(intent, table["status"])) | {"alerts"}
+    return [s for s in ALLOWED_STEPS if s in want]
 
 
 class State(TypedDict, total=False):
@@ -239,31 +248,12 @@ def build_graph(deps: Deps):
         return {"route": "unavailable", "answer": msg("fixed.service_unavailable", reason=reason("failed", state["service_down"])),
                 "answer_source": "fixed", "judgements": []}
 
-    # ── plan (LLM 제안 + 코드 제약) ──
+    # ── plan (코드 규칙, ADR-018) ──
+    # 예전에는 LLM 이 제안하고 코드가 제약했지만, 단계는 의도만으로 정해졌다(T-032) → 규칙 표(rules.yaml plan_steps).
     async def plan_node(state: State, writer):
-        intent = state["intent"]
-        mandatory = ["alerts"] if intent == "guide" else ["alerts", "messages"]  # 특보 조회는 생략 불가
-        steps, source = list(mandatory), "rules"
-        errors = list(state.get("llm_errors", []))
-        try:
-            raw = await deps.llm.complete(
-                prompt("plan", steps=str(ALLOWED_STEPS)),
-                prompt("plan", "user", query=state["query"], intent=intent, hazards=str(state.get("hazards"))),
-                json_mode=True, task="plan", payload={"intent": intent})
-            proposed = [s for s in (extract_json(raw).get("steps") or []) if s in ALLOWED_STEPS]
-            steps = [s for s in ALLOWED_STEPS if s in set(proposed) | set(mandatory)]
-            source = "llm+constraints"
-        except (LLMError, ValueError, TypeError) as e:
-            errors.append(f"plan: {type(e).__name__}: {e}")
-            steps = [s for s in ALLOWED_STEPS if s in mandatory or s == "guide"]
-            fail = _llm_failure(e)
-        else:
-            fail = None
-        if "guide" not in steps and intent == "guide":
-            steps.append("guide")
-        plan = {"steps": steps, "source": source}
+        plan = {"steps": rule_plan(state["intent"]), "source": "rules"}
         writer({"event": "plan", **plan})
-        return {"plan": plan, "llm_errors": errors, "failures": list(state.get("failures", [])) + ([fail] if fail else [])}
+        return {"plan": plan}
 
     # ── research (병렬 + 재시도 + 실패 격리) ──
     async def research(state: State, writer):

@@ -92,7 +92,7 @@ class Flow(unittest.TestCase):
         self.assertEqual([j["region_id"] for j in final["judgements"]], ["gyeonggi_gwangju"])
 
     def test_missing_guide_hazard_not_substituted(self):
-        final, _, _ = R("경기도 광주 열대야 어때", as_of="2026-08-25 12:00")
+        final, _, _ = R("경기도 광주 열대야 행동요령 알려줘", as_of="2026-08-25 12:00")
         j = final["judgements"][0]
         self.assertIn("열대야", j["hazards"])
         self.assertTrue(any("행동요령(열대야)" in g["source"] for g in j["gaps"]))
@@ -119,8 +119,17 @@ class Resilience(unittest.TestCase):
         self.assertEqual(final["answer_source"], "template_llm_error")
         self.assertEqual(final["hazard_source"] if "hazard_source" in final else "rules", "rules")
         self.assertEqual(final["judgements"][0]["level"], "warning")
-        self.assertGreaterEqual(len(final["meta"]["llm_errors"]), 3)
+        self.assertGreaterEqual(len(final["meta"]["llm_errors"]), 2)  # intent·write (plan 은 코드 규칙, ADR-018)
+        self.assertNotIn("plan", llm.calls)
         self.assertTrue(final["validation"]["ok"])
+
+    def test_plan_is_rule_table_not_llm(self):
+        for q, want in (("경기도 광주 폭염 어때?", ["alerts", "messages"]),
+                        ("경기도 광주 폭염 행동요령 알려줘", ["alerts", "guide"]),
+                        ("경기도 광주 폭염인데 나가도 돼?", ["alerts", "messages", "guide"])):
+            final, events, llm = R(q)
+            self.assertEqual(final["plan"], {"steps": want, "source": "rules"}, q)
+            self.assertNotIn("plan", llm.calls)
 
     def test_garbage_json_from_llm_is_ignored(self):
         llm = FakeLLM(garbage_tasks={"intent", "plan"})

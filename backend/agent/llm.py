@@ -66,9 +66,6 @@ class FakeLLM(BaseLLM):
             if self.place:
                 out["place"] = self.place
             return json.dumps(out, ensure_ascii=False)
-        if task == "plan":
-            steps = ["alerts", "guide"] if p.get("intent") == "guide" else ["alerts", "messages", "guide"]
-            return json.dumps({"steps": steps, "reason": "fake plan"}, ensure_ascii=False)
         if task == "write":
             if self.bad_write_times > 0:
                 self.bad_write_times -= 1
