@@ -38,6 +38,8 @@ services:
       LLM_MODEL: ${LLM_MODEL:-qwen3:8b}
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_NO_THINK: ${LLM_NO_THINK:-1}
+      # 시연용 장애 주입 (기본 꺼짐, ADR-021). 녹화 때만: DEMO_FAULTS=1 docker compose up -d backend
+      DEMO_FAULTS: ${DEMO_FAULTS:-0}
       LANGSMITH_TRACING: ${LANGSMITH_TRACING:-false}
       LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
       LANGSMITH_PROJECT: ${LANGSMITH_PROJECT:-disaster-advisor}

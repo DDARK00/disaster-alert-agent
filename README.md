@@ -14,9 +14,10 @@
 ## 구조
 ```mermaid
 flowchart LR
-    U[브라우저] -->|"/api/ (SSE)"| F[frontend<br/>nginx]
-    F --> B[backend<br/>FastAPI + LangGraph]
+    U[브라우저] -->|"/api/ (SSE)"| F[frontend<br/>nginx · index.html 한 장]
+    F --> B[backend<br/>FastAPI + LangGraph<br/>data/regions.json 복사본]
     B -->|MCP| M[mcp 서버]
+    B -.->|"DEMO_FAULTS=1 일 때만"| D[demo_faults.py<br/>시연용 장애 주입]
     M --> A[(공공 API<br/>특보·재난문자·행동요령·쉼터)]
     M --> K[(카카오 로컬<br/>장소 검색)]
     B -.-> L[LLM<br/>Ollama / OpenAI 호환]
@@ -39,7 +40,8 @@ flowchart TD
     V2 -->|통과| O
     V2 -->|실패| T[고정 템플릿]
 ```
-- 판정 결과(`judgement`)가 먼저 스트리밍되고, 검증을 통과한 최종 답변(`final`)이 이어서 도착합니다.
+- 화면은 SSE 이벤트를 네 단계로 보여 줍니다: **판단**(`judgement`, 지역·위험 수준) → **근거**(`evidence`, 공식 데이터 묶음) → **빠른 답**(`quick`, 검증을 통과한 기본 요약) → **최종 답**(`final`, AI 답변이 검증을 통과하면 교체). 진행 문구는 `progress`, 노드별 시간·분기·장애 주입은 화면의 "개발자 보기"에만 있습니다.
+- 백엔드 이미지는 범위 판단용으로 `data/regions.json`만 복사합니다. 시연용 장애 주입(`backend/agent/demo_faults.py`)은 `DEMO_FAULTS=1`일 때만 켜집니다(기본 꺼짐, ADR-021).
 - 응급 상황과 범위 밖 질문은 고정 응답으로 분기합니다. 지역은 전국 시·군으로 해석하고(광역시는 시 전체 단위), 같은 이름이 여러 곳이거나 도 이름만 있으면 되묻습니다('광주'는 두 곳을 함께 보여 줍니다).
 - 쉼터·대피장소는 공식 목록에 있는 장소로만 안내하고 운영 여부는 단정하지 않습니다. 지도는 카카오맵 링크로만 넘깁니다.
 - 설계 배경과 결정 기록은 [`doc/기획서.md`](doc/기획서.md), [`doc/ADR.md`](doc/ADR.md), 문제 해결 기록은 [`doc/트러블슈팅.md`](doc/트러블슈팅.md)에 있습니다.

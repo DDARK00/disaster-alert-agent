@@ -133,6 +133,20 @@ class Staged(unittest.TestCase):
         self.assertTrue(ev["alerts"] and ev["guide_groups"] and ev["shelters"])
         self.assertTrue(all(g["items"] for g in ev["guide_groups"]))
 
+    def test_fixed_answers_keep_sentence_line_breaks(self):
+        # 고정 안내는 문장마다 줄을 바꿔 화면에서 따로 보인다 (messages.yaml |-, T-038)
+        for q, lines in (("호우 때 지하차도에서 차가 물에 잠기면 어떻게 탈출해?", 3), ("물이 차오르고 있어 도와줘", 3)):
+            final = dict(self.stream(FakeLLM(), {"message": q}))["final"]
+            self.assertEqual(len(final["answer"].split("\n")), lines, final["answer"])
+            self.assertNotIn("지어내", final["answer"])
+
+    def test_source_failed_progress_uses_plain_source_name(self):
+        # 8월 기준 시각은 재난문자 저장 범위 밖 → 실패 진행 문구. API 이름·ID(DSSP-IF-…)가 아니라 사용자 말 (T-038)
+        prog = [d for e, d in self.stream(FakeLLM()) if e == "progress" and d["stage"] == "source_failed"]
+        self.assertTrue(prog)
+        self.assertTrue(all("DSSP" not in d["text"] and "(" not in d["text"] for d in prog), prog)
+        self.assertIn("경기도 광주시 재난문자 정보 없음", prog[0]["text"])
+
     def test_unvalidated_llm_text_never_sent_and_quick_becomes_final(self):
         events = self.stream(FakeLLM(bad_write_times=99))
         final = events[-1][1]

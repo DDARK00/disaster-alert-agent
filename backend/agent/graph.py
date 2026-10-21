@@ -294,8 +294,9 @@ def build_graph(deps: Deps):
             src = resp["source"]
             writer({"event": "source", "region_id": rid, "name": src["name"], "status": src["status"],
                     "cause": src.get("cause"), "count": len(resp.get("alerts", resp.get("messages", [])))})
-            if src["status"] != "ok":
-                writer(progress_failed(f"{names.get(rid, rid)} {src['name']}", src["status"], src.get("cause")))
+            if src["status"] != "ok":   # 사용자 문구에는 API 이름·ID 대신 사용자 말 (원래 이름은 source 이벤트에만)
+                label = "기상특보" if kind == "alerts" else "재난문자"
+                writer(progress_failed(f"{names.get(rid, rid)} {label}", src["status"], src.get("cause")))
             return kind, rid, resp
 
         jobs = [fetch("alerts", r) for r in regions]
