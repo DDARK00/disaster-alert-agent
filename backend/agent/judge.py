@@ -147,3 +147,22 @@ def judge_region(alerts: dict, messages: dict | None, guides: dict[str, dict],
     return {"region_id": region_id, "region": alerts["region"], "level": level, "level_label": LEVEL_LABEL[level],
             "hazards": hazards, "uncertain": uncertain, "as_of": alerts["as_of"], "mode": alerts["mode"],
             "zones": alerts["zones"], "zone_names": alerts.get("zone_names") or alerts["zones"], "evidence": ev, "gaps": gaps, "note": note, "statement": alerts["statement"]}
+
+
+def evidence_view(j: dict) -> dict:
+    """판정 결과 → 화면용 구조화 근거 (SSE evidence, ADR-019). 코드가 고른 근거를 종류·묶음별로 나눌 뿐 문장을 만들지 않는다.
+    LLM 문장이 아니므로 검증 전에 보내도 된다."""
+    ev = j["evidence"]
+    groups: list[dict] = []
+    for e in (x for x in ev if x["kind"] == "guide"):
+        if not groups or groups[-1]["group"] != e["group"] or groups[-1]["hazard"] != e["hazard"]:
+            groups.append({"group": e["group"], "label": e["group_label"], "hazard": e["hazard"], "items": []})
+        groups[-1]["items"].append(e)
+    shelters = [x for x in ev if x["kind"] == "shelter"]
+    return {"region_id": j["region_id"], "region": j["region"], "level": j["level"], "level_label": j["level_label"],
+            "as_of": j["as_of"], "scope_note": j.get("scope_note"), "note": j.get("note"),
+            "alerts": [x for x in ev if x["kind"] in ("alert", "pending", "released")],
+            "messages": [x for x in ev if x["kind"] == "message"],
+            "guide_groups": groups,
+            "shelters": {"header": shelters[0]["group_label"], "items": shelters} if shelters else None,
+            "gaps": [g for g in j["gaps"] if g["status"] != "not_queried"]}

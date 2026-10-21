@@ -75,13 +75,23 @@ a.chip{border-style:solid;color:inherit;text-decoration:none}
 .meta{font-size:12px;color:var(--sub);word-break:break-all}
 .meta .bad{color:var(--sev);font-weight:700}
 .err{color:var(--sev);font-weight:600}
+.progress{font-size:14px;color:var(--accent);margin:0 0 6px;min-height:1.4em}
+.progress.bad{color:var(--unk)}
+.grp{padding:6px 14px 0;font-size:13px;font-weight:700;color:var(--ink)}
+.grp.dont{color:var(--warn)}
+.ev+.grp{border-top:1px solid var(--line);margin-top:2px}
+.shdr{padding:6px 14px 0;font-size:12px;color:var(--sub)}
+.sumhead{font-size:12px;color:var(--sub);margin:0 0 6px}
+details.dev{margin-top:8px;font-size:12px;color:var(--sub)}
+details.dev summary{cursor:pointer}
 .caret::after{content:"▍";animation:b 1s steps(1) infinite}
 @keyframes b{50%{opacity:0}}
 @media (max-width:560px){form{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="banner" role="note">공식 경보를 대신하지 않습니다 · 위급하면 <b>119·112</b> · 공식 채널에서 최종 확인</div>
+<!-- 면책은 화면에 한 번만: 이 배너가 답변의 면책 줄(prompts/messages.yaml disclaimer)과 같은 문장이다 (답변 쪽 같은 줄은 표시만 생략) -->
+<div class="banner" role="note" id="disclaimer">공식 데이터(기상청·행정안전부)를 정리한 안내로, 공식 경보를 대신하지 않습니다. 위급하면 즉시 119·112에 연락하고 공식 채널(기상청, 재난문자, 국민재난안전포털)에서 최종 확인해 주세요.</div>
 <div class="wrap">
   <h1>재난·특보 상황 판단</h1>
   <p class="lead">특보·재난문자·행동요령을 지역별로 모아, 확인된 근거와 함께 정리합니다. 위험 수준은 코드가 판정하고 AI는 설명만 합니다.</p>
@@ -101,18 +111,22 @@ a.chip{border-style:solid;color:inherit;text-decoration:none}
     </form>
   </section>
 
-  <section class="panel" aria-live="polite">
-    <div class="steps" id="steps"></div>
+  <section class="panel">
+    <div class="progress" id="progress" aria-live="polite"></div>
     <div id="loc"></div>
     <div id="links"></div>
-    <div class="badges" id="badges"></div>
+    <details class="dev"><summary>개발자 상세 (처리 단계)</summary>
+      <div class="steps" id="steps"></div>
+      <div class="badges" id="badges"></div>
+    </details>
   </section>
 
-  <section id="cards" class="cards" aria-label="판정 카드"></section>
-
-  <section class="panel" id="ansPanel" style="display:none;margin-top:14px">
+  <section class="panel" id="ansPanel" style="display:none" aria-live="polite">
+    <div class="sumhead" id="sumhead"></div>
     <div id="answer" class="caret"></div>
   </section>
+
+  <section id="cards" class="cards" aria-label="확인된 근거"></section>
   <div class="meta" id="meta"></div>
 </div>
 
@@ -122,8 +136,9 @@ const API = new URLSearchParams(location.search).get("api") || "/api";
 const NODES = ["route","parse_intent","gate","plan","research","judge","write","validate","finalize"];
 const NODE_KO = {route:"분기",parse_intent:"의도",gate:"지역",plan:"계획",research:"조회",judge:"판정",write:"작성",validate:"검증",finalize:"완료",fallback:"대체",fixed_response:"고정응답",ask_region:"되묻기"};
 const KIND_KO = {alert:"특보",pending:"예고",released:"해제",message:"문자",guide:"행동요령",shelter:"쉼터"};
+const DISCLAIMER = document.getElementById("disclaimer").textContent.trim();
 const $ = id => document.getElementById(id);
-let es = null, lastRegion = "", evById = {};
+let es = null, lastRegion = "", evById = {}, shown = "";
 
 function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
 
@@ -142,8 +157,8 @@ async function loadScenarios(){
 
 function resetView(){
   $("steps").replaceChildren(); $("loc").replaceChildren(); $("links").replaceChildren(); $("badges").replaceChildren();
-  $("cards").replaceChildren(); $("answer").replaceChildren(); $("meta").replaceChildren(); evById={};
-  $("ansPanel").style.display="none";
+  $("cards").replaceChildren(); $("answer").replaceChildren(); $("meta").replaceChildren(); evById={}; shown="";
+  $("ansPanel").style.display="none"; $("progress").textContent=""; $("progress").className="progress"; $("sumhead").textContent="";
   NODES.forEach(n=>{ const s=el("span","step",NODE_KO[n]); s.id="st-"+n; $("steps").appendChild(s); });
 }
 function stepEvent(d){
@@ -173,36 +188,49 @@ function showLinks(d){
 }
 function badge(text,cls){ const b=el("span","badge"+(cls?" "+cls:""),text); $("badges").appendChild(b); }
 
-function showJudgements(list){
+function evItem(ul,e){
+  evById[e.id]=e;
+  const li=el("li"); li.dataset.id=e.id;
+  li.appendChild(el("span","tag",e.id+" "+(KIND_KO[e.kind]||e.kind)));
+  li.appendChild(el("span",null,e.text));
+  if(e.kind==="shelter"&&KAKAO_SEARCH.test(e.map_url||"")){
+    const a=el("a","chip","카카오맵에서 찾기"); a.href=e.map_url; a.target="_blank"; a.rel="noopener noreferrer";
+    a.title="이름·주소 검색 결과로 넘어갑니다. 운영 여부와 경로상의 통제·침수 여부는 반영되지 않았습니다."; li.appendChild(a);
+  }
+  ul.appendChild(li);
+}
+function list(c,items){ if(!items.length) return; const ul=el("ul","ev"); items.forEach(e=>evItem(ul,e)); c.appendChild(ul); }
+// 판정 카드 머리(지역·수준) — judgement 이벤트, 근거 묶음은 evidence 이벤트가 채운다 (둘 다 코드가 만든 데이터)
+function showJudgements(js){
   const box=$("cards"); box.replaceChildren();
-  list.forEach(j=>{
-    const c=el("article","card"); c.appendChild(el("h3",null,j.region));
+  js.forEach(j=>{
+    const c=el("article","card"); c.id="card-"+j.region_id; c.appendChild(el("h3",null,j.region));
     const lv=el("div","lv "+j.level,j.level_label);
     // 특보구역은 이름으로 보이고 코드는 툴팁(개발자용)에만
     const sm=el("small",null,"기준 "+j.as_of+" · 구역 "+(j.zone_names||j.zones).join("·")+(j.uncertain?" · 해석 불확실 코드 포함":""));
     sm.title="특보구역 코드: "+j.zones.join(", "); lv.appendChild(sm);
-    c.appendChild(lv);
-    if(j.note) c.appendChild(el("div","note",j.note));
-    const ul=el("ul","ev");
-    j.evidence.forEach(e=>{
-      evById[e.id]=e;
-      const li=el("li"); li.dataset.id=e.id;
-      li.appendChild(el("span","tag",e.id+" "+(KIND_KO[e.kind]||e.kind)));
-      li.appendChild(el("span",null,e.text));
-      if(e.kind==="shelter"&&KAKAO_SEARCH.test(e.map_url||"")){
-        const a=el("a","chip","카카오맵에서 찾기"); a.href=e.map_url; a.target="_blank"; a.rel="noopener noreferrer";
-        a.title="이름·주소 검색 결과로 넘어갑니다. 운영 여부와 경로상의 통제·침수 여부는 반영되지 않았습니다."; li.appendChild(a);
-      }
-      ul.appendChild(li);
-    });
-    j.gaps.filter(g=>g.status!=="not_queried").forEach(g=>{
-      const li=el("li"); li.appendChild(el("span","tag gap","정보 없음"));
-      // 사용자 문구는 백엔드가 준 원인별 문구(reason), 원인 코드·상세는 툴팁(개발자용)에만
-      const sp=el("span","gap",g.source+" — "+(g.reason||"불러오지 못했습니다")+(g.status==="unavailable"?"":" — 위험 여부는 공식 채널에서 확인"));
-      sp.title=[g.cause||g.status,g.detail||""].join(" · "); li.appendChild(sp);
-      ul.appendChild(li);
-    });
-    c.appendChild(ul); box.appendChild(c);
+    c.appendChild(lv); box.appendChild(c);
+  });
+}
+function showEvidence(d){
+  d.regions.forEach(r=>{
+    const c=$("card-"+r.region_id); if(!c) return;
+    while(c.children.length>2) c.lastChild.remove();
+    if(r.scope_note) c.appendChild(el("div","note",r.scope_note));
+    if(r.note) c.appendChild(el("div","note",r.note));
+    list(c,r.alerts); list(c,r.messages);
+    r.guide_groups.forEach(g=>{ c.appendChild(el("div","grp "+g.group,"▶ "+g.label)); list(c,g.items); });
+    if(r.shelters){ c.appendChild(el("div","shdr",r.shelters.header)); list(c,r.shelters.items); }
+    if(r.gaps.length){
+      const ul=el("ul","ev");
+      r.gaps.forEach(g=>{
+        const li=el("li"); li.appendChild(el("span","tag gap","정보 없음"));
+        // 사용자 문구는 백엔드가 준 원인별 문구(reason), 원인 코드·상세는 툴팁(개발자용)에만
+        const sp=el("span","gap",g.source+" — "+(g.reason||"불러오지 못했습니다"));
+        sp.title=[g.cause||g.status,g.detail||""].join(" · "); li.appendChild(sp); ul.appendChild(li);
+      });
+      c.appendChild(ul);
+    }
   });
 }
 
@@ -217,16 +245,21 @@ function renderAnswer(text){
     });
   };
   text.split("\n").forEach(line=>{
+    if(line.trim()===DISCLAIMER) return;   // 면책은 위 배너와 같은 문장 — 화면에는 한 번만
     if(line.startsWith("### ")){ ul=null; root.appendChild(el("h4",null,line.slice(4))); }
     else if(line.startsWith("- ")){ if(!ul){ ul=el("ul"); root.appendChild(ul);} const li=el("li"); addCites(li,line.slice(2)); ul.appendChild(li); }
     else if(line.trim()){ ul=null; const p=el("p"); addCites(p,line); root.appendChild(p); }
   });
 }
 
+// 실행 정보: 일반 사용자에게는 모델 이름만(내부 연결 방식 이름은 숨김), 테스트용 고정 응답이면 그렇게 표시
+function llmLabel(name){ if(!name||name==="fake") return "테스트 모드(고정 응답)"; const i=name.indexOf(":"); return i>=0?name.slice(i+1):name; }
+const SRC_KO={llm:"AI 작성(검증 통과)",fake:"고정 응답",fixed:"고정 안내",template_fallback:"기본 요약(AI 답변이 검증을 통과하지 못함)",template_llm_error:"기본 요약(AI 연결 실패)"};
 function showMeta(f){
   const m=f.meta, box=$("meta"); box.replaceChildren();
   const v=f.validation; const t=Object.entries(m.timings_ms||{}).map(([k,x])=>k+" "+x+"ms").join(" · ");
-  box.appendChild(document.createTextNode("run "+m.run_id+" · LLM "+m.llm+" · 답변 출처 "+(f.answer_source||"-")+" · 검증 "));
+  box.title="run "+m.run_id+" · LLM "+m.llm+" · 데이터 "+m.mode+" · 답변 출처 "+(f.answer_source||"-");  // 개발자 상세
+  box.appendChild(document.createTextNode("모델 "+llmLabel(m.llm)+" · 답변 "+(SRC_KO[f.answer_source]||f.answer_source||"-")+" · 검증 "));
   box.appendChild(el("span",v&&v.ok?null:"bad",v?(v.ok?"통과":"위반"):"-"));
   if(m.llm_errors&&m.llm_errors.length) box.appendChild(document.createTextNode(" · LLM 오류 "+m.llm_errors.length+"건(규칙/템플릿으로 대체)"));
   box.appendChild(document.createElement("br")); box.appendChild(document.createTextNode(t));
@@ -244,6 +277,7 @@ function run(){
   const on=(name,fn)=>es.addEventListener(name,e=>fn(JSON.parse(e.data)));
   on("start",d=>{ badge("데이터 "+d.mode,"mode"); if(d.as_of) badge("기준 "+d.as_of); });
   on("step",stepEvent);
+  on("progress",d=>{ const p=$("progress"); p.textContent=d.text; p.className="progress"+(d.stage==="source_failed"?" bad":""); });
   on("route",d=>badge("분기: "+d.route));
   on("intent",d=>{ badge("의도 "+d.intent); badge("재난 "+(d.hazards.join("·")||"미지정")+" ("+d.hazard_source+")"); });
   on("location",showLocation);
@@ -251,14 +285,22 @@ function run(){
   on("plan",d=>badge("조회 "+d.steps.join("+")+" ("+d.source+")"));
   on("source",d=>{ if(d.status!=="ok") badge("⚠ "+d.name+" 정보 없음"+(d.cause?" ("+d.cause+")":"")); });
   on("judgement",d=>showJudgements(d.judgements));
+  on("evidence",showEvidence);
+  // 검증을 통과한 기본 요약을 먼저 보이고, AI 답변이 검증을 통과하면 final 에서 요약 영역만 바꾼다 (근거 카드는 그대로)
+  on("quick",d=>{ $("ansPanel").style.display=""; ans.className=""; renderAnswer(d.answer); shown=d.answer;
+    $("sumhead").textContent="기본 요약 · AI 답변을 작성·검증하는 중입니다"; });
   on("validation",d=>{ if(!d.ok) badge("검증 위반 → "+(d.attempt==="template"?"템플릿":"재작성")); });
-  on("token",d=>{ if(!started){ started=true; $("ansPanel").style.display=""; ans.className="caret"; ans.textContent=""; } ans.textContent+=d.text; });
+  on("token",d=>{ if(shown) return;   // 요약이 이미 보이면 토큰을 덧쓰지 않고 final 에서 한 번에 교체
+    if(!started){ started=true; $("ansPanel").style.display=""; ans.className="caret"; ans.textContent=""; } ans.textContent+=d.text; });
   on("final",f=>{
-    ans.className=""; $("ansPanel").style.display=""; renderAnswer(f.answer); showMeta(f);
+    ans.className=""; $("ansPanel").style.display="";
+    if(f.answer!==shown) renderAnswer(f.answer);   // 같으면(기본 요약이 최종) 다시 그리지 않는다
+    $("sumhead").textContent=f.answer_source==="llm"?"":(shown&&f.answer===shown&&f.route==="disaster"?"기본 요약":"");
+    $("progress").textContent=""; showMeta(f);
     const j=(f.judgements||[]); if(j.length===1) lastRegion=j[0].region_id; else if(f.location&&f.location.chosen) lastRegion=f.location.chosen;
     es.close(); es=null; $("send").disabled=false;
   });
-  on("error",d=>{ ans.className=""; $("ansPanel").style.display=""; ans.replaceChildren(el("p","err","정보 없음 — 답변을 만들지 못했습니다. 위험 여부는 공식 채널에서 확인해 주세요. ("+d.message+")")); es&&es.close(); es=null; $("send").disabled=false; });
+  on("error",d=>{ ans.className=""; $("ansPanel").style.display=""; const p=el("p","err","정보 없음 — 답변을 만들지 못했습니다. 위험 여부는 공식 채널에서 확인해 주세요."); p.title=d.message||""; ans.replaceChildren(p); $("progress").textContent=""; es&&es.close(); es=null; $("send").disabled=false; });
   es.onerror=()=>{ if(es&&es.readyState===EventSource.CLOSED){ $("send").disabled=false; } };
 }
 $("f").addEventListener("submit",e=>{ e.preventDefault(); document.querySelectorAll(".scn").forEach(x=>x.setAttribute("aria-pressed","false")); run(); });

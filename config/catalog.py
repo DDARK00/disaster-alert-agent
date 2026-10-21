@@ -32,6 +32,8 @@ REQUIRED_MESSAGES = [
     "mcp.messages_failed", "mcp.messages_count", "mcp.alert_unreachable",
     "kakao.route_notice", "kakao.map_label", "kakao.route_label",
     "shelters.header", "shelters.source_name", "shelters.map_label", "shelters.map_notice",
+    "progress.parse_intent", "progress.gate", "progress.research", "progress.judge", "progress.write",
+    "progress.rewrite", "progress.validate", "progress.fallback", "progress.source_failed",
 ]
 # 조회 실패 원인 코드 (ADR-014). MCP(외부 API)·백엔드(MCP 연결) 공용. 문구는 messages.yaml causes.<코드>
 CAUSE_CODES = ("api_auth_error", "rate_limited", "api_http_error", "api_result_error", "api_timeout", "network_error",

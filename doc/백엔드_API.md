@@ -12,7 +12,16 @@
 서버는 대화 상태를 보관하지 않는다(Stateless). 직전에 확정된 지역은 클라이언트가 `history_region_id`로 보낸다.
 
 ## SSE 이벤트
-`start` → (`step` start/done 쌍들, `route`, `intent`, `location`, `plan`, `source`×N, `judgement`, `validation`) → `token`×N → `final` (실패 시 `error`)
+`start` → (`step` start/done 쌍들, `progress`, `route`, `intent`, `location`, `plan`, `source`×N) → `judgement` → `evidence` → `quick` → (`progress`, `validation`…) → `token`×N → `final` (실패 시 `error`)
+
+단계별 표시 (ADR-019): 검증이 필요 없는 **코드가 만든 정보**를 먼저 보낸다. 검증 전 LLM 문장은 어떤 이벤트에도 싣지 않는다.
+- `progress`: `{stage, text, cause?}` — 노드 시작마다 짧은 진행 문구(`messages.yaml progress.*`: 질문 이해 → 지역 확인 → 조회 → 정리 → 작성 → 검증, 재작성이면 `rewrite`, 템플릿 대체면 `fallback`). 조회가 실패하면 `stage: source_failed` + 원인별 문구(`causes.*`, ADR-014).
+- `evidence`: `{regions: [{region_id, region, level, level_label, as_of, scope_note, note, alerts[], messages[], guide_groups: [{group, label, hazard, items[]}], shelters: {header, items[]} | null, gaps[]}]}` — `judgement`의 근거를 종류·묶음별로 나눈 것(`judge.evidence_view`). 문장을 만들지 않는다.
+- `quick`: `{answer, answer_source: "template", validation}` — 판정 직후 고정 템플릿(`compose.render_answer`, fallback과 같은 것)을 **검증기에 통과시킨 뒤에만** 보낸다(통과 못 하면 보내지 않음). LLM 답변이 검증을 통과하면 `final.answer`가 요약 영역을 교체하고, LLM이 실패하거나 검증이 끝내 실패하면 `final.answer`가 이 요약과 같다(`answer_source` = `template_llm_error` / `template_fallback`).
+- 고정 응답(위급·범위 밖·되묻기·MCP 불가)에는 `evidence`·`quick`이 없다(근거가 없고 `final`이 바로 온다).
+- 기존 소비자: `final` 형태는 그대로이고 `token` 합 = `final.answer`도 그대로다(평가·시나리오 러너 호환). 프론트는 `quick`을 받은 뒤에는 `token`을 덧쓰지 않고 `final`에서 요약 영역만 바꾼다(근거 카드 유지).
+- 버퍼링: 백엔드 `X-Accel-Buffering: no`, nginx `/api/`는 `proxy_buffering off`·`proxy_cache off`(`frontend/nginx.conf`) — 이벤트가 생기는 대로 도착한다.
+- 측정(qwen3:8b, replay, 로컬): `quick` 도착 1.7~5.5초(첫 요청은 모델 적재 포함), `final` 24~47초.
 
 - `links`: 카카오맵 링크 칩 `{region, notice, chips:[{kind: map|route, label, url}]}` — 장소가 질문에 있고 조회 지역과 일치할 때만. 답변 본문이 아니라 별도 칩이며 `final.links`에도 실린다. 경로는 판단하지 않는다(고정 문구 "경로상의 도로 통제·침수 여부는 반영되지 않았습니다.").
 - `judgement`: 판정 카드(지역·등급·근거·정보 없음 목록). 문장보다 먼저 도착한다. `gaps[]`: `{source, status, cause, reason, detail}` — `reason`은 사용자 문구, `cause`·`detail`은 개발자용.

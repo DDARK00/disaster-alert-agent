@@ -113,6 +113,19 @@ shelters:
   map_label: 카카오맵에서 찾기
   map_notice: 이름·주소 검색 결과로 넘어갑니다. 운영 여부와 경로상의 통제·침수 여부는 반영되지 않았습니다.
 
+# 단계 진행 표시 (SSE progress, ADR-019). 사용자에게 보이는 짧은 문구 — 판정·답변 문장이 아니다.
+# source_failed: 조회 실패 원인별 문구(causes.*)를 $reason 에 넣는다
+progress:
+  parse_intent: 질문을 이해하고 있습니다
+  gate: 지역을 확인하고 있습니다
+  research: 특보·재난문자·행동요령을 조회하고 있습니다
+  judge: 확인된 정보를 정리하고 있습니다
+  write: 답변을 작성하고 있습니다
+  rewrite: 답변을 다시 다듬고 있습니다
+  validate: 작성한 답변을 검증하고 있습니다
+  fallback: 검증된 기본 요약으로 정리하고 있습니다
+  source_failed: "$source 정보 없음 — $reason"
+
 # 행동요령 묶음 제목 (ADR-016). 특보가 발효 중이 아닌 유형은 now 대신 now_inactive
 guide_groups:
   now: 지금 할 일

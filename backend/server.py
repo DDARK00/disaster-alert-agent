@@ -1,7 +1,8 @@
 """FastAPI 백엔드 — /chat (JSON), /chat/stream (SSE), /scenarios, /health, /version.
 
 Stateless: 서버는 대화 상태를 보관하지 않는다. 클라이언트가 history_region_id 를 요청마다 실어 보낸다.
-SSE 이벤트: start · step · route · intent · location · plan · source · judgement · validation · token · final · error
+SSE 이벤트: start · step · progress · route · intent · location · plan · source · judgement · evidence · quick
+          · validation · token · final · error  (순서·페이로드는 doc/백엔드_API.md, ADR-019)
 """
 from __future__ import annotations
 

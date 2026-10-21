@@ -12,6 +12,9 @@ route ─┬─ emergency / not_in_data / out_of_scope ─→ fixed_response ─
 역할 분담: 판단(route/gate/plan/judge/validate)은 코드, 이해·설명(parse_intent/write)은 LLM.
 (plan 은 LLM 이었으나 의도만으로 정해져 규칙 표로 바꿨다 — ADR-018)
 LLM 이 실패하거나 엉뚱해도 규칙/템플릿으로 떨어진다 (안전 우선).
+
+단계별 표시 (ADR-019): judge 직후 코드가 만든 구조화 근거(evidence)와 검증을 통과한 템플릿 요약(quick)을 먼저 보낸다.
+LLM 문장은 validate 를 통과한 뒤에만 final 로 나간다. 노드 시작마다 짧은 진행 문구(progress)를 보낸다.
 """
 from __future__ import annotations
 
@@ -36,6 +39,13 @@ from .validator import validate, validate_links
 
 ALLOWED_INTENTS = {"status", "go_out", "guide"}
 ALLOWED_STEPS = ["alerts", "messages", "guide"]
+PROGRESS = {k: v for k, v in msg("progress").items() if k != "source_failed"}
+
+
+def progress_failed(source: str, status: str, cause: str | None) -> dict:
+    """조회 실패 진행 문구 — 원인별 문구(causes.*)를 쓴다 (ADR-014)."""
+    return {"event": "progress", "stage": "source_failed", "cause": cause,
+            "text": msg("progress.source_failed", source=source, reason=reason(status, cause))}
 
 
 def rule_plan(intent: str) -> list[str]:
@@ -134,6 +144,9 @@ def build_graph(deps: Deps):
             writer = emitter(config)
             t0 = time.perf_counter()
             writer({"event": "step", "node": name, "status": "start"})
+            stage = "rewrite" if name == "write" and state.get("rewrites") else name
+            if stage in PROGRESS:
+                writer({"event": "progress", "stage": stage, "text": PROGRESS[stage]})
             out = await fn(state, writer)
             ms = int((time.perf_counter() - t0) * 1000)
             writer({"event": "step", "node": name, "status": "done", "ms": ms})
@@ -193,6 +206,7 @@ def build_graph(deps: Deps):
             log.warning("mcp failure at gate: %s %s", cause, type(e).__name__)
             annotate_span(source_failures=[f"MCP:{cause}"])
             writer({"event": "source", "name": "데이터 서비스", "status": "failed", "cause": cause, "count": 0})
+            writer(progress_failed("데이터 서비스", "failed", cause))
             return {"location": {"status": "none", "chosen": None, "candidates": []}, "regions": [],
                     "region_names": {}, "service_down": cause,
                     "failures": list(state.get("failures", [])) + [
@@ -274,6 +288,8 @@ def build_graph(deps: Deps):
             src = resp["source"]
             writer({"event": "source", "region_id": rid, "name": src["name"], "status": src["status"],
                     "cause": src.get("cause"), "count": len(resp.get("alerts", resp.get("messages", [])))})
+            if src["status"] != "ok":
+                writer(progress_failed(f"{names.get(rid, rid)} {src['name']}", src["status"], src.get("cause")))
             return kind, rid, resp
 
         jobs = [fetch("alerts", r) for r in regions]
@@ -352,6 +368,12 @@ def build_graph(deps: Deps):
             if j["region_id"] in districts:
                 j["scope_note"] = msg("region.district_scope", district=districts[j["region_id"]], region=j["region"])
         writer({"event": "judgement", "judgements": js})
+        # 단계별 표시 (ADR-019): 코드가 만든 근거를 먼저, 그다음 검증을 통과한 템플릿 요약. LLM 문장은 아직 보내지 않는다
+        writer({"event": "evidence", "regions": [judge.evidence_view(j) for j in js]})
+        quick = compose.render_answer(js, state["intent"])
+        qv = validate(quick, js)
+        if qv["ok"]:  # 템플릿이 검증을 통과하지 못하면(드묾) 요약을 먼저 보내지 않고 final 을 기다린다
+            writer({"event": "quick", "answer": quick, "answer_source": "template", "validation": qv})
         return {"judgements": js}
 
     # ── write (LLM) ──

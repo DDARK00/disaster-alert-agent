@@ -108,5 +108,75 @@ class Api(unittest.TestCase):
             self.assertEqual(last[0], "error")
 
 
+class Staged(unittest.TestCase):
+    """단계별 표시 (ADR-019): judgement → evidence → quick → final. 검증 전 LLM 문장은 보내지 않는다."""
+    Q = {"message": "경기도 광주 폭염특보 났는데 지금 나가도 돼?", "mode": "replay", "as_of": "2026-08-24 12:00"}
+    BAD = "지금은 안전합니다"  # FakeLLM(bad_write_times) 의 검증 위반 답변
+
+    def stream(self, llm, params=None):
+        app = backend_server.create_app(mcp_target=mcp_module.mcp, llm=llm)
+        with TestClient(app) as c:
+            return parse_sse(c.get("/chat/stream", params=params or self.Q).text)
+
+    def test_order_and_quick_is_validated_template(self):
+        events = self.stream(FakeLLM())
+        names = [e for e, _ in events]
+        order = [names.index(n) for n in ("judgement", "evidence", "quick", "final")]
+        self.assertEqual(order, sorted(order))
+        self.assertLess(names.index("quick"), names.index("token"))
+        self.assertIn("progress", names)
+        quick = dict(events)["quick"]
+        self.assertTrue(quick["validation"]["ok"])
+        self.assertEqual(quick["answer_source"], "template")
+        ev = dict(events)["evidence"]["regions"][0]
+        self.assertEqual(ev["level"], "warning")
+        self.assertTrue(ev["alerts"] and ev["guide_groups"] and ev["shelters"])
+        self.assertTrue(all(g["items"] for g in ev["guide_groups"]))
+
+    def test_unvalidated_llm_text_never_sent_and_quick_becomes_final(self):
+        events = self.stream(FakeLLM(bad_write_times=99))
+        final = events[-1][1]
+        self.assertEqual(events[-1][0], "final")
+        self.assertEqual(final["answer_source"], "template_fallback")
+        self.assertEqual(final["answer"], dict(events)["quick"]["answer"])  # 검증이 끝내 실패하면 quick 이 최종
+        self.assertFalse(any(self.BAD in json.dumps(d, ensure_ascii=False) for _, d in events))
+
+    def test_llm_down_quick_is_final(self):
+        events = self.stream(FakeLLM(fail_tasks={"intent", "write"}))
+        final = events[-1][1]
+        self.assertEqual(final["answer_source"], "template_llm_error")
+        self.assertEqual(final["answer"], dict(events)["quick"]["answer"])
+
+    def test_frontend_banner_is_the_answer_disclaimer(self):
+        # 화면은 답변의 면책 줄을 배너와 같은 문장일 때만 생략한다 — 문구가 어긋나면 면책이 사라지지 않게 고정
+        from config.catalog import msg
+        self.assertIn(msg("disclaimer"), (ROOT / "frontend" / "index.html").read_text(encoding="utf-8"))
+
+    def test_fixed_route_has_no_evidence_or_quick(self):
+        names = [e for e, _ in self.stream(FakeLLM(), {"message": "물이 차오르고 있어 도와줘"})]
+        self.assertNotIn("evidence", names)
+        self.assertNotIn("quick", names)
+        self.assertEqual(names[-1], "final")
+
+    def test_progress_texts_are_plain_and_failure_uses_cause_phrase(self):
+        sys.path.insert(0, str(ROOT / "eval"))
+        import asyncio
+        from faults import DownGateway
+        from agent.deps import Deps, Settings
+        from agent.graph import build_graph
+        from config.catalog import msg
+
+        async def go():
+            graph = build_graph(Deps(mcp=DownGateway(), llm=FakeLLM(), settings=Settings(data_mode="replay")))
+            evs: list = []
+            await graph.ainvoke({"query": "경기도 광주 폭염", "mode": "replay", "as_of": ""},
+                                config={"configurable": {"emit": evs.append}})
+            return evs
+        evs = asyncio.run(go())
+        prog = [e for e in evs if e["event"] == "progress"]
+        self.assertTrue(any(e["stage"] == "source_failed" and msg("causes.mcp_unreachable") in e["text"] for e in prog))
+        self.assertFalse(any(e["event"] in ("evidence", "quick") for e in evs))  # MCP 중단: 근거 없음 → 고정 응답만
+
+
 if __name__ == "__main__":
     unittest.main()

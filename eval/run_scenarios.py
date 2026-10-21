@@ -61,13 +61,20 @@ def check(sc: dict, res: dict) -> tuple[list[str], dict]:
         problems.append("위급인데 고정 119 응답 아님")
     if sc["id"] == "ambiguous_rain" and len(js) != 2:
         problems.append(f"모호 지명인데 지역 {len(js)}개")
+    # 단계별 표시 (ADR-019): quick 은 검증을 통과한 템플릿이어야 하고, 근거가 있는 응답이면 final 전에 와야 한다
+    for d in (d for _, n, d in evs if n == "quick"):
+        if not validate(d["answer"], js)["ok"] or any(w in d["answer"] for w in FORBIDDEN):
+            problems.append("quick 요약이 검증을 통과하지 못함")
+    if js and "quick" in names and names.index("quick") > names.index("final"):
+        problems.append("quick 이 final 뒤에 옴")
     if "".join(d["text"] for _, n, d in evs if n == "token") != ans:
         problems.append("token 합 ≠ final.answer")
     t = {n: round(ts, 2) for ts, n, _ in reversed(evs)}  # 이벤트별 첫 도착 시각
     vals = [d for _, n, d in evs if n == "validation"]
     info = {"src": src, "levels": [j["level"] for j in js], "validations": [(d["attempt"], d["ok"]) for d in vals],
             "llm_errors": f["meta"].get("llm_errors", []), "llm": f["meta"].get("llm"),
-            "t_judgement": t.get("judgement"), "t_first_token": t.get("token"), "t_final": t.get("final"),
+            "t_judgement": t.get("judgement"), "t_quick": t.get("quick"), "t_first_token": t.get("token"),
+            "t_final": t.get("final"),
             "n_events": len(names)}
     return problems, info
 
