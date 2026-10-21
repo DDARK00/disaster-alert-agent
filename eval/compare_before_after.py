@@ -1,9 +1,9 @@
 """Before/After 측정 — 같은 질문을 두 커밋의 코드로 돌려 같은 기준으로 센다. 측정 대상 코드는 고치지 않는다.
 
-    git worktree add ../baseline_work/e13c10f e13c10f          # Before 를 저장소 밖에 꺼낸다
-    .venv/bin/python eval/compare_before_after.py dup    --tree ../baseline_work/e13c10f --tree .
-    .venv/bin/python eval/compare_before_after.py faults --tree ../baseline_work/e13c10f --tree .
-    .venv/bin/python eval/compare_before_after.py tests  --tree ../baseline_work/e13c10f --tree .
+    git worktree add ../baseline_work/aec2694 aec2694          # Before 를 저장소 밖에 꺼낸다
+    .venv/bin/python eval/compare_before_after.py dup    --tree ../baseline_work/aec2694 --tree .
+    .venv/bin/python eval/compare_before_after.py faults --tree ../baseline_work/aec2694 --tree .
+    .venv/bin/python eval/compare_before_after.py tests  --tree ../baseline_work/aec2694 --tree .
     .venv/bin/python eval/compare_before_after.py timing --base http://localhost:8080/api --n 3   # qwen, 실행 중인 서버
     .venv/bin/python eval/compare_before_after.py eval   --base http://localhost:8110 --label before
 
